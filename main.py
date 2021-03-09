@@ -94,9 +94,9 @@ class MyFirstGUI:
             size='small'
         else:
             messagebox.showinfo("Uh-oh,", f":( The dimensions are wrong.")
+            return
 
 #Check to see if there are unknown colors
-        print(color_dict.values())
         for x in range(size_num[0]):
             for y in range(size_num[1]):
                 if pic[x,y] not in color_dict.values():
@@ -104,6 +104,16 @@ class MyFirstGUI:
                     messagebox.showinfo("Uh-oh,",f":( there's an unknown color located at {x},{y}")
                     return
         messagebox.showinfo("Congrats","No unknown colors! Nice")
+
+#Read the color coding in the bottom left corner
+        yarn_colors=[]
+        for i in range(8):
+            current_color=pic[i,size_num[1]-1]
+            if current_color != color_dict['K']:
+                yarn_colors.append(current_color)
+        print(yarn_colors)
+
+
 
         return
 
