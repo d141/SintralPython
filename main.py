@@ -1,6 +1,7 @@
 
 from tkinter import *
 import os
+import os.path, sys
 from tkinter import messagebox, filedialog
 
 from scipy import misc
@@ -113,8 +114,10 @@ class MyFirstGUI:
                 yarn_colors.append(current_color)
         print(yarn_colors)
 
-
-
+#Trim the edges and rotate
+        img2 = img.crop((6, 300, 400, 15))
+        img2.show(title=" ")
+        #img.save('Cropped.bmp',"BMP",quality=100)
         return
 
     def cycle_label_text(self, event):
