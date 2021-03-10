@@ -7,6 +7,7 @@ from tkinter import messagebox, filedialog
 from scipy import misc
 import PIL
 from PIL import Image
+import numpy as np
 
 color_dict={'.':(255,255,255),
     'A':(0,0,0),
@@ -21,12 +22,12 @@ color_dict={'.':(255,255,255),
     'O':(245,196,0),
     'W':(152,0,152),
     'Z':(128,255,0),
+    'E': (104, 96, 104),
+    'K': (64, 0, 56),
+    'L': (17, 27, 78),
     'X':(137,138,142),
     'N':(75,8,103),
     'S':(167,20,51),
-    'E':(104,96,104),
-    'K': (64,0,56),
-    'L': (17,27,78),
     'M': (2,86,48),
     'P': (64,0,0),
     'Q': (255,183,12),
@@ -67,14 +68,87 @@ def read_bitmap_for_colors(pic,size_num):
 
 def convert_colors_to_knitting(pic,size_num,colors):
     pixels=pic.load()
+    oddity=0
     for x in range(size_num[0]):
         for y in range(size_num[1]):
             current_color=pixels[x,y]
             color_index=colors.index(current_color)
-            print(color_index)
-            knitting_color= list(color_dict.values())[color_index]
+            #print(color_index)
+            if oddity%2 !=0:
+                knitting_color = list(color_dict.values())[color_index+8]
+            else:
+                knitting_color= list(color_dict.values())[color_index]
             pixels[x,y]=knitting_color
+            oddity+=1
     return pic
+
+def make_barcode(img,colors):
+    size=img.size
+    barcode_row=Image.new('RGB',(481,size[1]),color_dict['.'])
+    barcode_row.paste(img,(8,0))
+    pixels=barcode_row.load()
+    #array=np.array(barcode_row)
+    base_colors=[color_dict['.'],color_dict['A'],color_dict['Y']]
+    for x in range(481):
+        num_colors_in_row=0
+        this_row=0
+        colors_in_row=[]
+        for y in range(size[1]):
+            current_color=pixels[x,y]
+            if current_color in colors_in_row:
+                break
+            elif current_color is color_dict['.'] or color_dict['G']:
+                colors_in_row.append(color_dict['.'])
+                num_colors_in_row+=1
+            elif current_color is color_dict['A'] or color_dict['H']:
+                colors_in_row.append(color_dict['A'])
+                num_colors_in_row+=1
+            elif current_color is color_dict['Y'] or color_dict['O']:
+                colors_in_row.append(color_dict['Y'])
+                num_colors_in_row+=1
+            elif current_color is color_dict['T'] or color_dict['W']:
+                colors_in_row.append(color_dict['T'])
+                num_colors_in_row+=1
+            elif current_color is color_dict['*'] or color_dict['Z']:
+                colors_in_row.append(color_dict['*'])
+                num_colors_in_row+=1
+            elif current_color is color_dict['I'] or color_dict['E']:
+                colors_in_row.append(color_dict['I'])
+                num_colors_in_row+=1
+            elif current_color is color_dict['+'] or color_dict['K']:
+                colors_in_row.append(color_dict['+'])
+                num_colors_in_row+=1
+            elif current_color is color_dict['B'] or color_dict['L']:
+                colors_in_row.append(color_dict['B'])
+                num_colors_in_row+=1
+        print(num_colors_in_row)
+        if num_colors_in_row==1:
+            if colors_in_row[0] not in base_colors:
+                pixels[0,this_row] = color_dict['.']
+                pixels[1,this_row] = color_dict['A']
+                pixels[2,this_row] = colors_in_row[0]
+            else:
+                pixels[0,this_row]=color_dict['.']
+                pixels[1,this_row]=color_dict['A']
+                pixels[2,this_row]=color_dict['Y']
+        elif num_colors_in_row==2:
+            pixels[0,this_row] = color_dict['.']
+            pixels[1,this_row] = colors_in_row[0]
+            pixels[2,this_row] = colors_in_row[1]
+        elif num_colors_in_row==3:
+            pixels[0,this_row] = colors_in_row[0]
+            pixels[1,this_row] = colors_in_row[1]
+            pixels[2,this_row] = colors_in_row[2]
+        elif num_colors_in_row==3:
+            pixels[0,this_row] = colors_in_row[0]
+            pixels[1,this_row] = colors_in_row[1]
+            pixels[2,this_row] = colors_in_row[2]
+            pixels[3,this_row] = colors_in_row[3]
+
+        this_row+=1
+    #print(pixels[0])
+    return barcode_row
+
 
 
 class MyFirstGUI:
@@ -98,8 +172,12 @@ class MyFirstGUI:
         self.label.bind("<Button-1>", self.cycle_label_text)
         self.label.pack()
 
-        self.greet_button = Button(master, text="Barcode", command=self.read)
-        self.greet_button.pack()
+     #   self.read_button = Button(master, text="Read the Bitmap", command=self.read)
+     #   self.read_button.pack()
+
+        self.plain_button = Button(master, text="Finish it. Not Personalized", command=self.plain)
+        self.plain_button.pack()
+
 
         self.close_button = Button(master, text="Close", command=master.quit)
         self.close_button.pack()
@@ -150,12 +228,17 @@ class MyFirstGUI:
         #pic=img2.load()
 
 #Convert the bitmap to it's knitting colors
-
         img3=convert_colors_to_knitting(img2,size_num,colors)
-        img3.show()
-        #img2.save('Cropped.bmp',"BMP",quality=100)
+        #img3.show()
 
-        return
+        return img3,colors
+
+    def plain(self):
+        img,colors=self.read()
+        #img.show()
+        barcoded=make_barcode(img,colors)
+        barcoded.show()
+
 
     def cycle_label_text(self, event):
         self.label_index += 1
