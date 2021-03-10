@@ -5,6 +5,7 @@ import os.path, sys
 from tkinter import messagebox, filedialog
 
 from scipy import misc
+import PIL
 from PIL import Image
 
 color_dict={'.':(255,255,255),
@@ -63,6 +64,17 @@ def read_bitmap_for_colors(pic,size_num):
             if pic[x,y] not in yarn_colors:
                 yarn_colors.append(pic[x,y])
     return yarn_colors
+
+def convert_colors_to_knitting(pic,size_num,colors):
+    pixels=pic.load()
+    for x in range(size_num[0]):
+        for y in range(size_num[1]):
+            current_color=pixels[x,y]
+            color_index=colors.index(current_color)
+            print(color_index)
+            knitting_color= list(color_dict.values())[color_index]
+            pixels[x,y]=knitting_color
+    return pic
 
 
 class MyFirstGUI:
@@ -124,22 +136,24 @@ class MyFirstGUI:
         messagebox.showinfo("Congrats","No unknown colors! Nice")
 
 #Read the color coding in the bottom left corner or scan it to get them.
-        colors_from_code=read_color_code(pic,size_num)
-        if not colors_from_code:
+        colors=read_color_code(pic,size_num)
+        if not colors:
             messagebox.showinfo("Don't worry", f"There's no color code for this one. I'll scan it myself.")
 
-        colors_from_reading=read_bitmap_for_colors(pic,size_num)
-        print(colors_from_code,colors_from_reading)
-
-
+        colors=read_bitmap_for_colors(pic,size_num)
 
 #Trim the edges and rotate
         height=size_num[1]-15
         img2 = img.crop((6,6, 478,height))
-        img2.show(title=" ")
-        img2.save('Cropped.bmp',"BMP",quality=100)
+        img2=img2.transpose(PIL.Image.FLIP_TOP_BOTTOM)
+        size_num=img2.size
         #pic=img2.load()
 
+#Convert the bitmap to it's knitting colors
+
+        img3=convert_colors_to_knitting(img2,size_num,colors)
+        img3.show()
+        #img2.save('Cropped.bmp',"BMP",quality=100)
 
         return
 
