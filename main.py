@@ -46,6 +46,23 @@ color_dict={'.':(255,255,255),
     'p': (81,43,28),
     'q': (41,86,154)}
 
+def read_color_code(pic,size_num):
+    yarn_colors = []
+    for i in range(8):
+        current_color = pic[i, size_num[1] - 1]
+        if current_color != color_dict['K']:
+            yarn_colors.append(current_color)
+    if all(x == yarn_colors[0] for x in yarn_colors):
+        return False
+    return yarn_colors
+
+def read_bitmap_for_colors(pic,size_num):
+    yarn_colors=[]
+    for x in reversed(range(size_num[0])):
+        for y in reversed(range(size_num[1]-15)):
+            if pic[x,y] not in yarn_colors:
+                yarn_colors.append(pic[x,y])
+    return yarn_colors
 
 
 class MyFirstGUI:
@@ -106,18 +123,24 @@ class MyFirstGUI:
                     return
         messagebox.showinfo("Congrats","No unknown colors! Nice")
 
-#Read the color coding in the bottom left corner
-        yarn_colors=[]
-        for i in range(8):
-            current_color=pic[i,size_num[1]-1]
-            if current_color != color_dict['K']:
-                yarn_colors.append(current_color)
-        print(yarn_colors)
+#Read the color coding in the bottom left corner or scan it to get them.
+        colors_from_code=read_color_code(pic,size_num)
+        if not colors_from_code:
+            messagebox.showinfo("Don't worry", f"There's no color code for this one. I'll scan it myself.")
+
+        colors_from_reading=read_bitmap_for_colors(pic,size_num)
+        print(colors_from_code,colors_from_reading)
+
+
 
 #Trim the edges and rotate
-        img2 = img.crop((6, 300, 400, 15))
+        height=size_num[1]-15
+        img2 = img.crop((6,6, 478,height))
         img2.show(title=" ")
-        #img.save('Cropped.bmp',"BMP",quality=100)
+        img2.save('Cropped.bmp',"BMP",quality=100)
+        #pic=img2.load()
+
+
         return
 
     def cycle_label_text(self, event):
