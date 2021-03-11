@@ -48,6 +48,18 @@ color_dict={'.':(255,255,255),
     'p': (81,43,28),
     'q': (41,86,154)}
 
+base_colors_3 = [color_dict['.'], color_dict['A'], color_dict['Y']]
+base_colors_8={color_dict['.']:[1,color_dict['G']], color_dict['A']:[2,color_dict['H']],color_dict['Y']:[3,color_dict['O']],color_dict['T']:[4,color_dict['W']],
+               color_dict['*']:[5,color_dict['Z']], color_dict['I']:[6,color_dict['E']],color_dict['+']:[7,color_dict['K']],color_dict['B']:[8,color_dict['L']]}
+pair_1=[color_dict['.'],color_dict['G']]
+pair_2=[color_dict['A'],color_dict['H']]
+pair_3=[color_dict['Y'],color_dict['O']]
+pair_4=[color_dict['T'],color_dict['W']]
+pair_5=[color_dict['*'],color_dict['Z']]
+pair_6=[color_dict['I'],color_dict['E']]
+pair_7=[color_dict['+'],color_dict['K']]
+pair_8=[color_dict['B'],color_dict['L']]
+
 def read_color_code(pic,size_num):
     yarn_colors = []
     for i in range(8):
@@ -82,71 +94,86 @@ def convert_colors_to_knitting(pic,size_num,colors):
             oddity+=1
     return pic
 
+def sort_colors(colors):
+  ranks=[]
+  results=[]
+  for color in colors:
+    ranks.append(base_colors_8[color])
+  for color in colors:
+    min_idx=ranks.index(min(ranks))
+    results.append(colors[min_idx])
+    ranks.pop(min_idx)
+  return results
+
 def make_barcode(img,colors):
     size=img.size
     barcode_row=Image.new('RGB',(481,size[1]),color_dict['.'])
     barcode_row.paste(img,(8,0))
     pixels=barcode_row.load()
-    #array=np.array(barcode_row)
-    base_colors=[color_dict['.'],color_dict['A'],color_dict['Y']]
-    for x in range(481):
-        num_colors_in_row=0
-        this_row=0
-        colors_in_row=[]
-        for y in range(size[1]):
-            current_color=pixels[x,y]
-            if current_color in colors_in_row:
-                break
-            elif current_color is color_dict['.'] or color_dict['G']:
-                colors_in_row.append(color_dict['.'])
-                num_colors_in_row+=1
-            elif current_color is color_dict['A'] or color_dict['H']:
-                colors_in_row.append(color_dict['A'])
-                num_colors_in_row+=1
-            elif current_color is color_dict['Y'] or color_dict['O']:
-                colors_in_row.append(color_dict['Y'])
-                num_colors_in_row+=1
-            elif current_color is color_dict['T'] or color_dict['W']:
-                colors_in_row.append(color_dict['T'])
-                num_colors_in_row+=1
-            elif current_color is color_dict['*'] or color_dict['Z']:
-                colors_in_row.append(color_dict['*'])
-                num_colors_in_row+=1
-            elif current_color is color_dict['I'] or color_dict['E']:
-                colors_in_row.append(color_dict['I'])
-                num_colors_in_row+=1
-            elif current_color is color_dict['+'] or color_dict['K']:
-                colors_in_row.append(color_dict['+'])
-                num_colors_in_row+=1
-            elif current_color is color_dict['B'] or color_dict['L']:
-                colors_in_row.append(color_dict['B'])
-                num_colors_in_row+=1
-        print(num_colors_in_row)
-        if num_colors_in_row==1:
-            if colors_in_row[0] not in base_colors:
-                pixels[0,this_row] = color_dict['.']
-                pixels[1,this_row] = color_dict['A']
-                pixels[2,this_row] = colors_in_row[0]
-            else:
-                pixels[0,this_row]=color_dict['.']
-                pixels[1,this_row]=color_dict['A']
-                pixels[2,this_row]=color_dict['Y']
-        elif num_colors_in_row==2:
-            pixels[0,this_row] = color_dict['.']
-            pixels[1,this_row] = colors_in_row[0]
-            pixels[2,this_row] = colors_in_row[1]
-        elif num_colors_in_row==3:
-            pixels[0,this_row] = colors_in_row[0]
-            pixels[1,this_row] = colors_in_row[1]
-            pixels[2,this_row] = colors_in_row[2]
-        elif num_colors_in_row==3:
-            pixels[0,this_row] = colors_in_row[0]
-            pixels[1,this_row] = colors_in_row[1]
-            pixels[2,this_row] = colors_in_row[2]
-            pixels[3,this_row] = colors_in_row[3]
 
-        this_row+=1
-    #print(pixels[0])
+    for y in range(size[1]):
+        num_colors_in_row=0
+        colors_in_row=[]
+        for x in range(473):
+            current_color=pixels[x+8,y]
+            current_color_pair=()
+            if current_color not in base_colors_8.keys():
+                ###########
+                current_color_pair=base_colors_8[current_color][0]
+           # print(current_color in colors_in_row)
+            if current_color not in colors_in_row and current_color_pair not in colors_in_row:
+                if current_color in pair_1:
+                    colors_in_row.append(pair_1[0])
+                    num_colors_in_row+=1
+                elif current_color in pair_2:
+                    colors_in_row.append(pair_2[0])
+                    num_colors_in_row+=1
+                elif current_color in pair_3:
+                    colors_in_row.append(pair_3[0])
+                    num_colors_in_row+=1
+                elif current_color in pair_4:
+                    colors_in_row.append(pair_4[0])
+                    num_colors_in_row+=1
+                elif current_color in pair_5:
+                    colors_in_row.append(pair_5[0])
+                    num_colors_in_row+=1
+                elif current_color in pair_6:
+                    colors_in_row.append(pair_6[0])
+                    num_colors_in_row+=1
+                elif current_color in pair_7:
+                    colors_in_row.append(pair_7[0])
+                    num_colors_in_row+=1
+                elif current_color in pair_8:
+                    colors_in_row.append(pair_8[0])
+                    num_colors_in_row+=1
+
+        print(num_colors_in_row)
+        colors_in_row=sort_colors(colors_in_row)
+
+        if num_colors_in_row==1:
+            if colors_in_row[0] not in base_colors_3:
+                pixels[0,y] = pair_1[0]
+                pixels[1,y] = pair_2[0]
+                pixels[2,y] = colors_in_row[0]
+            else:
+                pixels[0,y]=pair_1[0]
+                pixels[1,y]=pair_2[0]
+                pixels[2,y]=pair_3[0]
+        elif num_colors_in_row==2:
+            pixels[0,y] = pair_1[0]
+            pixels[1,y] = colors_in_row[0]
+            pixels[2,y] = colors_in_row[1]
+        elif num_colors_in_row==3:
+            pixels[0,y] = colors_in_row[0]
+            pixels[1,y] = colors_in_row[1]
+            pixels[2,y] = colors_in_row[2]
+        elif num_colors_in_row==4:
+            pixels[0,y] = colors_in_row[0]
+            pixels[1,y] = colors_in_row[1]
+            pixels[2,y] = colors_in_row[2]
+            pixels[3,y] = colors_in_row[3]
+
+    barcode_row.show()
     return barcode_row
 
 
