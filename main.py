@@ -2,6 +2,7 @@ from tkinter import *
 import os
 import os.path, sys
 from tkinter import messagebox, filedialog
+from tkinter.messagebox import askokcancel, showinfo, WARNING, QUESTION
 from tkinter.simpledialog import askstring
 import pandas as pd
 
@@ -91,7 +92,6 @@ def convert_colors_to_knitting(pic, size_num, colors):
         for y in range(size_num[1]):
             current_color = pixels[x, y]
             color_index = colors.index(current_color)
-            # print(color_index)
             if oddity % 2 != 0:
                 knitting_color = list(color_dict.values())[color_index + 8]
             else:
@@ -107,7 +107,6 @@ def sort_colors(colors):
     results = []
     for color in colors:
         ranks.append(base_colors_8[color][0])
-        print(ranks)
     for color in colors:
         min_idx = ranks.index(min(ranks))
         results.append(colors[min_idx])
@@ -208,23 +207,35 @@ def caclulate_reduction(counts):
     adjusted_total = np.sum(adjusted_counts) - count_total
     return adjusted_total
 
+def confirm():
+    answer = askokcancel(
+        title='Proceed?',
+        message='Are you happy with the results? Or do you want to try again',
+        icon=QUESTION)
+    return answer
 
 def remove_lines(bitmap, line_begin, reduction_count):
     true_count = int(np.round(reduction_count / 2))
+    line_begin=int(line_begin)
     if true_count % 2 != 0:
         true_count += 1
     size = bitmap.size
-    canvas = Image.new('RGB', (481, size[1] - true_count), color_dict['.'])
-    pixels = np.array(bitmap)
-    part1 = bitmap.crop((0, 0, 482, int(line_begin)))
-    # part2=bitmap.crop()
-    # part3=bitmap.crop()
-    # part4=bitmap.crop()
+    new_height = size[1]-(true_count*2)
+    canvas = Image.new('RGB', (481, new_height), color_dict['.'])
+    part1 = bitmap.crop((0, 0, 482, line_begin))
+    midsection = new_height-(true_count+line_begin)
+    part2 = bitmap.crop((0, line_begin+true_count, 482, midsection+true_count+line_begin))
+    part3 = bitmap.crop((0, size[1]-line_begin, 482, size[1]))
     canvas.paste(part1)
-    bitmap.show()
-    canvas.show()
+    canvas.paste(part2, (0, line_begin))
+    canvas.paste(part3, (0, new_height-line_begin))
 
-    #print(pixels)
+    decision=confirm()
+    canvas.show()
+    if decision is True:
+        return canvas
+    else:
+        showinfo("OK","Alrighty...let's try again",)
 
 
 class MyFirstGUI:
@@ -309,12 +320,10 @@ class MyFirstGUI:
 
     def plain(self):
         img, colors = self.read()
-        # img.show()
         barcoded, reduction_counts = make_barcode(img, colors)
         reduction_count = caclulate_reduction(reduction_counts)
         line_begin = askstring("Begin Reduction", "How far in from the edge should I start my removal?")
         reduced = remove_lines(barcoded, line_begin, reduction_count)
-        #reduced.show()
 
     def cycle_label_text(self, event):
         self.label_index += 1
