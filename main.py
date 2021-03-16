@@ -98,7 +98,7 @@ def convert_colors_to_knitting(pic, size_num, colors):
                 knitting_color = list(color_dict.values())[color_index]
             pixels[x, y] = knitting_color
             oddity += 1
-        oddity+=1
+        oddity += 1
     return pic
 
 
@@ -207,6 +207,7 @@ def caclulate_reduction(counts):
     adjusted_total = np.sum(adjusted_counts) - count_total
     return adjusted_total
 
+
 def confirm():
     answer = askokcancel(
         title='Proceed?',
@@ -214,28 +215,82 @@ def confirm():
         icon=QUESTION)
     return answer
 
+
 def remove_lines(bitmap, line_begin, reduction_count):
     true_count = int(np.round(reduction_count / 2))
-    line_begin=int(line_begin)
+    line_begin = int(line_begin)
     if true_count % 2 != 0:
         true_count += 1
     size = bitmap.size
-    new_height = size[1]-(true_count*2)
+    new_height = size[1] - (true_count * 2)
     canvas = Image.new('RGB', (481, new_height), color_dict['.'])
     part1 = bitmap.crop((0, 0, 482, line_begin))
-    midsection = new_height-(true_count+line_begin)
-    part2 = bitmap.crop((0, line_begin+true_count, 482, midsection+true_count+line_begin))
-    part3 = bitmap.crop((0, size[1]-line_begin, 482, size[1]))
+    midsection = new_height - (true_count + line_begin)
+    part2 = bitmap.crop((0, line_begin + true_count, 482, midsection + true_count + line_begin))
+    part3 = bitmap.crop((0, size[1] - line_begin, 482, size[1]))
     canvas.paste(part1)
     canvas.paste(part2, (0, line_begin))
-    canvas.paste(part3, (0, new_height-line_begin))
-
-    decision=confirm()
+    canvas.paste(part3, (0, new_height - line_begin))
     canvas.show()
+    decision = confirm()
+
     if decision is True:
         return canvas
     else:
-        showinfo("OK","Alrighty...let's try again",)
+        showinfo("OK", "Alrighty...let's try again", )
+
+
+def read(file_path):
+    large = (483, 510)
+    regular = (483, 360)
+    small = (483, 296)
+    img = Image.open(file_path)
+    rgb_im = img.convert('RGB')
+    pic = img.load()
+    size_num = rgb_im.size
+
+    # Check that the size is right
+    if size_num == large:
+        size = 'large'
+    elif size_num == regular:
+        size = 'regular'
+    elif size_num == small:
+        size = 'small'
+    else:
+        messagebox.showinfo("Uh-oh,", f":( The dimensions are wrong.")
+        return
+
+    # Check to see if there are unknown colors
+    for x in range(size_num[0]):
+        for y in range(size_num[1]):
+            if pic[x, y] not in color_dict.values():
+                print(pic[x, y])
+                messagebox.showinfo("Uh-oh,", f":( there's an unknown color located at {x},{y}")
+                return
+    messagebox.showinfo("Congrats", "No unknown colors! Nice")
+
+    # Read the color coding in the bottom left corner or scan it to get them.
+    colors = read_color_code(pic, size_num)
+    if not colors:
+        messagebox.showinfo("Don't worry", f"There's no color code for this one. I'll scan it myself.")
+
+    colors = read_bitmap_for_colors(pic, size_num)
+
+    # Trim the edges and rotate
+    height = size_num[1] - 15
+    img2 = img.crop((6, 6, 479, height + 1))
+    img2 = img2.transpose(PIL.Image.FLIP_TOP_BOTTOM)
+    size_num = img2.size
+    # pic=img2.load()
+
+    # Convert the bitmap to it's knitting colors
+    img3 = convert_colors_to_knitting(img2, size_num, colors)
+    # img3.show()
+
+    return img3, colors
+
+def convert_to_jtxt(image,file_path):
+    my_file = os.path.join(file_path)
 
 
 class MyFirstGUI:
@@ -258,72 +313,51 @@ class MyFirstGUI:
         self.label.bind("<Button-1>", self.cycle_label_text)
         self.label.pack()
 
-        #   self.read_button = Button(master, text="Read the Bitmap", command=self.read)
-        #   self.read_button.pack()
+        self.plain_folder_button = Button(master, text="Do a Whole Folder. Not Personalized", command=self.plain_folder)
+        self.plain_folder_button.pack()
 
-        self.plain_button = Button(master, text="Finish it. Not Personalized", command=self.plain)
+        self.plain_button = Button(master, text="Do a Single. Not Personalized", command=self.plain)
         self.plain_button.pack()
 
         self.close_button = Button(master, text="Close", command=master.quit)
         self.close_button.pack()
 
-    def read(self):
-        large = (483, 510)
-        regular = (483, 360)
-        small = (483, 296)
-
-        file_path = filedialog.askopenfilename()
-        img = Image.open(file_path)
-        rgb_im = img.convert('RGB')
-        pic = img.load()
-        size_num = rgb_im.size
-
-        # Check that the size is right
-        if size_num == large:
-            size = 'large'
-        elif size_num == regular:
-            size = 'regular'
-        elif size_num == small:
-            size = 'small'
-        else:
-            messagebox.showinfo("Uh-oh,", f":( The dimensions are wrong.")
-            return
-
-        # Check to see if there are unknown colors
-        for x in range(size_num[0]):
-            for y in range(size_num[1]):
-                if pic[x, y] not in color_dict.values():
-                    print(pic[x, y])
-                    messagebox.showinfo("Uh-oh,", f":( there's an unknown color located at {x},{y}")
-                    return
-        messagebox.showinfo("Congrats", "No unknown colors! Nice")
-
-        # Read the color coding in the bottom left corner or scan it to get them.
-        colors = read_color_code(pic, size_num)
-        if not colors:
-            messagebox.showinfo("Don't worry", f"There's no color code for this one. I'll scan it myself.")
-
-        colors = read_bitmap_for_colors(pic, size_num)
-
-        # Trim the edges and rotate
-        height = size_num[1] - 15
-        img2 = img.crop((6, 6, 479, height+1))
-        img2 = img2.transpose(PIL.Image.FLIP_TOP_BOTTOM)
-        size_num = img2.size
-        # pic=img2.load()
-
-        # Convert the bitmap to it's knitting colors
-        img3 = convert_colors_to_knitting(img2, size_num, colors)
-        # img3.show()
-
-        return img3, colors
-
     def plain(self):
-        img, colors = self.read()
+        file_path = filedialog.askopenfilename()
+        #filename = os.fsdecode(file_path)
+        img, colors = read(file_path)
         barcoded, reduction_counts = make_barcode(img, colors)
         reduction_count = caclulate_reduction(reduction_counts)
         line_begin = askstring("Begin Reduction", "How far in from the edge should I start my removal?")
         reduced = remove_lines(barcoded, line_begin, reduction_count)
+        folder_name=askstring("Folder Name", "Name the new folder for this pattern")
+        new_path=os.path.join(os.path.dirname(file_path),folder_name)
+        os.makedirs(new_path)
+        reduced.save(f"{new_path}/birdseyed.bmp")
+        convert_to_jtxt(reduced, new_path)
+        #not sure if this is necessary
+        os.chdir('..')
+
+    def plain_folder(self):
+        folder_path = filedialog.askdirectory()
+        directory = os.fsencode(folder_path)
+        for file in os.listdir(directory):
+            filename = os.fsdecode(file)
+            if filename.endswith(".bmp") or filename.endswith(".Bmp"):
+                messagebox.showinfo("Working", f"We're about to work on {filename}")
+                file_path = os.fsdecode(os.path.join(directory, file))
+                img, colors = read(file_path)
+                barcoded, reduction_counts = make_barcode(img, colors)
+                reduction_count = caclulate_reduction(reduction_counts)
+                line_begin = askstring("Begin Reduction", "How far in from the edge should I start my removal?")
+                reduced = remove_lines(barcoded, line_begin, reduction_count)
+                folder_name = askstring("Folder Name", "Name the new folder for this pattern")
+                new_path = os.path.join(os.path.dirname(file_path), folder_name)
+                os.makedirs(new_path)
+                reduced.save(f"{new_path}/birdseyed.bmp")
+                convert_to_jtxt(reduced, new_path)
+                #not sure if this is necessary
+                os.chdir('..')
 
     def cycle_label_text(self, event):
         self.label_index += 1
