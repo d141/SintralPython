@@ -1,3 +1,4 @@
+import ntpath
 from tkinter import *
 import os
 import os.path, sys
@@ -289,9 +290,58 @@ def read(file_path):
 
     return img3, colors
 
-def convert_to_jtxt(image,file_path):
-    my_file = os.path.join(file_path)
 
+def convert_to_jtxt(image):
+    pixels = image.load()
+    size = image.size
+    big_string = ""
+    for y in range(size[1]):
+        string = ""
+        for x in range(481):
+            current_color = pixels[x, y]
+            string += list(color_dict.keys())[list(color_dict.values()).index(current_color)]
+        big_string += string + '\n'
+
+    txt_list = big_string.split('\n')
+    line_num = 1002
+    compressed = ""
+    for line in txt_list:
+        string = line
+        length = len(big_string)
+        new_string = ""
+        i = 1
+        while i <= length - 1 and string:
+            if i > length - i:
+                pass
+            sub_string1 = string[:i]
+            sub_string2 = string[i:i + i]
+            if sub_string1 == sub_string2:
+                match = True
+                count = 1
+                while match is True:
+                    sub_string1 = string[count * i:(count + 1) * i]
+                    sub_string2 = string[(count + 1) * i:(count + 2) * i]
+                    if sub_string1 == sub_string2:
+                        count += 1
+                    else:
+                        match = False
+                        new_string += f"{count + 1}({sub_string1})"
+                        string = string[count * i + i:]
+                        i = 1
+            else:
+                if i == len(string):
+                    new_string += string[0]
+                    string = string[1:]
+                    i = 1
+                else:
+                    i += 1
+        compressed = compressed + str(line_num) + " " + new_string + "\n"
+        line_num += 1
+    return compressed
+
+def path_leaf(path):
+    head, tail = ntpath.split(path)
+    return tail or ntpath.basename(head)
 
 class MyFirstGUI:
     LABEL_TEXT = [
@@ -324,18 +374,22 @@ class MyFirstGUI:
 
     def plain(self):
         file_path = filedialog.askopenfilename()
-        #filename = os.fsdecode(file_path)
+        filename = path_leaf(file_path)
+        filename=filename[:-4]
         img, colors = read(file_path)
         barcoded, reduction_counts = make_barcode(img, colors)
         reduction_count = caclulate_reduction(reduction_counts)
         line_begin = askstring("Begin Reduction", "How far in from the edge should I start my removal?")
         reduced = remove_lines(barcoded, line_begin, reduction_count)
-        folder_name=askstring("Folder Name", "Name the new folder for this pattern")
-        new_path=os.path.join(os.path.dirname(file_path),folder_name)
+        folder_name = str(askstring("Folder Name", "Name the new folder for this pattern"))
+        new_path = os.path.join(os.path.dirname(file_path), folder_name)
         os.makedirs(new_path)
-        reduced.save(f"{new_path}/birdseyed.bmp")
-        convert_to_jtxt(reduced, new_path)
-        #not sure if this is necessary
+        reduced.save(f"{new_path}/{filename}-birdseye.bmp")
+        compressed_txt = convert_to_jtxt(reduced)
+        new_txt_file = open(f"{new_path}/{filename}_J.txt", 'w')
+        new_txt_file.write(compressed_txt)
+        new_txt_file.close()
+        # not sure if this is necessary
         os.chdir('..')
 
     def plain_folder(self):
@@ -343,6 +397,8 @@ class MyFirstGUI:
         directory = os.fsencode(folder_path)
         for file in os.listdir(directory):
             filename = os.fsdecode(file)
+            filename1 = path_leaf(file)
+            filename1 = filename[:-4]
             if filename.endswith(".bmp") or filename.endswith(".Bmp"):
                 messagebox.showinfo("Working", f"We're about to work on {filename}")
                 file_path = os.fsdecode(os.path.join(directory, file))
@@ -351,12 +407,15 @@ class MyFirstGUI:
                 reduction_count = caclulate_reduction(reduction_counts)
                 line_begin = askstring("Begin Reduction", "How far in from the edge should I start my removal?")
                 reduced = remove_lines(barcoded, line_begin, reduction_count)
-                folder_name = askstring("Folder Name", "Name the new folder for this pattern")
+                folder_name = str(askstring("Folder Name", "Name the new folder for this pattern"))
                 new_path = os.path.join(os.path.dirname(file_path), folder_name)
                 os.makedirs(new_path)
-                reduced.save(f"{new_path}/birdseyed.bmp")
-                convert_to_jtxt(reduced, new_path)
-                #not sure if this is necessary
+                reduced.save(f"{new_path}/{filename1}birdseyed.bmp")
+                compressed_txt = convert_to_jtxt(reduced)
+                new_txt_file = open(f"{new_path}/{filename1}_J.txt", 'w')
+                new_txt_file.write(compressed_txt)
+                new_txt_file.close()
+                # not sure if this is necessary
                 os.chdir('..')
 
     def cycle_label_text(self, event):
