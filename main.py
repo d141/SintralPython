@@ -459,33 +459,93 @@ def path_leaf(path):
 
 
 class MyFirstGUI:
-    LABEL_TEXT = [
-        "This is our first GUI!",
-        "Actually, this is our second GUI.",
-        "We made it more interesting...",
-        "...by making this label interactive.",
-        "Go on, click on it again.",
-    ]
+
 
     def __init__(self, master):
         self.master = master
         master.title("A simple GUI")
 
-        self.label_index = 0
-        self.label_text = StringVar()
-        self.label_text.set(self.LABEL_TEXT[self.label_index])
-        self.label = Label(master, textvariable=self.label_text)
-        self.label.bind("<Button-1>", self.cycle_label_text)
-        self.label.pack()
+        self.plain_folder_button = Button(master, text="Do a Whole Folder. Not Personalized", command=self.plain_folder,highlightbackground="#7eb6ff")
+        self.plain_folder_button.grid(row=0,column=0,columnspan=2)
 
-        self.plain_folder_button = Button(master, text="Do a Whole Folder. Not Personalized", command=self.plain_folder)
-        self.plain_folder_button.pack()
+        self.plain_button = Button(master, text="Do a Single. Not Personalized", command=self.plain, highlightbackground="#7EB6FF")
+        self.plain_button.grid(row=1,column=0,columnspan=2)
 
-        self.plain_button = Button(master, text="Do a Single. Not Personalized", command=self.plain)
-        self.plain_button.pack()
+#DON'T FORGET TO CHANGE THE COMMAND
+        self.pers_folder_button = Button(master, text="Do a Whole Folder. Personalized", command=self.plain_folder, highlightbackground="#838EDE")
+        self.pers_folder_button.grid(row=2,column=0,columnspan=2)
+#DITTO HERE
+        self.pers_button = Button(master, text="Do a Single. Personalized", command=self.plain, highlightbackground="#838EDE")
+        self.pers_button.grid(row=3,column=0,columnspan=2,pady=(0,20))
 
-        self.close_button = Button(master, text="Close", command=master.quit)
-        self.close_button.pack()
+        self.speed_label=Label(master,text="Speed", bg="#8FBC8F")
+        self.speed_entry=Entry(master)
+        self.speed_entry.insert(0,".65")
+        self.speed_label.grid(row=4, column=0)
+        self.speed_entry.grid(row=4, column=1)
+
+        self.empty_speed_label=Label(master,text="Empty Stroke Speed",bg="#8FBC8F")
+        self.empty_speed_entry=Entry(master)
+        self.empty_speed_entry.insert(0,"1.0")
+        self.empty_speed_label.grid(row=5, column=0)
+        self.empty_speed_entry.grid(row=5, column=1)
+
+        self.wm32x_label=Label(master,text="3 Color TC WM",bg="#90EE90")
+        self.wm32x_entry=Entry(master)
+        self.wm32x_entry.insert(0,"8.5")
+        self.wm32x_label.grid(row=6, column=0)
+        self.wm32x_entry.grid(row=6, column=1)
+
+        self.wm36_label=Label(master,text="3-6 Color 440 WM",bg="#90EE90")
+        self.wm36_entry=Entry(master)
+        self.wm36_entry.insert(0,"7")
+        self.wm36_label.grid(row=7, column=0)
+        self.wm36_entry.grid(row=7, column=1)
+
+        self.wm56_label=Label(master,text="5-6 Color TC WM",bg="#90EE90")
+        self.wm56_entry=Entry(master)
+        self.wm56_entry.insert(0,"7.2")
+        self.wm56_label.grid(row=8, column=0)
+        self.wm56_entry.grid(row=8, column=1)
+
+        self.wm7_label=Label(master,text="7 Color WM",bg="#90EE90")
+        self.wm7_entry=Entry(master)
+        self.wm7_entry.insert(0,"7.3")
+        self.wm7_label.grid(row=9, column=0)
+        self.wm7_entry.grid(row=9, column=1)
+
+        self.wm8_label=Label(master,text="8 Color TC WM",bg="#90EE90")
+        self.wm8_entry=Entry(master)
+        self.wm8_entry.insert(0,"7.5")
+        self.wm8_label.grid(row=10, column=0)
+        self.wm8_entry.grid(row=10, column=1)
+
+        self.wmi_label=Label(master,text="3-6 Color WMI",bg="#71C671")
+        self.wmi_entry=Entry(master)
+        self.wmi_entry.insert(0,"11")
+        self.wmi_label.grid(row=11, column=0)
+        self.wmi_entry.grid(row=11, column=1)
+
+        self.wmi78_label=Label(master,text="2x and 7-8 Color WMI", bg="#71C671")
+        self.wmi78_entry=Entry(master)
+        self.wmi78_entry.insert(0,"12")
+        self.wmi78_label.grid(row=12, column=0)
+        self.wmi78_entry.grid(row=12, column=1)
+
+        self.front_stitch_label=Label(master,text="Front Stitch Setting", bg="#699864")
+        self.front_stitch_entry=Entry(master)
+        self.front_stitch_entry.insert(0,"5")
+        self.front_stitch_label.grid(row=13, column=0)
+        self.front_stitch_entry.grid(row=13, column=1)
+
+        self.back_stitch_label=Label(master,text="Back Stitch Setting", bg="#699864")
+        self.back_stitch_entry=Entry(master)
+        self.back_stitch_entry.insert(0,"8")
+        self.back_stitch_label.grid(row=14, column=0)
+        self.back_stitch_entry.grid(row=14, column=1)
+
+        self.close_button = Button(master, text="Close", command=master.quit, highlightbackground="#B0E2FF")
+        self.close_button.grid(row=15,column=0, pady=30, columnspan=2)
 
     def plain(self):
         file_path = filedialog.askopenfilename()
@@ -533,10 +593,6 @@ class MyFirstGUI:
                 # not sure if this is necessary
                 os.chdir('..')
 
-    def cycle_label_text(self, event):
-        self.label_index += 1
-        self.label_index %= len(self.LABEL_TEXT)  # wrap around
-        self.label_text.set(self.LABEL_TEXT[self.label_index])
 
 
 root = Tk()
