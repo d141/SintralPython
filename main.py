@@ -122,6 +122,7 @@ def make_barcode(img, colors):
     barcode_row.paste(img, (8, 0))
     pixels = barcode_row.load()
     reduction_counts = [0, 0, 0, 0, 0, 0, 0, 0]
+    last_row = []
     for y in range(size[1]):
         num_colors_in_row = 0
         colors_in_row = []
@@ -159,43 +160,155 @@ def make_barcode(img, colors):
 
         colors_in_row = sort_colors(colors_in_row)
         reduction_counts[num_colors_in_row - 1] += 1
+        go_backwards=False
+        if colors_in_row != last_row and y > 0 and y % 2 == 0:
+            print(y,num_colors_in_row,len(last_row))
+            if len(last_row) == num_colors_in_row:
+                in_first = set(colors_in_row)
+                in_second = set(last_row)
+                in_second_but_not_in_first = in_second - in_first
+                num_colors_in_row += len(list(in_second_but_not_in_first))
+                colors_in_row = sort_colors(colors_in_row + list(in_second_but_not_in_first))
+                go_backwards=True
+            elif len(last_row) > num_colors_in_row:
+                colors_in_row = last_row
+                num_colors_in_row = len(last_row)
+            else:
+                go_backwards=True
+
+
         if num_colors_in_row == 1:
             if colors_in_row[0] not in base_colors_3:
                 pixels[0, y] = pair_1[0]
                 pixels[1, y] = pair_2[0]
                 pixels[2, y] = colors_in_row[0]
+                if go_backwards:
+                    pixels[0, y-1] = pair_1[0]
+                    pixels[1, y-1] = pair_2[0]
+                    pixels[2, y-1] = colors_in_row[0]
             else:
                 pixels[0, y] = pair_1[0]
                 pixels[1, y] = pair_2[0]
                 pixels[2, y] = pair_3[0]
+                if go_backwards:
+                    pixels[0, y-1] = pair_1[0]
+                    pixels[1, y-1] = pair_2[0]
+                    pixels[2, y-1] = pair_3[0]
 
         elif num_colors_in_row == 2:
             if colors_in_row[0] not in base_colors_3 and colors_in_row[1] in base_colors_3:
                 pixels[0, y] = pair_1[0]
                 pixels[1, y] = pair_2[0]
                 pixels[2, y] = colors_in_row[0]
+                if go_backwards:
+                    pixels[0, y-1] = pair_1[0]
+                    pixels[1, y-1] = pair_2[0]
+                    pixels[2, y-1] = colors_in_row[0]
             elif colors_in_row[1] not in base_colors_3 and colors_in_row[0] in base_colors_3:
                 pixels[0, y] = pair_1[0]
                 pixels[1, y] = pair_2[0]
                 pixels[2, y] = colors_in_row[1]
+                if go_backwards:
+                    pixels[0, y] = pair_1[0]
+                    pixels[1, y] = pair_2[0]
+                    pixels[2, y] = colors_in_row[1]
             elif colors_in_row[0] not in base_colors_3 and colors_in_row[1] not in base_colors_3:
                 pixels[0, y] = pair_1[0]
                 pixels[1, y] = colors_in_row[0]
                 pixels[2, y] = colors_in_row[1]
+                if go_backwards:
+                    pixels[0, y] = pair_1[0]
+                    pixels[1, y] = colors_in_row[0]
+                    pixels[2, y] = colors_in_row[1]
             else:
                 pixels[0, y] = pair_1[0]
                 pixels[1, y] = pair_2[0]
                 pixels[2, y] = pair_3[0]
+                if go_backwards:
+                    pixels[0, y] = pair_1[0]
+                    pixels[1, y] = colors_in_row[0]
+                    pixels[2, y] = colors_in_row[1]
 
         elif num_colors_in_row == 3:
             pixels[0, y] = colors_in_row[0]
             pixels[1, y] = colors_in_row[1]
             pixels[2, y] = colors_in_row[2]
+            if go_backwards:
+                pixels[0, y-1] = colors_in_row[0]
+                pixels[1, y-1] = colors_in_row[1]
+                pixels[2, y-1] = colors_in_row[2]
         elif num_colors_in_row == 4:
             pixels[0, y] = colors_in_row[0]
             pixels[1, y] = colors_in_row[1]
             pixels[2, y] = colors_in_row[2]
             pixels[3, y] = colors_in_row[3]
+            if go_backwards:
+                pixels[0, y-1] = colors_in_row[0]
+                pixels[1, y-1] = colors_in_row[1]
+                pixels[2, y-1] = colors_in_row[2]
+                pixels[3, y-1] = colors_in_row[3]
+        elif num_colors_in_row == 5:
+            pixels[0, y] = colors_in_row[0]
+            pixels[1, y] = colors_in_row[1]
+            pixels[2, y] = colors_in_row[2]
+            pixels[3, y] = colors_in_row[3]
+            pixels[4, y] = colors_in_row[4]
+            if go_backwards:
+                pixels[0, y-1] = colors_in_row[0]
+                pixels[1, y-1] = colors_in_row[1]
+                pixels[2, y-1] = colors_in_row[2]
+                pixels[3, y-1] = colors_in_row[3]
+                pixels[4, y-1] = colors_in_row[4]
+        elif num_colors_in_row == 6:
+            pixels[0, y] = colors_in_row[0]
+            pixels[1, y] = colors_in_row[1]
+            pixels[2, y] = colors_in_row[2]
+            pixels[3, y] = colors_in_row[3]
+            pixels[4, y] = colors_in_row[4]
+            pixels[5, y] = colors_in_row[5]
+            if go_backwards:
+                pixels[0, y-1] = colors_in_row[0]
+                pixels[1, y-1] = colors_in_row[1]
+                pixels[2, y-1] = colors_in_row[2]
+                pixels[3, y-1] = colors_in_row[3]
+                pixels[4, y-1] = colors_in_row[4]
+                pixels[5, y-1] = colors_in_row[5]
+        elif num_colors_in_row == 7:
+            pixels[0, y] = colors_in_row[0]
+            pixels[1, y] = colors_in_row[1]
+            pixels[2, y] = colors_in_row[2]
+            pixels[3, y] = colors_in_row[3]
+            pixels[4, y] = colors_in_row[4]
+            pixels[5, y] = colors_in_row[5]
+            pixels[6, y] = colors_in_row[6]
+            if go_backwards:
+                pixels[0, y-1] = colors_in_row[0]
+                pixels[1, y-1] = colors_in_row[1]
+                pixels[2, y-1] = colors_in_row[2]
+                pixels[3, y-1] = colors_in_row[3]
+                pixels[4, y-1] = colors_in_row[4]
+                pixels[5, y-1] = colors_in_row[5]
+                pixels[6, y-1] = colors_in_row[6]
+        elif num_colors_in_row == 8:
+            pixels[0, y] = colors_in_row[0]
+            pixels[1, y] = colors_in_row[1]
+            pixels[2, y] = colors_in_row[2]
+            pixels[3, y] = colors_in_row[3]
+            pixels[4, y] = colors_in_row[4]
+            pixels[5, y] = colors_in_row[5]
+            pixels[6, y] = colors_in_row[6]
+            pixels[7, y] = colors_in_row[7]
+            if go_backwards:
+                pixels[0, y-1] = colors_in_row[0]
+                pixels[1, y-1] = colors_in_row[1]
+                pixels[2, y-1] = colors_in_row[2]
+                pixels[3, y-1] = colors_in_row[3]
+                pixels[4, y-1] = colors_in_row[4]
+                pixels[5, y-1] = colors_in_row[5]
+                pixels[6, y-1] = colors_in_row[6]
+                pixels[7, y-1] = colors_in_row[7]
+
+        last_row = colors_in_row
 
     return barcode_row, reduction_counts
 
@@ -339,9 +452,11 @@ def convert_to_jtxt(image):
         line_num += 1
     return compressed
 
+
 def path_leaf(path):
     head, tail = ntpath.split(path)
     return tail or ntpath.basename(head)
+
 
 class MyFirstGUI:
     LABEL_TEXT = [
@@ -375,7 +490,7 @@ class MyFirstGUI:
     def plain(self):
         file_path = filedialog.askopenfilename()
         filename = path_leaf(file_path)
-        filename=filename[:-4]
+        filename = filename[:-4]
         img, colors = read(file_path)
         barcoded, reduction_counts = make_barcode(img, colors)
         reduction_count = caclulate_reduction(reduction_counts)
