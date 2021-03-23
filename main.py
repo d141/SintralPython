@@ -6,11 +6,13 @@ from tkinter import messagebox, filedialog
 from tkinter.messagebox import askokcancel, showinfo, WARNING, QUESTION
 from tkinter.simpledialog import askstring
 import pandas as pd
-
+import labels
+from reportlab.graphics import shapes
 from scipy import misc
 import PIL
 from PIL import Image
 import numpy as np
+import textwrap
 
 color_dict = {'.': (255, 255, 255),
               'A': (0, 0, 0),
@@ -50,6 +52,36 @@ color_dict = {'.': (255, 255, 255),
               'm': (128, 128, 255),
               'p': (81, 43, 28),
               'q': (41, 86, 154)}
+
+color_words = {(255, 255, 255):"White",
+              (0, 0, 0):"Black",
+              (0, 60, 167):"Royal",
+              (0, 149, 55):"Kelly",
+              (255, 62, 255):"Hot Pink",
+              (198, 1, 45):"Real Red",
+              (255, 141, 17):"Trad. Orange",
+              (122, 174, 213):"Columbia",
+              (245, 196, 0):"Mustard",
+              (17, 27, 78):"Navy",
+              (137, 138, 142):"Silver",
+              (75, 8, 103):"Purple",
+              (167, 20, 51):"Barn Red",
+              (2, 86, 48):"Forest",
+              (255, 183, 12):"S Gold",
+              (60, 56, 52):"Charcoal",
+              (0, 136, 136):"Teal",
+              (133, 226, 29):"Hot Green",
+              (252, 218, 17):"Canary",
+              (196, 73, 0):"Burnt Orange",
+              (213, 144, 0):"Old Gold",
+              (61, 17, 19):"Olive",
+              (213, 199, 186):"Van Cream",
+              (249, 218, 224):"Light Pink",
+              (235, 254, 1):"Safety Yellow",
+              (194, 148, 113):"Sandstone",
+              (108, 23, 50):"Maroon",
+              (81, 43, 28):"Brown",
+              (41, 86, 154):"Denim"}
 
 base_colors_3 = [color_dict['.'], color_dict['A'], color_dict['Y']]
 base_colors_8 = {color_dict['.']: [1, color_dict['G']], color_dict['A']: [2, color_dict['H']],
@@ -457,6 +489,30 @@ def path_leaf(path):
     head, tail = ntpath.split(path)
     return tail or ntpath.basename(head)
 
+def make_label(colors):
+
+    specs = labels.Specification(75, 14, 1, 1, 70, 12, left_padding=0, top_padding=0, bottom_padding=0, right_padding=0,
+                                 padding_radius=0)
+
+    # Create a function to draw each label. This will be given the ReportLab drawing
+    # object to draw on, the dimensions (NB. these will be in points, the unit
+    # ReportLab uses) of the label, and the object to render.
+    def draw_label(label, width, height, obj):
+        # Just convert the object to a string and print this at the bottom left of
+        # the label.
+        label.add(shapes.String(2, 10, str(obj), fontName="Helvetica", fontSize=12))
+
+    # Create the sheet.
+    sheet = labels.Sheet(specs, draw_label, border=True)
+
+    # Add a couple of labels.
+    string=""
+    for i in range (len(colors)):
+        string += f"{color_words[colors[i]]}/"
+    wrapper=textwrap.TextWrapper(width=60)
+    string = wrapper.fill(text=string)
+    sheet.add_label(string)
+    return sheet
 
 class MyFirstGUI:
 
@@ -566,6 +622,8 @@ class MyFirstGUI:
         new_txt_file.close()
         # not sure if this is necessary
         os.chdir('..')
+        sheet = make_label(colors)
+        sheet.save(f"{new_path}/{filename}color_label.pdf")
 
     def plain_folder(self):
         folder_path = filedialog.askdirectory()
@@ -592,7 +650,8 @@ class MyFirstGUI:
                 new_txt_file.close()
                 # not sure if this is necessary
                 os.chdir('..')
-
+                sheet=make_label(colors)
+                sheet.save(f"{new_path}/{filename1}color_label.pdf")
 
 
 root = Tk()
