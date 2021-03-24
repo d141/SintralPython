@@ -1,0 +1,253 @@
+C BIRDSEYE START		
+C
+#50=1
+START
+IF #138=629 GOSUB 901-925
+IF #138=671 GOSUB 927-953
+C-------------------------------I-------------------------------I
+JA1=1002
+ PA:JA1;
+FA=9-481;
+PM:101: FA;
+SEN=101-573
+<> S0Y
+C-------------------------------I-------------------------------I
+<< S:DI.(4)-D.I(4)/D.I-DI.;		Y:2/4;	WMI=11		SX SX	
+>>	S:R(2)-R(2)/UVSDI/R(1)-D.I(1);ML	Y:4/8;	WMI=11		SX SX SX		
+<< S:R(25)-0/0-R/R(1)-R(1); 	  	Y:8/0/4;	WMI=11		SX SX SX	
+>> S:0(2)-R(2)/R-0; 		Y:2/4;	WMI=11		SX SX	
+C-------------------------------I-------------------------------I
+C --------------------------------------------------------------------
+<<	S:R(5)-D.I(6)/0-DI.(6)/0-D.I;	Y:2/3/4;	WMI=11		SX SX SX
+>>	S:R-DI.(6)/0-D.I(6)/0-DI.;		WMI=11		SX SX SX
+C --------------------------------------------------------------------
+  21 C 3 COLOR COMBOS	
+  22 <<	S:<1+>~~(5)-R(6)/~~-~~~~~/~~-~~~~;		Y:~/~/~;	WM=7		WMI=11	SX SX SX  MSEC=.70
+  23 >>	S:<1+>~~(5)-R(6)/~~-~~~~~/~~-~~~~;		Y:~/~/~;	WM=7		WMI=11	SX SX SX 
+  24 C 3 COLOR COMBOS 2X	
+  25 <<	S:<1+>.G(5)-R(6)/AH-AH.GO/YO-YO.A;		Y:2/3/4/2/3/4;	WM=8.5		WMI=12	SX SX SX SX SX SX   MSEC=.70
+  26 >>	S:<1+>.G(5)-R(6)/AH-AH.GO/YO-YO.A;		Y:2/3/4/2/3/4;	WM=8.5		WMI=12	SX SX SX SX SX SX
+  27 C 4 COLOR COMBOS
+  28 C	
+  29 <<	S:<1+>~~(5)-~.AYT*I+B(7)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;	Y:~/~/~/~;	WM=7	WMI=11	SX SX SX SX MSEC=.70
+  30 >>	S:<1+>~~(5)-~.AYT*I+B(7)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;	Y:~/~/~/~;	WM=7	WMI=11	SX SX SX SX 
+  31 C 5 COLOR COMBOS
+  32 C	
+  33 <<	S:<1+>~~(5)-~.AYT*I+B(8)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;	Y:~/~/~/~/~;	WM=7	WMI=11		SX SX SX SX  MSEC=.70
+  34 >>	S0 MSEC=1.0
+  35 << S:~~-~.AYT*I+B;						WM=7	WMI=11		SX
+  36 >>	S:<1+>~~(5)-~.AYT*I+B(8)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;			WM=7	WMI=11		SX SX SX SX  MSEC=.70
+  37 <<	S0 MSEC=1.0
+  38 >> S:~~-~.AYT*I+B;						WM=7	WMI=11		SX
+  39 C 5 COLOR COMBOS - TC MACINE
+  40 C	
+  41   <<S:<1+>~~(5)-~.AYT*I+B(8)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL/~~-~.AYT*I+B;	Y:~/~/~/~/~;	WM=7.2	WMI=11	SX SX SX SX SX  MSEC=.70
+  42   >>S:<1+>~~(5)-~.AYT*I+B(8)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL/~~-~.AYT*I+B;	Y:~/~/~/~/~;	WM=7.2	WMI=11	SX SX SX SX SX				
+  43 C 6 COLOR COMBOS
+  44 C	
+  45 <<	S:<1+>~~(5)-~.AYT*I+B(9)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;	Y:~/~/~/~/~/~;	WM=7	WMI=11		SX SX SX SX  MSEC=.70
+  46 >>	S0 MSEC=1.0
+  47 << S:~~-~.AYT*I+B/~~-~GHOWZEKL;					WM=7	WMI=11		SX SX
+  48 >>	S:<1+>~~(5)-~.AYT*I+B(9)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;			WM=7	WMI=11		SX SX SX SX  MSEC=.70
+  49 <<	S0 MSEC=1.0
+  50 >> S:~~-~.AYT*I+B/~~-~GHOWZEKL;					WM=7	WMI=11		SX SX
+  51 C 6 COLOR COMBOS - TC MACINE
+  52 C	
+  53   <<S:<1+>~~(5)-~.AYT*I+B(9)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;	Y:~/~/~/~/~/~;	WM=7.2	WMI=11	SX SX SX SX SX SX  MSEC=.70
+  54   >>S:<1+>~~(5)-~.AYT*I+B(9)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;	Y:~/~/~/~/~/~;	WM=7.2	WMI=11	SX SX SX SX SX SX
+  55 C 7 COLOR COMBOS
+  56 C	
+  57 <<	S:<1+>~~(5)-~.AYT*I+B(10)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;	Y:~/~/~/~/~/~/~;	WM=7	WMI=12		SX SX SX SX  MSEC=.70
+  58 >>	S0 MSEC=1.0
+  59 << S:~~-~.AYT*I+B/~~-~GHOWZEKL/~~-~.AYT*I+B;				WM=7		WMI=12		SX SX SX MSEC=.70
+  60 >>	S:<1+>~~(5)-~.AYT*I+B(10)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;		WM=7		WMI=12		SX SX SX SX 
+  61 <<	S0 MSEC=1.0
+  62 >> S:~~-~.AYT*I+B/~~-~GHOWZEKL/~~-~.AYT*I+B;				WM=7		WMI=12		SX SX SX MSEC=.70
+  63 C 8 COLOR COMBOS
+  64 C	
+  65 <<	S:<1+>~~(5)-~.AYT*I+B(11)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;	Y:~/~/~/~/~/~/~/~;	WM=7.5	WMI=12	SX SX SX SX  MSEC=.70
+  66 >>	S0 MSEC=1.0
+  67 << S:~~-~.AYT*I+B/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;					WM=7.5	WMI=12	SX SX SX SX MSEC=.70
+  68 >>	S:<1+>~~(5)-~.AYT*I+B(11)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;				WM=7.5	WMI=12	SX SX SX SX 
+  69 <<	S0 MSEC=1.0
+  70 >> S:~~-~.AYT*I+B/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;					WM=7.5	WMI=12	SX SX SX SX MSEC=.70
+  71		C***16 HIGH NAMES*******************
+  72 	IF #50=1 JA1=1748
+  73 	IF #50=2 JA1=1871
+  74 	IF #50=3 JA1=1994
+  75 	IF #50=4 JA1=2117
+  76 	IF #50=5 JA1=2240
+  77 	IF #50=6 JA1=2363
+  78 	IF #50=7 JA1=2486
+  79 	IF #50=8 JA1=2609
+  80 	IF #50=9 JA1=2732
+  81  	IF #50=10 JA1=2855
+  82 	IF #50=11 JA1=2978
+  83 	IF #50=12 JA1=3101
+  84 	IF #50=13 JA1=3224
+  85 	IF #50=14 JA1=3347
+  86 	IF #50=15 JA1=3470
+  87 	IF #50=16 JA1=3593
+  88 	IF #50=17 JA1=3716
+  89 	IF #50=18 JA1=3839
+  90 	IF #50=19 JA1=3962
+  91 	IF #50=20 JA1=4085
+  92 	IF #50=21 JA1=4208
+  93  	IF #50=22 JA1=4331
+  94 	IF #50=23 JA1=4454
+  95 	IF #50=24 JA1=4577
+  96 	IF #50=25 JA1=4700
+  97	C	GOTO 171
+  98    C **24 HIGH NAMES********************
+  99 	IF #50=1 JA1=1772
+ 100 	IF #50=2 JA1=1895
+ 101 	IF #50=3 JA1=2018
+ 102 	IF #50=4 JA1=2141
+ 103 	IF #50=5 JA1=2264
+ 104 	IF #50=6 JA1=2387
+ 105 	IF #50=7 JA1=2510
+ 106 	IF #50=8 JA1=2633
+ 107 	IF #50=9 JA1=2756
+ 108  	IF #50=10 JA1=2879
+ 109 	IF #50=11 JA1=3002
+ 110 	IF #50=12 JA1=3125
+ 111 	IF #50=13 JA1=3248
+ 112 	IF #50=14 JA1=3371
+ 113 	IF #50=15 JA1=3494
+ 114 	IF #50=16 JA1=3617
+ 115 	IF #50=17 JA1=3740
+ 116 	IF #50=18 JA1=3863
+ 117 	IF #50=19 JA1=3986
+ 118 	IF #50=20 JA1=4109
+ 119 	IF #50=21 JA1=4232
+ 120  	IF #50=22 JA1=4355
+ 121 	IF #50=23 JA1=4478
+ 122 	IF #50=24 JA1=4601
+ 123 	IF #50=25 JA1=4724
+ 124	C	GOTO 171
+ 125    C **40 HIGH NAMES********************
+ 126 	IF #50=1 JA1=1820
+ 127 	IF #50=2 JA1=1943
+ 128 	IF #50=3 JA1=2066
+ 129 	IF #50=4 JA1=2189
+ 130 	IF #50=5 JA1=2312
+ 131 	IF #50=6 JA1=2435
+ 132 	IF #50=7 JA1=2558
+ 133 	IF #50=8 JA1=2681
+ 134 	IF #50=9 JA1=2804
+ 135  	IF #50=10 JA1=2927
+ 136 	IF #50=11 JA1=3050
+ 137 	IF #50=12 JA1=3173
+ 138 	IF #50=13 JA1=3296
+ 139 	IF #50=14 JA1=3419
+ 140 	IF #50=15 JA1=3542
+ 141 	IF #50=16 JA1=3665
+ 142 	IF #50=17 JA1=3788
+ 143 	IF #50=18 JA1=3911
+ 144 	IF #50=19 JA1=4034
+ 145 	IF #50=20 JA1=4157
+ 146 	IF #50=21 JA1=4280
+ 147  	IF #50=22 JA1=4403
+ 148 	IF #50=23 JA1=4526
+ 149 	IF #50=24 JA1=4649
+ 150 	IF #50=25 JA1=4772
+ 151	C	GOTO 171
+ 152 REP*~~	
+ 153 <<	S:<1->.G(5)-R(6)/AH-AH.GO/YO-YO.A;		Y:2/3/4;	WM=7		WMI=11	SX SX SX MSEC=.70
+ 154 >>	S:<1->.G(5)-R(6)/AH-AH.GO/YO-YO.A;		Y:2/3/4;	WM=7		WMI=11	SX SX SX
+ 155 REPEND
+ 156  REP*~~
+ 157 <<	S:<1->.G(5)-G.AYT*I+B(7)/AH-AGHOWZEKL/YO-O.AYT*I+B/TW-TGHOWZEKL;	Y:2/3/4/5;	WM=7	WMI=11	SX SX SX SX 
+ 158 >>	S:<1->.G(5)-G.AYT*I+B(7)/AH-AGHOWZEKL/YO-O.AYT*I+B/TW-TGHOWZEKL;	Y:2/3/4/5;	WM=7	WMI=11	SX SX SX SX 
+ 159  REPEND
+ 160 REP*~~	
+ 161  <<	S:<1->.G(5)-R(6)/AH-AH.GO/YO-YO.A;		Y:2/3/4/2/3/4;	WM=8.5		WMI=12	SX SX SX SX SX SX   MSEC=.70
+ 162  >>	S:<1->.G(5)-R(6)/AH-AH.GO/YO-YO.A;		Y:2/3/4/2/3/4;	WM=8.5		WMI=12	SX SX SX SX SX SX
+ 163 REPEND
+#50=#50+1
+<<	S:R(5)-D.I(6)/0-DI.(6)/0-D.I;	Y:2/3/4;	WMI=11		SX SX SX
+>>	S:R-DI.(6)/0-D.I(6)/0-DI.;		WMI=11		SX SX SX
+END
+ 900 C--BIRDSEYE SETUP---------------------
+ 901 	NP1=11.0 	C SET UP
+ 902 	NP2=12.0	C TUBULAR
+ 903 	NP3=11.7	C 1X1
+ 904 	NP4=11.5 	C 1X1
+ 905 	NP5=12.8 	C PATTERN FRONT
+ 906 	NP6=12.3 	C PATTERN REAR-3 COLOR
+ 907		NP7=12.0	C PATTERN REAR-4 COLOR
+ 908		NP8=12.0	C PATTERN REAR-5 COLOR
+ 909		NP9=12.0	C PATTERN REAR-6 COLOR
+ 910		NP10=11.9	C PATTERN REAR-7 COLOR
+ 911		NP11=11.9	C PATTERN REAR-8 COLOR		
+ 912    NP23=11.5 	C 1ST COURSE
+ 913 	NP24=12.0	C SINGLE LOCK
+ 914		NP25=11.0	C NYLON
+ 915		W+0		
+ 916		MSEC=0.80		
+ 917    YG:8/12345678;
+ 918 	YD8=32-1
+ 919 	YD7=39-39
+ 920 	YD6=32-32
+ 921 	YD5=25-25
+ 922 	YD4=18-18
+ 923 	YD3=11-11
+ 924 	YD2=4-4
+ 925 	YD1=46-46
+ 926 C------------------------
+ 927 	NP1=11.0 	C SET UP
+ 928 	NP2=12.0	C TUBULAR
+ 929 	NP3=11.7	C 1X1
+ 930 	NP4=11.5 	C 1X1 
+ 931 	NP5=12.6 	C PATTERN FRONT
+ 932 	NP6=12.0 	C PATTERN REAR-3 COLOR
+ 933		NP7=11.9	C PATTERN REAR-4 COLOR
+ 934		NP8=11.8	C PATTERN REAR-5 COLOR
+ 935		NP9=11.8	C PATTERN REAR-6 COLOR
+ 936		NP10=11.7	C PATTERN REAR-7 COLOR
+ 937		NP11=11.7	C PATTERN REAR-8 COLOR		
+ 938    NP23=11.5 	C 1ST COURSE
+ 939 	NP24=12.0	C SINGLE LOCK
+ 940		NP25=11.0	C NYLON	
+ 941		W+1
+ 942    W+P=3
+ 943		W+=4	
+ 944 	MSEC=0.75		
+ 945    YG:8/12345678;
+ 946 	YD8=32-1
+ 947 	YD7=39-39
+ 948 	YD6=32-32
+ 949 	YD5=25-25
+ 950 	YD4=18-18
+ 951 	YD3=11-11
+ 952 	YD2=4-4
+ 953 	YD1=46-46
+ 960 	C KNIT DOWN ROUTINE		
+ 961 	C
+ 962 	START
+ 963 IF #138=629 GOSUB 901-925
+ 964 IF #138=671 GOSUB 927-953
+ 965	C-------------------------------I-------------------------------I
+ 966 << S:DI.(4)-D.I(4)/D.I-DI.;		Y:2/4;	WMI=11		SX SX	
+ 967 >>	S:R(2)-R(2)/UVSDI/R(1)-D.I(1);ML	Y:4/8;	WMI=11		SX SX SX		
+ 968 << S:R(25)-0/0-R/R(1)-R(1); 	  	Y:8/0/4;	WMI=11		SX SX SX	
+ 969 >> S:0(2)-R(2)/R-0; 		Y:2/4;	WMI=11		SX SX	
+ 970	C-------------------------------I-------------------------------I
+ 971 <<	S:R(2)-R(2)/R-R(2);	Y:2/4;	WMI=11		SX SX
+ 972 >>	S:R(2)-R(2)/R-R(2);	Y:2/4;	WMI=11		SX SX
+ 973 REP*24
+ 974 <<	S:R(2)-R(2)/R-R(2);	Y:2/4;	WMI=11		SX SX
+ 975 >>	S:R(2)-R(2)/R-R(2);	Y:2/4;	WMI=11		SX SX
+ 976 REPEND
+ 977 END
+ 980 	C TIE UP ROUTINE		
+ 981 	C
+ 982 	START
+ 983 IF #138=629 GOSUB 901-925
+ 984 IF #138=671 GOSUB 927-953
+ 985	C-------------------------------I-------------------------------I
+ 986 << S:DI.(4)-D.I(4)/D.I-DI.;		Y:2/4;	WMI=11		SX SX	
+ 987 >>	S:R(2)-R(2)/UVSDI/R(1)-D.I(1);ML	Y:4/8;	WMI=11		SX SX SX		
+ 988 << S:R(25)-0/0-R/R(1)-R(1); 	  	Y:8/0/4;	WMI=11		SX SX SX	
+ 989 >> S:0(2)-R(2)/R-0; 		Y:2/4;	WMI=11		SX SX	
+ 990	C-------------------------------I-------------------------------I

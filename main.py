@@ -53,35 +53,37 @@ color_dict = {'.': (255, 255, 255),
               'p': (81, 43, 28),
               'q': (41, 86, 154)}
 
-color_words = {(255, 255, 255):"White",
-              (0, 0, 0):"Black",
-              (0, 60, 167):"Royal",
-              (0, 149, 55):"Kelly",
-              (255, 62, 255):"Hot Pink",
-              (198, 1, 45):"Real Red",
-              (255, 141, 17):"Trad. Orange",
-              (122, 174, 213):"Columbia",
-              (245, 196, 0):"Mustard",
-              (17, 27, 78):"Navy",
-              (137, 138, 142):"Silver",
-              (75, 8, 103):"Purple",
-              (167, 20, 51):"Barn Red",
-              (2, 86, 48):"Forest",
-              (255, 183, 12):"S Gold",
-              (60, 56, 52):"Charcoal",
-              (0, 136, 136):"Teal",
-              (133, 226, 29):"Hot Green",
-              (252, 218, 17):"Canary",
-              (196, 73, 0):"Burnt Orange",
-              (213, 144, 0):"Old Gold",
-              (61, 17, 19):"Olive",
-              (213, 199, 186):"Van Cream",
-              (249, 218, 224):"Light Pink",
-              (235, 254, 1):"Safety Yellow",
-              (194, 148, 113):"Sandstone",
-              (108, 23, 50):"Maroon",
-              (81, 43, 28):"Brown",
-              (41, 86, 154):"Denim"}
+color_words = {(255, 255, 255): "White",
+               (0, 0, 0): "Black",
+               (0, 60, 167): "Royal",
+               (0, 149, 55): "Kelly",
+               (255, 62, 255): "Hot Pink",
+               (198, 1, 45): "Real Red",
+               (255, 141, 17): "Trad. Orange",
+               (122, 174, 213): "Columbia",
+               (245, 196, 0): "Mustard",
+               (17, 27, 78): "Navy",
+               (137, 138, 142): "Silver",
+               (75, 8, 103): "Purple",
+               (167, 20, 51): "Barn Red",
+               (2, 86, 48): "Forest",
+               (255, 183, 12): "S Gold",
+               (60, 56, 52): "Charcoal",
+               (0, 136, 136): "Teal",
+               (133, 226, 29): "Hot Green",
+               (252, 218, 17): "Canary",
+               (196, 73, 0): "Burnt Orange",
+               (213, 144, 0): "Old Gold",
+               (61, 17, 19): "Olive",
+               (213, 199, 186): "Van Cream",
+               (249, 218, 224): "Light Pink",
+               (235, 254, 1): "Safety Yellow",
+               (194, 148, 113): "Sandstone",
+               (108, 23, 50): "Maroon",
+               (81, 43, 28): "Brown",
+               (41, 86, 154): "Denim"}
+
+sintral_template = open("sintral_template.txt")
 
 base_colors_3 = [color_dict['.'], color_dict['A'], color_dict['Y']]
 base_colors_8 = {color_dict['.']: [1, color_dict['G']], color_dict['A']: [2, color_dict['H']],
@@ -192,7 +194,7 @@ def make_barcode(img, colors):
 
         colors_in_row = sort_colors(colors_in_row)
         reduction_counts[num_colors_in_row - 1] += 1
-        go_backwards=False
+        go_backwards = False
         if colors_in_row != last_row and y > 0 and y % 2 == 0:
             if len(last_row) == num_colors_in_row:
                 in_first = set(colors_in_row)
@@ -200,13 +202,12 @@ def make_barcode(img, colors):
                 in_second_but_not_in_first = in_second - in_first
                 num_colors_in_row += len(list(in_second_but_not_in_first))
                 colors_in_row = sort_colors(colors_in_row + list(in_second_but_not_in_first))
-                go_backwards=True
+                go_backwards = True
             elif len(last_row) > num_colors_in_row:
                 colors_in_row = last_row
                 num_colors_in_row = len(last_row)
             else:
-                go_backwards=True
-
+                go_backwards = True
 
         if num_colors_in_row == 1:
             if colors_in_row[0] not in base_colors_3:
@@ -214,17 +215,17 @@ def make_barcode(img, colors):
                 pixels[1, y] = pair_2[0]
                 pixels[2, y] = colors_in_row[0]
                 if go_backwards:
-                    pixels[0, y-1] = pair_1[0]
-                    pixels[1, y-1] = pair_2[0]
-                    pixels[2, y-1] = colors_in_row[0]
+                    pixels[0, y - 1] = pair_1[0]
+                    pixels[1, y - 1] = pair_2[0]
+                    pixels[2, y - 1] = colors_in_row[0]
             else:
                 pixels[0, y] = pair_1[0]
                 pixels[1, y] = pair_2[0]
                 pixels[2, y] = pair_3[0]
                 if go_backwards:
-                    pixels[0, y-1] = pair_1[0]
-                    pixels[1, y-1] = pair_2[0]
-                    pixels[2, y-1] = pair_3[0]
+                    pixels[0, y - 1] = pair_1[0]
+                    pixels[1, y - 1] = pair_2[0]
+                    pixels[2, y - 1] = pair_3[0]
 
         elif num_colors_in_row == 2:
             if colors_in_row[0] not in base_colors_3 and colors_in_row[1] in base_colors_3:
@@ -232,9 +233,9 @@ def make_barcode(img, colors):
                 pixels[1, y] = pair_2[0]
                 pixels[2, y] = colors_in_row[0]
                 if go_backwards:
-                    pixels[0, y-1] = pair_1[0]
-                    pixels[1, y-1] = pair_2[0]
-                    pixels[2, y-1] = colors_in_row[0]
+                    pixels[0, y - 1] = pair_1[0]
+                    pixels[1, y - 1] = pair_2[0]
+                    pixels[2, y - 1] = colors_in_row[0]
             elif colors_in_row[1] not in base_colors_3 and colors_in_row[0] in base_colors_3:
                 pixels[0, y] = pair_1[0]
                 pixels[1, y] = pair_2[0]
@@ -265,19 +266,19 @@ def make_barcode(img, colors):
             pixels[1, y] = colors_in_row[1]
             pixels[2, y] = colors_in_row[2]
             if go_backwards:
-                pixels[0, y-1] = colors_in_row[0]
-                pixels[1, y-1] = colors_in_row[1]
-                pixels[2, y-1] = colors_in_row[2]
+                pixels[0, y - 1] = colors_in_row[0]
+                pixels[1, y - 1] = colors_in_row[1]
+                pixels[2, y - 1] = colors_in_row[2]
         elif num_colors_in_row == 4:
             pixels[0, y] = colors_in_row[0]
             pixels[1, y] = colors_in_row[1]
             pixels[2, y] = colors_in_row[2]
             pixels[3, y] = colors_in_row[3]
             if go_backwards:
-                pixels[0, y-1] = colors_in_row[0]
-                pixels[1, y-1] = colors_in_row[1]
-                pixels[2, y-1] = colors_in_row[2]
-                pixels[3, y-1] = colors_in_row[3]
+                pixels[0, y - 1] = colors_in_row[0]
+                pixels[1, y - 1] = colors_in_row[1]
+                pixels[2, y - 1] = colors_in_row[2]
+                pixels[3, y - 1] = colors_in_row[3]
         elif num_colors_in_row == 5:
             pixels[0, y] = colors_in_row[0]
             pixels[1, y] = colors_in_row[1]
@@ -285,11 +286,11 @@ def make_barcode(img, colors):
             pixels[3, y] = colors_in_row[3]
             pixels[4, y] = colors_in_row[4]
             if go_backwards:
-                pixels[0, y-1] = colors_in_row[0]
-                pixels[1, y-1] = colors_in_row[1]
-                pixels[2, y-1] = colors_in_row[2]
-                pixels[3, y-1] = colors_in_row[3]
-                pixels[4, y-1] = colors_in_row[4]
+                pixels[0, y - 1] = colors_in_row[0]
+                pixels[1, y - 1] = colors_in_row[1]
+                pixels[2, y - 1] = colors_in_row[2]
+                pixels[3, y - 1] = colors_in_row[3]
+                pixels[4, y - 1] = colors_in_row[4]
         elif num_colors_in_row == 6:
             pixels[0, y] = colors_in_row[0]
             pixels[1, y] = colors_in_row[1]
@@ -298,12 +299,12 @@ def make_barcode(img, colors):
             pixels[4, y] = colors_in_row[4]
             pixels[5, y] = colors_in_row[5]
             if go_backwards:
-                pixels[0, y-1] = colors_in_row[0]
-                pixels[1, y-1] = colors_in_row[1]
-                pixels[2, y-1] = colors_in_row[2]
-                pixels[3, y-1] = colors_in_row[3]
-                pixels[4, y-1] = colors_in_row[4]
-                pixels[5, y-1] = colors_in_row[5]
+                pixels[0, y - 1] = colors_in_row[0]
+                pixels[1, y - 1] = colors_in_row[1]
+                pixels[2, y - 1] = colors_in_row[2]
+                pixels[3, y - 1] = colors_in_row[3]
+                pixels[4, y - 1] = colors_in_row[4]
+                pixels[5, y - 1] = colors_in_row[5]
         elif num_colors_in_row == 7:
             pixels[0, y] = colors_in_row[0]
             pixels[1, y] = colors_in_row[1]
@@ -313,13 +314,13 @@ def make_barcode(img, colors):
             pixels[5, y] = colors_in_row[5]
             pixels[6, y] = colors_in_row[6]
             if go_backwards:
-                pixels[0, y-1] = colors_in_row[0]
-                pixels[1, y-1] = colors_in_row[1]
-                pixels[2, y-1] = colors_in_row[2]
-                pixels[3, y-1] = colors_in_row[3]
-                pixels[4, y-1] = colors_in_row[4]
-                pixels[5, y-1] = colors_in_row[5]
-                pixels[6, y-1] = colors_in_row[6]
+                pixels[0, y - 1] = colors_in_row[0]
+                pixels[1, y - 1] = colors_in_row[1]
+                pixels[2, y - 1] = colors_in_row[2]
+                pixels[3, y - 1] = colors_in_row[3]
+                pixels[4, y - 1] = colors_in_row[4]
+                pixels[5, y - 1] = colors_in_row[5]
+                pixels[6, y - 1] = colors_in_row[6]
         elif num_colors_in_row == 8:
             pixels[0, y] = colors_in_row[0]
             pixels[1, y] = colors_in_row[1]
@@ -330,14 +331,14 @@ def make_barcode(img, colors):
             pixels[6, y] = colors_in_row[6]
             pixels[7, y] = colors_in_row[7]
             if go_backwards:
-                pixels[0, y-1] = colors_in_row[0]
-                pixels[1, y-1] = colors_in_row[1]
-                pixels[2, y-1] = colors_in_row[2]
-                pixels[3, y-1] = colors_in_row[3]
-                pixels[4, y-1] = colors_in_row[4]
-                pixels[5, y-1] = colors_in_row[5]
-                pixels[6, y-1] = colors_in_row[6]
-                pixels[7, y-1] = colors_in_row[7]
+                pixels[0, y - 1] = colors_in_row[0]
+                pixels[1, y - 1] = colors_in_row[1]
+                pixels[2, y - 1] = colors_in_row[2]
+                pixels[3, y - 1] = colors_in_row[3]
+                pixels[4, y - 1] = colors_in_row[4]
+                pixels[5, y - 1] = colors_in_row[5]
+                pixels[6, y - 1] = colors_in_row[6]
+                pixels[7, y - 1] = colors_in_row[7]
 
         last_row = colors_in_row
 
@@ -488,8 +489,8 @@ def path_leaf(path):
     head, tail = ntpath.split(path)
     return tail or ntpath.basename(head)
 
-def make_label(colors):
 
+def make_label(colors):
     specs = labels.Specification(75, 14, 1, 1, 70, 12, left_padding=0, top_padding=0, bottom_padding=0, right_padding=0,
                                  padding_radius=0)
 
@@ -505,102 +506,138 @@ def make_label(colors):
     sheet = labels.Sheet(specs, draw_label, border=True)
 
     # Add a couple of labels.
-    string=""
-    for i in range (len(colors)):
+    string = ""
+    for i in range(len(colors)):
         string += f"{color_words[colors[i]]}/"
-    wrapper=textwrap.TextWrapper(width=60)
+    wrapper = textwrap.TextWrapper(width=60)
     string = wrapper.fill(text=string)
     sheet.add_label(string)
     return sheet
 
-class MyFirstGUI:
 
+def add_bottom_of_sintral(sintral440, sintral2x):
+    lines_to_read = list(range(166, 253))
+    for position, line in enumerate(sintral_template):
+        print(position)
+        if position in lines_to_read:
+            print(position)
+            sintral440 += line
+            sintral2x += line
+    return sintral440, sintral2x
+
+
+def add_top_of_sintral(sintral440, sintral2x):
+    lines_to_read = list(range(0, 22))
+    for position, line in enumerate(sintral_template):
+        print(position)
+        if position in lines_to_read:
+            print(position)
+            sintral440 += line
+            sintral2x += line
+    return sintral440, sintral2x
+
+
+def make_plain_sintral(jtxt):
+    sintral = ""
+    sintral2x = ""
+    sintral, sintral2x = add_top_of_sintral(sintral, sintral2x)
+    #####
+    sintral, sintral2x = add_bottom_of_sintral(sintral, sintral2x)
+
+    return sintral, sintral2x
+
+
+class MyFirstGUI:
 
     def __init__(self, master):
         self.master = master
         master.title("A simple GUI")
 
-        self.plain_folder_button = Button(master, text="Do a Whole Folder. Not Personalized", command=self.plain_folder,highlightbackground="#7eb6ff")
-        self.plain_folder_button.grid(row=0,column=0,columnspan=2)
+        self.plain_folder_button = Button(master, text="Do a Whole Folder. Not Personalized", command=self.plain_folder,
+                                          highlightbackground="#7eb6ff")
+        self.plain_folder_button.grid(row=0, column=0, columnspan=2)
 
-        self.plain_button = Button(master, text="Do a Single. Not Personalized", command=self.plain, highlightbackground="#7EB6FF")
-        self.plain_button.grid(row=1,column=0,columnspan=2)
+        self.plain_button = Button(master, text="Do a Single. Not Personalized", command=self.plain,
+                                   highlightbackground="#7EB6FF")
+        self.plain_button.grid(row=1, column=0, columnspan=2)
 
-#DON'T FORGET TO CHANGE THE COMMAND
-        self.pers_folder_button = Button(master, text="Do a Whole Folder. Personalized", command=self.plain_folder, highlightbackground="#838EDE")
-        self.pers_folder_button.grid(row=2,column=0,columnspan=2)
-#DITTO HERE
-        self.pers_button = Button(master, text="Do a Single. Personalized", command=self.plain, highlightbackground="#838EDE")
-        self.pers_button.grid(row=3,column=0,columnspan=2,pady=(0,20))
+        # DON'T FORGET TO CHANGE THE COMMAND
+        self.pers_folder_button = Button(master, text="Do a Whole Folder. Personalized", command=self.plain_folder,
+                                         highlightbackground="#838EDE")
+        self.pers_folder_button.grid(row=2, column=0, columnspan=2)
+        # DITTO HERE
+        self.pers_button = Button(master, text="Do a Single. Personalized", command=self.plain,
+                                  highlightbackground="#838EDE")
+        self.pers_button.grid(row=3, column=0, columnspan=2, pady=(0, 20))
 
-        self.speed_label=Label(master,text="Speed", bg="#8FBC8F")
-        self.speed_entry=Entry(master)
-        self.speed_entry.insert(0,".65")
+        self.speed_label = Label(master, text="Speed", bg="#8FBC8F")
+        self.speed_entry = Entry(master)
+        self.speed_entry.insert(0, ".65")
         self.speed_label.grid(row=4, column=0)
         self.speed_entry.grid(row=4, column=1)
 
-        self.empty_speed_label=Label(master,text="Empty Stroke Speed",bg="#8FBC8F")
-        self.empty_speed_entry=Entry(master)
-        self.empty_speed_entry.insert(0,"1.0")
+        self.empty_speed_label = Label(master, text="Empty Stroke Speed", bg="#8FBC8F")
+        self.empty_speed_entry = Entry(master)
+        self.empty_speed_entry.insert(0, "1.0")
         self.empty_speed_label.grid(row=5, column=0)
         self.empty_speed_entry.grid(row=5, column=1)
 
-        self.wm32x_label=Label(master,text="3 Color TC WM",bg="#90EE90")
-        self.wm32x_entry=Entry(master)
-        self.wm32x_entry.insert(0,"8.5")
+        self.wm32x_label = Label(master, text="3 Color TC WM", bg="#90EE90")
+        self.wm32x_entry = Entry(master)
+        self.wm32x_entry.insert(0, "8.5")
         self.wm32x_label.grid(row=6, column=0)
         self.wm32x_entry.grid(row=6, column=1)
 
-        self.wm36_label=Label(master,text="3-6 Color 440 WM",bg="#90EE90")
-        self.wm36_entry=Entry(master)
-        self.wm36_entry.insert(0,"7")
+        self.wm36_label = Label(master, text="3-6 Color 440 WM", bg="#90EE90")
+        self.wm36_entry = Entry(master)
+        self.wm36_entry.insert(0, "7")
         self.wm36_label.grid(row=7, column=0)
         self.wm36_entry.grid(row=7, column=1)
 
-        self.wm56_label=Label(master,text="5-6 Color TC WM",bg="#90EE90")
-        self.wm56_entry=Entry(master)
-        self.wm56_entry.insert(0,"7.2")
+        self.wm56_label = Label(master, text="5-6 Color TC WM", bg="#90EE90")
+        self.wm56_entry = Entry(master)
+        self.wm56_entry.insert(0, "7.2")
         self.wm56_label.grid(row=8, column=0)
         self.wm56_entry.grid(row=8, column=1)
 
-        self.wm7_label=Label(master,text="7 Color WM",bg="#90EE90")
-        self.wm7_entry=Entry(master)
-        self.wm7_entry.insert(0,"7.3")
+        self.wm7_label = Label(master, text="7 Color WM", bg="#90EE90")
+        self.wm7_entry = Entry(master)
+        self.wm7_entry.insert(0, "7.3")
         self.wm7_label.grid(row=9, column=0)
         self.wm7_entry.grid(row=9, column=1)
 
-        self.wm8_label=Label(master,text="8 Color TC WM",bg="#90EE90")
-        self.wm8_entry=Entry(master)
-        self.wm8_entry.insert(0,"7.5")
+        self.wm8_label = Label(master, text="8 Color TC WM", bg="#90EE90")
+        self.wm8_entry = Entry(master)
+        self.wm8_entry.insert(0, "7.5")
         self.wm8_label.grid(row=10, column=0)
         self.wm8_entry.grid(row=10, column=1)
 
-        self.wmi_label=Label(master,text="3-6 Color WMI",bg="#71C671")
-        self.wmi_entry=Entry(master)
-        self.wmi_entry.insert(0,"11")
+        self.wmi_label = Label(master, text="3-6 Color WMI", bg="#71C671")
+        self.wmi_entry = Entry(master)
+        self.wmi_entry.insert(0, "11")
         self.wmi_label.grid(row=11, column=0)
         self.wmi_entry.grid(row=11, column=1)
 
-        self.wmi78_label=Label(master,text="2x and 7-8 Color WMI", bg="#71C671")
-        self.wmi78_entry=Entry(master)
-        self.wmi78_entry.insert(0,"12")
+        self.wmi78_label = Label(master, text="2x and 7-8 Color WMI", bg="#71C671")
+        self.wmi78_entry = Entry(master)
+        self.wmi78_entry.insert(0, "12")
         self.wmi78_label.grid(row=12, column=0)
         self.wmi78_entry.grid(row=12, column=1)
 
-        self.front_stitch_label=Label(master,text="Front Stitch Setting", bg="#699864")
-        self.front_stitch_entry=Entry(master)
-        self.front_stitch_entry.insert(0,"5")
+        self.front_stitch_label = Label(master, text="Front Stitch Setting", bg="#699864")
+        self.front_stitch_entry = Entry(master)
+        self.front_stitch_entry.insert(0, "5")
         self.front_stitch_label.grid(row=13, column=0)
         self.front_stitch_entry.grid(row=13, column=1)
 
-        self.back_stitch_label=Label(master,text="Back Stitch Setting", bg="#699864")
-        self.back_stitch_entry=Entry(master)
-        self.back_stitch_entry.insert(0,"8")
+        self.back_stitch_label = Label(master, text="Back Stitch Setting", bg="#699864")
+        self.back_stitch_entry = Entry(master)
+        self.back_stitch_entry.insert(0, "8")
         self.back_stitch_label.grid(row=14, column=0)
         self.back_stitch_entry.grid(row=14, column=1)
 
         self.close_button = Button(master, text="Close", command=master.quit, highlightbackground="#B0E2FF")
-        self.close_button.grid(row=15,column=0, pady=30, columnspan=2)
+        self.close_button.grid(row=15, column=0, pady=30, columnspan=2)
 
     def plain(self):
         file_path = filedialog.askopenfilename()
@@ -622,7 +659,14 @@ class MyFirstGUI:
         # not sure if this is necessary
         os.chdir('..')
         sheet = make_label(colors)
-        sheet.save(f"{new_path}/{filename}color_label.pdf")
+        sheet.save(f"{new_path}/{filename}-color_label.pdf")
+        sintral, sintral2x = make_plain_sintral(compressed_txt)
+        new_txt_file = open(f"{new_path}/{filename}-sintral440.txt", 'w')
+        new_txt_file.write(sintral)
+        new_txt_file.close()
+        new_txt_file = open(f"{new_path}/{filename}-sintralTC.txt", 'w')
+        new_txt_file.write(sintral)
+        new_txt_file.close()
 
     def plain_folder(self):
         folder_path = filedialog.askdirectory()
@@ -649,7 +693,7 @@ class MyFirstGUI:
                 new_txt_file.close()
                 # not sure if this is necessary
                 os.chdir('..')
-                sheet=make_label(colors)
+                sheet = make_label(colors)
                 sheet.save(f"{new_path}/{filename1}color_label.pdf")
 
 
