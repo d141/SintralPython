@@ -21,12 +21,12 @@ C --------------------------------------------------------------------
 <<	S:R(5)-D.I(6)/0-DI.(6)/0-D.I;	Y:2/3/4;	WMI=11		SX SX SX
 >>	S:R-DI.(6)/0-D.I(6)/0-DI.;		WMI=11		SX SX SX
 C --------------------------------------------------------------------
-  21 C 3 COLOR COMBOS	
-  22 <<	S:<1+>~~(5)-R(6)/~~-~~~~~/~~-~~~~;		Y:~/~/~;	WM=7		WMI=11	SX SX SX  MSEC=.70
-  23 >>	S:<1+>~~(5)-R(6)/~~-~~~~~/~~-~~~~;		Y:~/~/~;	WM=7		WMI=11	SX SX SX 
-  24 C 3 COLOR COMBOS 2X	
-  25 <<	S:<1+>.G(5)-R(6)/AH-AH.GO/YO-YO.A;		Y:2/3/4/2/3/4;	WM=8.5		WMI=12	SX SX SX SX SX SX   MSEC=.70
-  26 >>	S:<1+>.G(5)-R(6)/AH-AH.GO/YO-YO.A;		Y:2/3/4/2/3/4;	WM=8.5		WMI=12	SX SX SX SX SX SX
+C 3 COLOR COMBOS
+<<	S:<1+>~~(5)-R(6)/~~-~~~~~/~~-~~~~;		Y:~/~/~;	WM=7		WMI=11	SX SX SX  MSEC=.70
+>>	S:<1+>~~(5)-R(6)/~~-~~~~~/~~-~~~~;		Y:~/~/~;	WM=7		WMI=11	SX SX SX
+C 3 COLOR COMBOS 2X
+<<	S:<1+>.G(5)-R(6)/AH-AH.GO/YO-YO.A;		Y:2/3/4/2/3/4;	WM=8.5		WMI=12	SX SX SX SX SX SX   MSEC=.70
+>>	S:<1+>.G(5)-R(6)/AH-AH.GO/YO-YO.A;		Y:2/3/4/2/3/4;	WM=8.5		WMI=12	SX SX SX SX SX SX
   27 C 4 COLOR COMBOS
   28 C	
   29 <<	S:<1+>~~(5)-~.AYT*I+B(7)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;	Y:~/~/~/~;	WM=7	WMI=11	SX SX SX SX MSEC=.70

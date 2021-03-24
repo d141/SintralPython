@@ -15,7 +15,6 @@ import numpy as np
 import textwrap
 import itertools
 
-
 color_dict = {'.': (255, 255, 255),
               'A': (0, 0, 0),
               'Y': (0, 60, 167),
@@ -87,7 +86,7 @@ color_words = {(255, 255, 255): "White",
 
 sintral_template_txt = open("sintral_template.txt")
 sintral_template = list(enumerate(sintral_template_txt))
-#sintral_template_for_bottom = enumerate(sintral_template_txt)
+# sintral_template_for_bottom = enumerate(sintral_template_txt)
 
 base_colors_3 = [color_dict['.'], color_dict['A'], color_dict['Y']]
 base_colors_8 = {color_dict['.']: [1, color_dict['G']], color_dict['A']: [2, color_dict['H']],
@@ -103,6 +102,7 @@ pair_6 = [color_dict['I'], color_dict['E']]
 pair_7 = [color_dict['+'], color_dict['K']]
 pair_8 = [color_dict['B'], color_dict['L']]
 
+systems=['2','3','4','5','6','7','1','8']
 
 def read_color_code(pic, size_num):
     yarn_colors = []
@@ -199,6 +199,7 @@ def make_barcode(img, colors):
         colors_in_row = sort_colors(colors_in_row)
         reduction_counts[num_colors_in_row - 1] += 1
         go_backwards = False
+
         if colors_in_row != last_row and y > 0 and y % 2 == 0:
             if len(last_row) == num_colors_in_row:
                 in_first = set(colors_in_row)
@@ -226,11 +227,12 @@ def make_barcode(img, colors):
                 pixels[0, y] = pair_1[0]
                 pixels[1, y] = pair_2[0]
                 pixels[2, y] = pair_3[0]
+                """
                 if go_backwards:
                     pixels[0, y - 1] = pair_1[0]
                     pixels[1, y - 1] = pair_2[0]
                     pixels[2, y - 1] = pair_3[0]
-
+                """
         elif num_colors_in_row == 2:
             if colors_in_row[0] not in base_colors_3 and colors_in_row[1] in base_colors_3:
                 pixels[0, y] = pair_1[0]
@@ -260,11 +262,12 @@ def make_barcode(img, colors):
                 pixels[0, y] = pair_1[0]
                 pixels[1, y] = pair_2[0]
                 pixels[2, y] = pair_3[0]
+                '''
                 if go_backwards:
                     pixels[0, y] = pair_1[0]
                     pixels[1, y] = colors_in_row[0]
                     pixels[2, y] = colors_in_row[1]
-
+                '''
         elif num_colors_in_row == 3:
             pixels[0, y] = colors_in_row[0]
             pixels[1, y] = colors_in_row[1]
@@ -538,13 +541,61 @@ def add_top_of_sintral():
             sintral2x_top += line
     return sintral_top, sintral2x_top
 
+def make_3_color_line(combo,speed,front_ss,back_ss,wm_440,wm_TC,wmi_440,wmi_TC):
+    line1_440=f"<<	S:<1+>{combo[0]}~({front_ss})-R({back_ss})/{combo[1]}~-{combo[1]}~{combo[0]}~~/{combo[2]}~-{combo[2]}~{combo[0]}{combo[1]};		Y:~/~/~;	WM={wm_440}		WMI={wmi_440}	SX SX SX  MSEC={speed}"
+    line2_440=f">>	S:<1+>{combo[0]}~({front_ss})-R({back_ss})/{combo[1]}~-{combo[1]}~{combo[0]}~~/{combo[2]}~-{combo[2]}~{combo[0]}{combo[1]};		Y:~/~/~;	WM={wm_440}		WMI={wmi_440}	SX SX SX"
+    line1_TC=
+    line2_TC=
 
-def make_plain_sintral(jtxt):
+def make_4_color_line():
+
+def make_5_color_line():
+
+def make_6_color_line():
+
+def make_7_color_line():
+
+def make_8_color_line():
+
+def make_plain_sintral(jtxt,colors):
+    colors=sort_colors(colors)
+    pattern_color_dict={}
+    for i in range(len(colors)):
+        pattern_color_dict[colors[i]]=(systems[i],list(base_colors_8.values)[i][])
+
     sintral_top, sintral2x_top = add_top_of_sintral()
 
     ##### Make sintral_middle
+    lines = jtxt.split('\n')
+    last_line = ""
+    idx = 0
+    rep_count = 0
+    sintral_middle=""
+    sintral2x_middle=""
+    for line in lines:
+        this_line = ""
+        line_slice = line[5:13]
+        for char in line_slice:
+            if char.isdigit():
+                break
+            else:
+                this_line += char
+
+        if this_line != last_line and idx > 0:
+            # We have a change in color combinations
+            num_colors = len(this_line)
+            print(num_colors,rep_count)
 
 
+            rep_count=0
+        else:
+            rep_count += 1
+
+
+        last_line = this_line
+        idx += 1
+
+    # Add sintral lines 900 and below
     sintral_bottom, sintral2x_bottom = add_bottom_of_sintral()
 
     sintral = sintral_top + sintral_bottom
