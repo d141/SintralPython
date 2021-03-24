@@ -13,6 +13,8 @@ import PIL
 from PIL import Image
 import numpy as np
 import textwrap
+import itertools
+
 
 color_dict = {'.': (255, 255, 255),
               'A': (0, 0, 0),
@@ -83,7 +85,9 @@ color_words = {(255, 255, 255): "White",
                (81, 43, 28): "Brown",
                (41, 86, 154): "Denim"}
 
-sintral_template = open("sintral_template.txt")
+sintral_template_txt = open("sintral_template.txt")
+sintral_template = list(enumerate(sintral_template_txt))
+#sintral_template_for_bottom = enumerate(sintral_template_txt)
 
 base_colors_3 = [color_dict['.'], color_dict['A'], color_dict['Y']]
 base_colors_8 = {color_dict['.']: [1, color_dict['G']], color_dict['A']: [2, color_dict['H']],
@@ -431,8 +435,6 @@ def read(file_path):
 
     # Convert the bitmap to it's knitting colors
     img3 = convert_colors_to_knitting(img2, size_num, colors)
-    img3.show()
-
     return img3, colors
 
 
@@ -515,34 +517,38 @@ def make_label(colors):
     return sheet
 
 
-def add_bottom_of_sintral(sintral440, sintral2x):
+def add_bottom_of_sintral():
+    sintral_bottom = ""
+    sintral2x_bottom = ""
     lines_to_read = list(range(166, 253))
-    for position, line in enumerate(sintral_template):
-        print(position)
+    for position, line in sintral_template:
         if position in lines_to_read:
-            print(position)
-            sintral440 += line
-            sintral2x += line
-    return sintral440, sintral2x
+            sintral_bottom += line
+            sintral2x_bottom += line
+    return sintral_bottom, sintral2x_bottom
 
 
-def add_top_of_sintral(sintral440, sintral2x):
+def add_top_of_sintral():
+    sintral_top = ""
+    sintral2x_top = ""
     lines_to_read = list(range(0, 22))
-    for position, line in enumerate(sintral_template):
-        print(position)
+    for position, line in sintral_template:
         if position in lines_to_read:
-            print(position)
-            sintral440 += line
-            sintral2x += line
-    return sintral440, sintral2x
+            sintral_top += line
+            sintral2x_top += line
+    return sintral_top, sintral2x_top
 
 
 def make_plain_sintral(jtxt):
-    sintral = ""
-    sintral2x = ""
-    sintral, sintral2x = add_top_of_sintral(sintral, sintral2x)
-    #####
-    sintral, sintral2x = add_bottom_of_sintral(sintral, sintral2x)
+    sintral_top, sintral2x_top = add_top_of_sintral()
+
+    ##### Make sintral_middle
+
+
+    sintral_bottom, sintral2x_bottom = add_bottom_of_sintral()
+
+    sintral = sintral_top + sintral_bottom
+    sintral2x = sintral2x_top + sintral2x_bottom
 
     return sintral, sintral2x
 
@@ -665,7 +671,7 @@ class MyFirstGUI:
         new_txt_file.write(sintral)
         new_txt_file.close()
         new_txt_file = open(f"{new_path}/{filename}-sintralTC.txt", 'w')
-        new_txt_file.write(sintral)
+        new_txt_file.write(sintral2x)
         new_txt_file.close()
 
     def plain_folder(self):
