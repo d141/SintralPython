@@ -194,7 +194,6 @@ def make_barcode(img, colors):
         reduction_counts[num_colors_in_row - 1] += 1
         go_backwards=False
         if colors_in_row != last_row and y > 0 and y % 2 == 0:
-            print(y,num_colors_in_row,len(last_row))
             if len(last_row) == num_colors_in_row:
                 in_first = set(colors_in_row)
                 in_second = set(last_row)
@@ -384,6 +383,7 @@ def remove_lines(bitmap, line_begin, reduction_count):
         return canvas
     else:
         showinfo("OK", "Alrighty...let's try again", )
+        return False
 
 
 def read(file_path):
@@ -410,7 +410,6 @@ def read(file_path):
     for x in range(size_num[0]):
         for y in range(size_num[1]):
             if pic[x, y] not in color_dict.values():
-                print(pic[x, y])
                 messagebox.showinfo("Uh-oh,", f":( there's an unknown color located at {x},{y}")
                 return
     messagebox.showinfo("Congrats", "No unknown colors! Nice")
@@ -424,14 +423,14 @@ def read(file_path):
 
     # Trim the edges and rotate
     height = size_num[1] - 15
-    img2 = img.crop((6, 6, 479, height + 1))
+    img2 = img.crop((5, 5, 478, height))
     img2 = img2.transpose(PIL.Image.FLIP_TOP_BOTTOM)
     size_num = img2.size
     # pic=img2.load()
 
     # Convert the bitmap to it's knitting colors
     img3 = convert_colors_to_knitting(img2, size_num, colors)
-    # img3.show()
+    img3.show()
 
     return img3, colors
 
@@ -500,7 +499,7 @@ def make_label(colors):
     def draw_label(label, width, height, obj):
         # Just convert the object to a string and print this at the bottom left of
         # the label.
-        label.add(shapes.String(2, 10, str(obj), fontName="Helvetica", fontSize=12))
+        label.add(shapes.String(2, 10, str(obj), fontName="Helvetica", fontSize=8))
 
     # Create the sheet.
     sheet = labels.Sheet(specs, draw_label, border=True)
