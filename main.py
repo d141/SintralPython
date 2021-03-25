@@ -102,7 +102,8 @@ pair_6 = [color_dict['I'], color_dict['E']]
 pair_7 = [color_dict['+'], color_dict['K']]
 pair_8 = [color_dict['B'], color_dict['L']]
 
-systems=['2','3','4','5','6','7','1','8']
+systems = ['2', '3', '4', '5', '6', '7', '1', '8']
+
 
 def read_color_code(pic, size_num):
     yarn_colors = []
@@ -541,12 +542,26 @@ def add_top_of_sintral():
             sintral2x_top += line
     return sintral_top, sintral2x_top
 
-def make_3_color_line(combo,speed,front_ss,back_ss,wm_440,wm_TC,wmi_440,wmi_TC):
-    line1_440=f"<<	S:<1+>{combo[0]}~({front_ss})-R({back_ss})/{combo[1]}~-{combo[1]}~{combo[0]}~~/{combo[2]}~-{combo[2]}~{combo[0]}{combo[1]};		Y:~/~/~;	WM={wm_440}		WMI={wmi_440}	SX SX SX  MSEC={speed}"
-    line2_440=f">>	S:<1+>{combo[0]}~({front_ss})-R({back_ss})/{combo[1]}~-{combo[1]}~{combo[0]}~~/{combo[2]}~-{combo[2]}~{combo[0]}{combo[1]};		Y:~/~/~;	WM={wm_440}		WMI={wmi_440}	SX SX SX"
-    line1_TC=
-    line2_TC=
 
+def make_3_color_line(combo, speed, front_ss, back_ss, wm_440, wm_TC, wmi_440, wmi_TC):
+    combo_0_pair = list(color_dict)[list(color_dict).index(combo[0]) + 8]
+    combo_1_pair = list(color_dict)[list(color_dict).index(combo[1]) + 8]
+    combo_2_pair = list(color_dict)[list(color_dict).index(combo[2]) + 8]
+    system_0 = systems[list(color_dict).index(combo[0])]
+    system_1 = systems[list(color_dict).index(combo[1])]
+    system_2 = systems[list(color_dict).index(combo[2])]
+    line1_440 = f"<<	S:<1+>{combo[0]}{combo_0_pair}({front_ss})-R({back_ss})/{combo[1]}{combo_1_pair}-{combo[1]}{combo_1_pair}{combo[0]}{combo_0_pair}{combo_2_pair}/{combo[2]}{combo_2_pair}-{combo[2]}{combo_2_pair}{combo[0]}{combo[1]};		Y:{system_0}/{system_1}/{system_2};	WM={wm_440}		WMI={wmi_440}	SX SX SX  MSEC={speed}"
+    line2_440 = f">>	S:<1+>{combo[0]}{combo_0_pair}({front_ss})-R({back_ss})/{combo[1]}{combo_1_pair}-{combo[1]}{combo_1_pair}{combo[0]}{combo_0_pair}{combo_2_pair}/{combo[2]}{combo_2_pair}-{combo[2]}{combo_2_pair}{combo[0]}{combo[1]};		Y:{system_0}/{system_1}/{system_2};	WM={wm_440}		WMI={wmi_440}	SX SX SX"
+    if combo[0] == '.' and combo[1] == 'A' and combo[2] == 'Y':
+        line1_TC = f"<<	S:<1+>.G(5)-R(6)/AH-AH.GO/YO-YO.A;		Y:2/3/4/2/3/4;	WM={wm_TC}		WMI={wmi_TC}	SX SX SX SX SX SX   MSEC={speed}"
+        line2_TC = f"<<	S:<1+>.G(5)-R(6)/AH-AH.GO/YO-YO.A;		Y:2/3/4/2/3/4;	WM={wm_TC}		WMI={wmi_TC}	SX SX SX SX SX SX   MSEC={speed}"
+    else:
+        line1_TC = line1_440
+        line2_TC = line2_440
+    return line1_440, line2_440, line1_TC, line2_TC
+
+
+'''
 def make_4_color_line():
 
 def make_5_color_line():
@@ -556,13 +571,19 @@ def make_6_color_line():
 def make_7_color_line():
 
 def make_8_color_line():
+'''
 
-def make_plain_sintral(jtxt,colors):
-    colors=sort_colors(colors)
+
+def make_plain_sintral(jtxt, colors, entries):
+    # colors=sort_colors(colors)
+    '''
+    
+    Why did I make this?
+    
     pattern_color_dict={}
     for i in range(len(colors)):
         pattern_color_dict[colors[i]]=(systems[i],list(base_colors_8.values)[i][])
-
+'''
     sintral_top, sintral2x_top = add_top_of_sintral()
 
     ##### Make sintral_middle
@@ -570,8 +591,8 @@ def make_plain_sintral(jtxt,colors):
     last_line = ""
     idx = 0
     rep_count = 0
-    sintral_middle=""
-    sintral2x_middle=""
+    sintral_middle = ""
+    sintral2x_middle = ""
     for line in lines:
         this_line = ""
         line_slice = line[5:13]
@@ -583,14 +604,38 @@ def make_plain_sintral(jtxt,colors):
 
         if this_line != last_line and idx > 0:
             # We have a change in color combinations
-            num_colors = len(this_line)
-            print(num_colors,rep_count)
+            num_colors = len(last_line)
+            print(num_colors, rep_count)
+
+            if num_colors == 3:
+                line1_440, line2_440, line1_TC, line2_TC = make_3_color_line(last_line, entries['speed'],
+                                                                             entries['front_stitch'],
+                                                                             entries['back_stitch'], entries['wm36'],
+                                                                             entries['wm32x'], entries['wmi'],
+                                                                             entries['wmi78'])
+                sintral_middle += f"REP*{int(rep_count / 2)}\n"
+                sintral_middle += f"{line1_440}\n"
+                sintral_middle += f"{line2_440}\n"
+                sintral_middle += f"REPEND\n"
+
+                #Deal with an uneven number of double production strokes
+                if rep_count % 4 == 0:
+                    sintral2x_middle += f"REP*{int(rep_count / 4)}\n"
+                    sintral2x_middle += f"{line1_TC}\n"
+                    sintral2x_middle += f"{line2_TC}\n"
+                    sintral2x_middle += f"REPEND\n"
+                else:
+                    sintral2x_middle += f"REP*{int((rep_count - 2) / 4)}\n"
+                    sintral2x_middle += f"{line1_TC}\n"
+                    sintral2x_middle += f"{line2_TC}\n"
+                    sintral2x_middle += f"REPEND\n"
+                    sintral2x_middle += f"{line1_440}\n"
+                    sintral2x_middle += f"{line2_440}\n"
 
 
-            rep_count=0
+            rep_count = 0
         else:
             rep_count += 1
-
 
         last_line = this_line
         idx += 1
@@ -598,8 +643,8 @@ def make_plain_sintral(jtxt,colors):
     # Add sintral lines 900 and below
     sintral_bottom, sintral2x_bottom = add_bottom_of_sintral()
 
-    sintral = sintral_top + sintral_bottom
-    sintral2x = sintral2x_top + sintral2x_bottom
+    sintral = sintral_top + sintral_middle + sintral_bottom
+    sintral2x = sintral2x_top + sintra2x_middle + sintral2x_bottom
 
     return sintral, sintral2x
 
@@ -697,6 +742,19 @@ class MyFirstGUI:
         self.close_button.grid(row=15, column=0, pady=30, columnspan=2)
 
     def plain(self):
+
+        entries = {"speed": self.speed_entry.get(),
+                   "empty_speed": self.empty_speed_entry.get(),
+                   "wm32x": self.wm32x_entry.get(),
+                   "wm36": self.wm36_entry.get(),
+                   "wm56": self.wm56_entry.get(),
+                   "wm7": self.wm7_entry.get(),
+                   "wm8": self.wm8_entry.get(),
+                   "wmi": self.wmi_entry.get(),
+                   "wmi78": self.wmi78_entry.get(),
+                   "front_stitch": self.front_stitch_entry.get(),
+                   "back_stitch": self.back_stitch_entry.get()}
+
         file_path = filedialog.askopenfilename()
         filename = path_leaf(file_path)
         filename = filename[:-4]
@@ -717,7 +775,7 @@ class MyFirstGUI:
         os.chdir('..')
         sheet = make_label(colors)
         sheet.save(f"{new_path}/{filename}-color_label.pdf")
-        sintral, sintral2x = make_plain_sintral(compressed_txt)
+        sintral, sintral2x = make_plain_sintral(compressed_txt, colors, entries)
         new_txt_file = open(f"{new_path}/{filename}-sintral440.txt", 'w')
         new_txt_file.write(sintral)
         new_txt_file.close()
