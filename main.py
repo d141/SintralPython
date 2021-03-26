@@ -448,7 +448,7 @@ def remove_lines(bitmap, line_begin, reduction_count):
         return canvas
     else:
         showinfo("OK", "Alrighty...let's try again", )
-        remove_lines(bitmap,line_begin,reduction_count)
+        remove_lines(bitmap, line_begin, reduction_count)
 
 
 def read(file_path):
@@ -670,12 +670,63 @@ def make_3_color_line(combo, speed, wm_440, wm_TC, wmi_440, wmi_TC):
     return line1_440, line2_440, line1_TC, line2_TC
 
 
+def make_4_color_line(combo, speed, wm, wmi):
+    """
 
-def make_4_color_line():
+    :param combo:
+    :param speed:
+    :param wm:
+    :param wmi:
+    :return:
+    """
+    combo_0_pair = list(color_dict)[list(color_dict).index(combo[0]) + 8]
+    combo_1_pair = list(color_dict)[list(color_dict).index(combo[1]) + 8]
+    combo_2_pair = list(color_dict)[list(color_dict).index(combo[2]) + 8]
+    combo_3_pair = list(color_dict)[list(color_dict).index(combo[3]) + 8]
+    system_0 = systems[list(color_dict).index(combo[0])]
+    system_1 = systems[list(color_dict).index(combo[1])]
+    system_2 = systems[list(color_dict).index(combo[2])]
+    system_3 = systems[list(color_dict).index(combo[3])]
+    line1 = f"<<	S:<1+>{combo[0]}{combo_0_pair}(5)-{combo_0_pair}.AYT*I+B(7)/{combo[1]}{combo_1_pair}-{combo[1]}GHOWZEKL/{combo[2]}{combo_2_pair}-{combo_2_pair}.AYT*I+B/{combo[3]}{combo_3_pair}-{combo[3]}GHOWZEKL;	Y:{system_0}/{system_1}/{system_2}/{system_3};	WM={wm}	WMI={wmi}	SX SX SX SX MSEC={speed}"
+    line2 = f">>	S:<1+>{combo[0]}{combo_0_pair}(5)-{combo_0_pair}.AYT*I+B(7)/{combo[1]}{combo_1_pair}-{combo[1]}GHOWZEKL/{combo[2]}{combo_2_pair}-{combo_2_pair}.AYT*I+B/{combo[3]}{combo_3_pair}-{combo[3]}GHOWZEKL;	Y:{system_0}/{system_1}/{system_2}/{system_3};	WM={wm}	WMI={wmi}	SX SX SX SX "
+
+    return line1, line2
+
+
+def make_5_color_line(combo, speed, empty_speed, wm_440, wm_tc, wmi):
+    """
+
+    :return:
+    """
+
+    combo_0_pair = list(color_dict)[list(color_dict).index(combo[0]) + 8]
+    combo_1_pair = list(color_dict)[list(color_dict).index(combo[1]) + 8]
+    combo_2_pair = list(color_dict)[list(color_dict).index(combo[2]) + 8]
+    combo_3_pair = list(color_dict)[list(color_dict).index(combo[3]) + 8]
+    combo_4_pair = list(color_dict)[list(color_dict).index(combo[4]) + 8]
+    system_0 = systems[list(color_dict).index(combo[0])]
+    system_1 = systems[list(color_dict).index(combo[1])]
+    system_2 = systems[list(color_dict).index(combo[2])]
+    system_3 = systems[list(color_dict).index(combo[3])]
+    system_4 = systems[list(color_dict).index(combo[4])]
+
+    lines_440 = [
+        f"<<	S:<1+>{combo[0]}{combo_0_pair}(5)-{combo_0_pair}.AYT*I+B(7)/{combo[1]}{combo_1_pair}-{combo[1]}GHOWZEKL/{combo[2]}{combo_2_pair}-{combo_2_pair}.AYT*I+B/{combo[3]}{combo_3_pair}-{combo[3]}GHOWZEKL;	Y:{system_0}/{system_1}/{system_2}/{system_3}/{system_4};	WM={wm_440}	WMI={wmi}		SX SX SX SX  MSEC={speed}",
+        f">>	S0 MSEC={empty_speed}",
+        f"<< S:{combo[4]}{combo_4_pair}-{combo_4_pair}.AYT*I+B;						WM={wm_440}	WMI={wmi}		SX",
+        f">>	S:<1+>{combo[0]}{combo_0_pair}(5)-{combo_0_pair}.AYT*I+B(7)/{combo[1]}{combo_1_pair}-{combo[1]}GHOWZEKL/{combo[2]}{combo_2_pair}-{combo_2_pair}.AYT*I+B/{combo[3]}{combo_3_pair}-{combo[3]}GHOWZEKL;			WM={wm_440}	WMI={wmi}		SX SX SX SX  MSEC={speed}",
+        f"<<	S0 MSEC={empty_speed}",
+        f">> S:{combo[4]}{combo_4_pair}-{combo_4_pair}.AYT*I+B;						WM={wm_440}	WMI={wmi}		SX"]
+
+    lines_tc = [
+        f"<<S:<1+>{combo[0]}{combo_0_pair}(5)-{combo_0_pair}.AYT*I+B(7)/{combo[1]}{combo_1_pair}-{combo[1]}GHOWZEKL/{combo[2]}{combo_2_pair}-{combo_2_pair}.AYT*I+B/{combo[3]}{combo_3_pair}-{combo[3]}GHOWZEKL/{combo[4]}{combo}{combo_4_pair}-{combo_4_pair}AYT*I+B;	Y:{system_0}/{system_1}/{system_2}/{system_3}/{system_4};	WM={wm_tc}	WMI={wmi}	SX SX SX SX SX  MSEC={speed}",
+        f"<<S:<1+>{combo[0]}{combo_0_pair}(5)-{combo_0_pair}.AYT*I+B(7)/{combo[1]}{combo_1_pair}-{combo[1]}GHOWZEKL/{combo[2]}{combo_2_pair}-{combo_2_pair}.AYT*I+B/{combo[3]}{combo_3_pair}-{combo[3]}GHOWZEKL/{combo[4]}{combo}{combo_4_pair}-{combo_4_pair}AYT*I+B;	Y:{system_0}/{system_1}/{system_2}/{system_3}/{system_4};	WM={wm_tc}	WMI={wmi}	SX SX SX SX SX"
+    ]
+
+    return lines_440, lines_tc
+
 
 '''
-def make_5_color_line():
-
 def make_6_color_line():
 
 def make_7_color_line():
@@ -727,7 +778,7 @@ def make_plain_sintral(jtxt, colors, entries):
                 sintral_middle += f"{line2_440}\n"
                 sintral_middle += f"REPEND\n"
 
-                #Deal with an uneven number of double production strokes
+                # Deal with an uneven number of double production strokes
                 if rep_count % 4 == 0:
                     sintral2x_middle += f"REP*{int(rep_count / 4)}\n"
                     sintral2x_middle += f"{line1_TC}\n"
@@ -741,6 +792,34 @@ def make_plain_sintral(jtxt, colors, entries):
                     sintral2x_middle += f"{line1_440}\n"
                     sintral2x_middle += f"{line2_440}\n"
 
+            if num_colors == 4:
+                line1, line2 = make_4_color_line()
+
+                sintral_middle += f"REP*{int(rep_count / 2)}\n"
+                sintral_middle += f"{line1}\n"
+                sintral_middle += f"{line2}\n"
+                sintral_middle += f"REPEND\n"
+
+                sintral2x_middle += f"REP*{int(rep_count / 2)}\n"
+                sintral2x_middle += f"{line1}\n"
+                sintral2x_middle += f"{line2}\n"
+                sintral2x_middle += f"REPEND\n"
+
+            if num_colors == 5:
+                lines_440, lines_tc = make_5_color_line(last_line, entries['speed'],
+                                                        entries['empty_speed'],
+                                                        entries['wm36'],
+                                                        entries['wm56'], entries['wmi'])
+
+                sintral_middle += f"REP*{int(rep_count / 2)}\n"
+                for line in lines_440:
+                    sintral_middle += f"{line}\n"
+                sintral_middle += f"REPEND\n"
+
+                sintral2x_middle += f"REP*{int(rep_count / 2)}\n"
+                for line in lines_tc:
+                    sintral2x_middle += f"{line}\n"
+                sintral2x_middle += f"REPEND\n"
 
             rep_count = 0
         else:
@@ -904,7 +983,7 @@ class MyFirstGUI:
                 file_path = os.fsdecode(os.path.join(directory, file))
                 img, colors = read(file_path)
                 barcoded, reduction_counts = make_barcode(img, colors)
-                reduction_count = caclulate_reduction(reduction_counts)
+                reduction_count = calculate_reduction(reduction_counts)
                 line_begin = askstring("Begin Reduction", "How far in from the edge should I start my removal?")
                 reduced = remove_lines(barcoded, line_begin, reduction_count)
                 folder_name = str(askstring("Folder Name", "Name the new folder for this pattern"))
