@@ -106,6 +106,13 @@ systems = ['2', '3', '4', '5', '6', '7', '1', '8']
 
 
 def read_color_code(pic, size_num):
+    """
+    If there is a color code in the bottom left corner, read it. Not often used
+    --------------
+    :param pic: (PIL Image)Original bitmap, full size
+    :param size_num:(tuple) Dimensions of the bitmap
+    :return:(list) Actual yarn colors in the pattern
+    """
     yarn_colors = []
     for i in range(8):
         current_color = pic[i, size_num[1] - 1]
@@ -117,6 +124,13 @@ def read_color_code(pic, size_num):
 
 
 def read_bitmap_for_colors(pic, size_num):
+    """
+    Read the original bitmap and return the yarn colors
+    --------------
+    :param pic: (PIL Image).pixels()
+    :param size_num: (tuple) Size of the bitmap
+    :return: (list) Yarn colors in the blanket as they are first seen from the bottom up
+    """
     yarn_colors = []
     for x in reversed(range(size_num[0])):
         for y in reversed(range(size_num[1] - 15)):
@@ -126,6 +140,14 @@ def read_bitmap_for_colors(pic, size_num):
 
 
 def convert_colors_to_knitting(pic, size_num, colors):
+    """
+    Function to convert the bitmap from knitting colors associated with yarn feeders to birdseye
+    --------------
+    :param pic: (PIL Image) Original size and in original colors only (Purple, Yellow, Pink)
+    :param size_num: (tuple) Size of the bitmap
+    :param colors: (list of RGB) Colors in the bitmap [Purple,Yellow,Pink]
+    :return: New bitmap that has been birdseyed (.G,AH,YO)
+    """
     pixels = pic.load()
     oddity = 0
     for x in range(size_num[0]):
@@ -143,6 +165,12 @@ def convert_colors_to_knitting(pic, size_num, colors):
 
 
 def sort_colors(colors):
+    """
+    Sort colors from how they appear in a row to how they should appear in the barcode
+    --------------
+    :param colors: (list) Colors in a given row in any order. Ex: [Y,A,T,.]
+    :return: (list) Colors sorted according to knitting order. Ex: [.,A,Y,T]
+    """
     ranks = []
     results = []
     for color in colors:
@@ -156,6 +184,13 @@ def sort_colors(colors):
 
 
 def make_barcode(img, colors):
+    """
+    Key function for adding the barcode. Contains all logic to ensure even number of lines per combination
+    --------------
+    :param img: (PIL Image) Has been flipped and birdseyed
+    :param colors: list of colors used in the bitmap (not used)
+    :return: (PIL Image) 8 extra columns with barcode & (list) number of rows for each number of knitting colors
+    """
     size = img.size
     barcode_row = Image.new('RGB', (481, size[1]), color_dict['.'])
     barcode_row.paste(img, (8, 0))
@@ -353,7 +388,13 @@ def make_barcode(img, colors):
     return barcode_row, reduction_counts
 
 
-def caclulate_reduction(counts):
+def calculate_reduction(counts):
+    """
+    Performs calculation to determine how many lines should be removed
+    --------------
+    :param counts: (list) returned from make_barcode. Number of rows for each number of knitting colors
+    :return: (int) number of lines to remove
+    """
     count_total = np.sum(np.array(counts))
     adjusted_counts = np.array(
         [counts[0], counts[1], counts[2], counts[3] * 1.031, counts[4] * 1.1, counts[5] * 1.222, counts[6] * 1.294,
@@ -363,6 +404,12 @@ def caclulate_reduction(counts):
 
 
 def confirm():
+    """
+    Simple function to ask if the user is happy with results of the line reduction
+    --------------
+    :return: boolean
+    """
+
     answer = askokcancel(
         title='Proceed?',
         message='Are you happy with the results? Or do you want to try again',
@@ -371,6 +418,15 @@ def confirm():
 
 
 def remove_lines(bitmap, line_begin, reduction_count):
+    """
+    Function for automatically removing required lines based on input for the user.
+    Uses confirm() at the end to proceed
+    --------------
+    :param bitmap: (PIL Image) Already flipped, birdseyed, and barcoded
+    :param line_begin: (str) User input from a get_info box
+    :param reduction_count: (int) Result from calculate_reduction()
+    :return: (PIL Image) Reduced bitmap
+    """
     true_count = int(np.round(reduction_count / 2))
     line_begin = int(line_begin)
     if true_count % 2 != 0:
@@ -392,10 +448,16 @@ def remove_lines(bitmap, line_begin, reduction_count):
         return canvas
     else:
         showinfo("OK", "Alrighty...let's try again", )
-        return False
+        remove_lines(bitmap,line_begin,reduction_count)
 
 
 def read(file_path):
+    """
+    First function called to introduce the bitmap into the program
+    --------------
+    :param file_path: Gathered from a file_chooser()
+    :return: list color colors & The image cropped, flipped, and re-colored to main knitting colors
+    """
     large = (483, 510)
     regular = (483, 360)
     small = (483, 296)
@@ -443,6 +505,12 @@ def read(file_path):
 
 
 def convert_to_jtxt(image):
+    """
+    Takes the completed birdseyed bitmap and converts it to Run-Length Encoded _J.txt
+    --------------
+    :param image: (PIL image type), rotated, birdseyed, and barcode written
+    :return:
+    """
     pixels = image.load()
     size = image.size
     big_string = ""
@@ -492,11 +560,25 @@ def convert_to_jtxt(image):
 
 
 def path_leaf(path):
+    """
+    Takes a full filepath and removes the filename so that you can save other files in same location
+    --------------
+    :param path: full filepath including the filename
+    :return: filepath without the filename
+    """
     head, tail = ntpath.split(path)
     return tail or ntpath.basename(head)
 
 
 def make_label(colors):
+    """
+    Generate a sheet object that can be saved as a pdf.
+    Contains the correctly ordered yarn colors for tying up on the machine
+    --------------
+    :param colors: RGB values of original bitmap colors. Converted to (str) by matching index in (dict)color_words
+    :return: a sheet object that is saved in project folder as an appropriately sized pdf
+    """
+
     specs = labels.Specification(75, 14, 1, 1, 70, 12, left_padding=0, top_padding=0, bottom_padding=0, right_padding=0,
                                  padding_radius=0)
 
@@ -522,6 +604,13 @@ def make_label(colors):
 
 
 def add_bottom_of_sintral():
+    """
+    grabs pieces from sintral_template.txt
+    very sensitive to changes in the template
+    --------------
+    :return: sintral_bottom, sintral2x_bottom
+    """
+
     sintral_bottom = ""
     sintral2x_bottom = ""
     lines_to_read = list(range(166, 253))
@@ -533,6 +622,12 @@ def add_bottom_of_sintral():
 
 
 def add_top_of_sintral():
+    """
+    grabs pieces from sintral_template.txt
+    very sensitive to changes in the template
+    --------------
+    :return: sintral_top, sintral2x_top
+    """
     sintral_top = ""
     sintral2x_top = ""
     lines_to_read = list(range(0, 22))
@@ -543,15 +638,29 @@ def add_top_of_sintral():
     return sintral_top, sintral2x_top
 
 
-def make_3_color_line(combo, speed, front_ss, back_ss, wm_440, wm_TC, wmi_440, wmi_TC):
+def make_3_color_line(combo, speed, wm_440, wm_TC, wmi_440, wmi_TC):
+    """
+    makes 3 color knitting lines
+    reverts to single production on TC combinations that are not evenly divisible by 4
+    --------------
+    Parameters:
+    --------------
+    :param combo: (str)previous line from make_sintral loop through jtxt. Ex: .AY
+    :param speed: (str): come entries dictionary, universal throughout sintral
+    :param wm_440: (str)entries['wm36'], main takedown setting for single production 3-6 colors
+    :param wm_TC: (str)entries['wm32x'], main takedown setting for double production
+    :param wmi_440: (str)entries['wmi'], impulse takedown setting for 440
+    :param wmi_TC: (str)entries['wmi78'], impulse takedown for
+    :return: line1_440, line2_440, line1_TC, line2_TC
+    """
     combo_0_pair = list(color_dict)[list(color_dict).index(combo[0]) + 8]
     combo_1_pair = list(color_dict)[list(color_dict).index(combo[1]) + 8]
     combo_2_pair = list(color_dict)[list(color_dict).index(combo[2]) + 8]
     system_0 = systems[list(color_dict).index(combo[0])]
     system_1 = systems[list(color_dict).index(combo[1])]
     system_2 = systems[list(color_dict).index(combo[2])]
-    line1_440 = f"<<	S:<1+>{combo[0]}{combo_0_pair}({front_ss})-R({back_ss})/{combo[1]}{combo_1_pair}-{combo[1]}{combo_1_pair}{combo[0]}{combo_0_pair}{combo_2_pair}/{combo[2]}{combo_2_pair}-{combo[2]}{combo_2_pair}{combo[0]}{combo[1]};		Y:{system_0}/{system_1}/{system_2};	WM={wm_440}		WMI={wmi_440}	SX SX SX  MSEC={speed}"
-    line2_440 = f">>	S:<1+>{combo[0]}{combo_0_pair}({front_ss})-R({back_ss})/{combo[1]}{combo_1_pair}-{combo[1]}{combo_1_pair}{combo[0]}{combo_0_pair}{combo_2_pair}/{combo[2]}{combo_2_pair}-{combo[2]}{combo_2_pair}{combo[0]}{combo[1]};		Y:{system_0}/{system_1}/{system_2};	WM={wm_440}		WMI={wmi_440}	SX SX SX"
+    line1_440 = f"<<	S:<1+>{combo[0]}{combo_0_pair}(5)-R(6)/{combo[1]}{combo_1_pair}-{combo[1]}{combo_1_pair}{combo[0]}{combo_0_pair}{combo_2_pair}/{combo[2]}{combo_2_pair}-{combo[2]}{combo_2_pair}{combo[0]}{combo[1]};		Y:{system_0}/{system_1}/{system_2};	WM={wm_440}		WMI={wmi_440}	SX SX SX  MSEC={speed}"
+    line2_440 = f">>	S:<1+>{combo[0]}{combo_0_pair}(5)-R(6)/{combo[1]}{combo_1_pair}-{combo[1]}{combo_1_pair}{combo[0]}{combo_0_pair}{combo_2_pair}/{combo[2]}{combo_2_pair}-{combo[2]}{combo_2_pair}{combo[0]}{combo[1]};		Y:{system_0}/{system_1}/{system_2};	WM={wm_440}		WMI={wmi_440}	SX SX SX"
     if combo[0] == '.' and combo[1] == 'A' and combo[2] == 'Y':
         line1_TC = f"<<	S:<1+>.G(5)-R(6)/AH-AH.GO/YO-YO.A;		Y:2/3/4/2/3/4;	WM={wm_TC}		WMI={wmi_TC}	SX SX SX SX SX SX   MSEC={speed}"
         line2_TC = f"<<	S:<1+>.G(5)-R(6)/AH-AH.GO/YO-YO.A;		Y:2/3/4/2/3/4;	WM={wm_TC}		WMI={wmi_TC}	SX SX SX SX SX SX   MSEC={speed}"
@@ -561,9 +670,10 @@ def make_3_color_line(combo, speed, front_ss, back_ss, wm_440, wm_TC, wmi_440, w
     return line1_440, line2_440, line1_TC, line2_TC
 
 
-'''
+
 def make_4_color_line():
 
+'''
 def make_5_color_line():
 
 def make_6_color_line():
@@ -609,8 +719,7 @@ def make_plain_sintral(jtxt, colors, entries):
 
             if num_colors == 3:
                 line1_440, line2_440, line1_TC, line2_TC = make_3_color_line(last_line, entries['speed'],
-                                                                             entries['front_stitch'],
-                                                                             entries['back_stitch'], entries['wm36'],
+                                                                             entries['wm36'],
                                                                              entries['wm32x'], entries['wmi'],
                                                                              entries['wmi78'])
                 sintral_middle += f"REP*{int(rep_count / 2)}\n"
@@ -644,7 +753,7 @@ def make_plain_sintral(jtxt, colors, entries):
     sintral_bottom, sintral2x_bottom = add_bottom_of_sintral()
 
     sintral = sintral_top + sintral_middle + sintral_bottom
-    sintral2x = sintral2x_top + sintra2x_middle + sintral2x_bottom
+    sintral2x = sintral2x_top + sintral2x_middle + sintral2x_bottom
 
     return sintral, sintral2x
 
@@ -760,7 +869,7 @@ class MyFirstGUI:
         filename = filename[:-4]
         img, colors = read(file_path)
         barcoded, reduction_counts = make_barcode(img, colors)
-        reduction_count = caclulate_reduction(reduction_counts)
+        reduction_count = calculate_reduction(reduction_counts)
         line_begin = askstring("Begin Reduction", "How far in from the edge should I start my removal?")
         reduced = remove_lines(barcoded, line_begin, reduction_count)
         folder_name = str(askstring("Folder Name", "Name the new folder for this pattern"))
