@@ -43,34 +43,34 @@ C 5 COLOR COMBOS - TC MACINE
 C
 <<S:<1+>~~(5)-~.AYT*I+B(8)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL/~~-~.AYT*I+B;	Y:~/~/~/~/~;	WM=7.2	WMI=11	SX SX SX SX SX  MSEC=.70
 >>S:<1+>~~(5)-~.AYT*I+B(8)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL/~~-~.AYT*I+B;	Y:~/~/~/~/~;	WM=7.2	WMI=11	SX SX SX SX SX
-  43 C 6 COLOR COMBOS
-  44 C	
-  45 <<	S:<1+>~~(5)-~.AYT*I+B(9)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;	Y:~/~/~/~/~/~;	WM=7	WMI=11		SX SX SX SX  MSEC=.70
-  46 >>	S0 MSEC=1.0
-  47 << S:~~-~.AYT*I+B/~~-~GHOWZEKL;					WM=7	WMI=11		SX SX
-  48 >>	S:<1+>~~(5)-~.AYT*I+B(9)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;			WM=7	WMI=11		SX SX SX SX  MSEC=.70
-  49 <<	S0 MSEC=1.0
-  50 >> S:~~-~.AYT*I+B/~~-~GHOWZEKL;					WM=7	WMI=11		SX SX
-  51 C 6 COLOR COMBOS - TC MACINE
-  52 C	
-  53   <<S:<1+>~~(5)-~.AYT*I+B(9)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;	Y:~/~/~/~/~/~;	WM=7.2	WMI=11	SX SX SX SX SX SX  MSEC=.70
-  54   >>S:<1+>~~(5)-~.AYT*I+B(9)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;	Y:~/~/~/~/~/~;	WM=7.2	WMI=11	SX SX SX SX SX SX
-  55 C 7 COLOR COMBOS
-  56 C	
-  57 <<	S:<1+>~~(5)-~.AYT*I+B(10)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;	Y:~/~/~/~/~/~/~;	WM=7	WMI=12		SX SX SX SX  MSEC=.70
-  58 >>	S0 MSEC=1.0
-  59 << S:~~-~.AYT*I+B/~~-~GHOWZEKL/~~-~.AYT*I+B;				WM=7		WMI=12		SX SX SX MSEC=.70
-  60 >>	S:<1+>~~(5)-~.AYT*I+B(10)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;		WM=7		WMI=12		SX SX SX SX 
-  61 <<	S0 MSEC=1.0
-  62 >> S:~~-~.AYT*I+B/~~-~GHOWZEKL/~~-~.AYT*I+B;				WM=7		WMI=12		SX SX SX MSEC=.70
-  63 C 8 COLOR COMBOS
-  64 C	
-  65 <<	S:<1+>~~(5)-~.AYT*I+B(11)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;	Y:~/~/~/~/~/~/~/~;	WM=7.5	WMI=12	SX SX SX SX  MSEC=.70
-  66 >>	S0 MSEC=1.0
-  67 << S:~~-~.AYT*I+B/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;					WM=7.5	WMI=12	SX SX SX SX MSEC=.70
-  68 >>	S:<1+>~~(5)-~.AYT*I+B(11)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;				WM=7.5	WMI=12	SX SX SX SX 
-  69 <<	S0 MSEC=1.0
-  70 >> S:~~-~.AYT*I+B/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;					WM=7.5	WMI=12	SX SX SX SX MSEC=.70
+C 6 COLOR COMBOS
+C
+<<	S:<1+>~~(5)-~.AYT*I+B(9)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;	Y:~/~/~/~/~/~;	WM=7	WMI=11		SX SX SX SX  MSEC=.70
+>>	S0 MSEC=1.0
+<< S:~~-~.AYT*I+B/~~-~GHOWZEKL;					WM=7	WMI=11		SX SX
+>>	S:<1+>~~(5)-~.AYT*I+B(9)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;			WM=7	WMI=11		SX SX SX SX  MSEC=.70
+<<	S0 MSEC=1.0
+>> S:~~-~.AYT*I+B/~~-~GHOWZEKL;					WM=7	WMI=11		SX SX
+C 6 COLOR COMBOS - TC MACINE
+C
+<<S:<1+>~~(5)-~.AYT*I+B(9)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;	Y:~/~/~/~/~/~;	WM=7.2	WMI=11	SX SX SX SX SX SX  MSEC=.70
+>>S:<1+>~~(5)-~.AYT*I+B(9)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;	Y:~/~/~/~/~/~;	WM=7.2	WMI=11	SX SX SX SX SX SX
+7 COLOR COMBOS
+C
+<<	S:<1+>~~(5)-~.AYT*I+B(10)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;	Y:~/~/~/~/~/~/~;	WM=7	WMI=12		SX SX SX SX  MSEC=.70
+>>	S0 MSEC=1.0
+<< S:~~-~.AYT*I+B/~~-~GHOWZEKL/~~-~.AYT*I+B;				WM=7		WMI=12		SX SX SX MSEC=.70
+>>	S:<1+>~~(5)-~.AYT*I+B(10)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;		WM=7		WMI=12		SX SX SX SX
+<<	S0 MSEC=1.0
+>> S:~~-~.AYT*I+B/~~-~GHOWZEKL/~~-~.AYT*I+B;				WM=7		WMI=12		SX SX SX MSEC=.70
+C 8 COLOR COMBOS
+C
+<<	S:<1+>~~(5)-~.AYT*I+B(11)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;	Y:~/~/~/~/~/~/~/~;	WM=7.5	WMI=12	SX SX SX SX  MSEC=.70
+>>	S0 MSEC=1.0
+<< S:~~-~.AYT*I+B/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;					WM=7.5	WMI=12	SX SX SX SX MSEC=.70
+>>	S:<1+>~~(5)-~.AYT*I+B(11)/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;				WM=7.5	WMI=12	SX SX SX SX
+<<	S0 MSEC=1.0
+>> S:~~-~.AYT*I+B/~~-~GHOWZEKL/~~-~.AYT*I+B/~~-~GHOWZEKL;					WM=7.5	WMI=12	SX SX SX SX MSEC=.70
   71		C***16 HIGH NAMES*******************
   72 	IF #50=1 JA1=1748
   73 	IF #50=2 JA1=1871

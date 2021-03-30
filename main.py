@@ -663,7 +663,7 @@ def make_3_color_line(combo, speed, wm_440, wm_TC, wmi_440, wmi_TC):
     line2_440 = f">>	S:<1+>{combo[0]}{combo_0_pair}(5)-R(6)/{combo[1]}{combo_1_pair}-{combo[1]}{combo_1_pair}{combo[0]}{combo_0_pair}{combo_2_pair}/{combo[2]}{combo_2_pair}-{combo[2]}{combo_2_pair}{combo[0]}{combo[1]};		Y:{system_0}/{system_1}/{system_2};	WM={wm_440}		WMI={wmi_440}	SX SX SX"
     if combo[0] == '.' and combo[1] == 'A' and combo[2] == 'Y':
         line1_TC = f"<<	S:<1+>.G(5)-R(6)/AH-AH.GO/YO-YO.A;		Y:2/3/4/2/3/4;	WM={wm_TC}		WMI={wmi_TC}	SX SX SX SX SX SX   MSEC={speed}"
-        line2_TC = f"<<	S:<1+>.G(5)-R(6)/AH-AH.GO/YO-YO.A;		Y:2/3/4/2/3/4;	WM={wm_TC}		WMI={wmi_TC}	SX SX SX SX SX SX   MSEC={speed}"
+        line2_TC = f">>	S:<1+>.G(5)-R(6)/AH-AH.GO/YO-YO.A;		Y:2/3/4/2/3/4;	WM={wm_TC}		WMI={wmi_TC}	SX SX SX SX SX SX   MSEC={speed}"
     else:
         line1_TC = line1_440
         line2_TC = line2_440
@@ -713,34 +713,111 @@ def make_5_color_line(combo, speed, empty_speed, wm_440, wm_tc, wmi):
     lines_440 = [
         f"<<	S:<1+>{combo[0]}{combo_0_pair}(5)-{combo_0_pair}.AYT*I+B(7)/{combo[1]}{combo_1_pair}-{combo[1]}GHOWZEKL/{combo[2]}{combo_2_pair}-{combo_2_pair}.AYT*I+B/{combo[3]}{combo_3_pair}-{combo[3]}GHOWZEKL;	Y:{system_0}/{system_1}/{system_2}/{system_3}/{system_4};	WM={wm_440}	WMI={wmi}		SX SX SX SX  MSEC={speed}",
         f">>	S0 MSEC={empty_speed}",
-        f"<< S:{combo[4]}{combo_4_pair}-{combo_4_pair}.AYT*I+B;						WM={wm_440}	WMI={wmi}		SX",
+        f"<<    S:{combo[4]}{combo_4_pair}-{combo_4_pair}.AYT*I+B;						WM={wm_440}	WMI={wmi}		SX",
         f">>	S:<1+>{combo[0]}{combo_0_pair}(5)-{combo_0_pair}.AYT*I+B(7)/{combo[1]}{combo_1_pair}-{combo[1]}GHOWZEKL/{combo[2]}{combo_2_pair}-{combo_2_pair}.AYT*I+B/{combo[3]}{combo_3_pair}-{combo[3]}GHOWZEKL;			WM={wm_440}	WMI={wmi}		SX SX SX SX  MSEC={speed}",
         f"<<	S0 MSEC={empty_speed}",
-        f">> S:{combo[4]}{combo_4_pair}-{combo_4_pair}.AYT*I+B;						WM={wm_440}	WMI={wmi}		SX"]
+        f">>    S:{combo[4]}{combo_4_pair}-{combo_4_pair}.AYT*I+B;						WM={wm_440}	WMI={wmi}		SX"]
 
     lines_tc = [
-        f"<<S:<1+>{combo[0]}{combo_0_pair}(5)-{combo_0_pair}.AYT*I+B(7)/{combo[1]}{combo_1_pair}-{combo[1]}GHOWZEKL/{combo[2]}{combo_2_pair}-{combo_2_pair}.AYT*I+B/{combo[3]}{combo_3_pair}-{combo[3]}GHOWZEKL/{combo[4]}{combo}{combo_4_pair}-{combo_4_pair}AYT*I+B;	Y:{system_0}/{system_1}/{system_2}/{system_3}/{system_4};	WM={wm_tc}	WMI={wmi}	SX SX SX SX SX  MSEC={speed}",
-        f"<<S:<1+>{combo[0]}{combo_0_pair}(5)-{combo_0_pair}.AYT*I+B(7)/{combo[1]}{combo_1_pair}-{combo[1]}GHOWZEKL/{combo[2]}{combo_2_pair}-{combo_2_pair}.AYT*I+B/{combo[3]}{combo_3_pair}-{combo[3]}GHOWZEKL/{combo[4]}{combo}{combo_4_pair}-{combo_4_pair}AYT*I+B;	Y:{system_0}/{system_1}/{system_2}/{system_3}/{system_4};	WM={wm_tc}	WMI={wmi}	SX SX SX SX SX"
+        f"<<    S:<1+>{combo[0]}{combo_0_pair}(5)-{combo_0_pair}.AYT*I+B(7)/{combo[1]}{combo_1_pair}-{combo[1]}GHOWZEKL/{combo[2]}{combo_2_pair}-{combo_2_pair}.AYT*I+B/{combo[3]}{combo_3_pair}-{combo[3]}GHOWZEKL/{combo[4]}{combo}{combo_4_pair}-{combo_4_pair}AYT*I+B;	Y:{system_0}/{system_1}/{system_2}/{system_3}/{system_4};	WM={wm_tc}	WMI={wmi}	SX SX SX SX SX  MSEC={speed}",
+        f">>    S:<1+>{combo[0]}{combo_0_pair}(5)-{combo_0_pair}.AYT*I+B(7)/{combo[1]}{combo_1_pair}-{combo[1]}GHOWZEKL/{combo[2]}{combo_2_pair}-{combo_2_pair}.AYT*I+B/{combo[3]}{combo_3_pair}-{combo[3]}GHOWZEKL/{combo[4]}{combo}{combo_4_pair}-{combo_4_pair}AYT*I+B;	Y:{system_0}/{system_1}/{system_2}/{system_3}/{system_4};	WM={wm_tc}	WMI={wmi}	SX SX SX SX SX"
     ]
 
     return lines_440, lines_tc
 
 
-'''
-def make_6_color_line():
+def make_6_color_line(combo, speed, empty_speed, wm_440, wm_tc, wmi):
+    combo_0_pair = list(color_dict)[list(color_dict).index(combo[0]) + 8]
+    combo_1_pair = list(color_dict)[list(color_dict).index(combo[1]) + 8]
+    combo_2_pair = list(color_dict)[list(color_dict).index(combo[2]) + 8]
+    combo_3_pair = list(color_dict)[list(color_dict).index(combo[3]) + 8]
+    combo_4_pair = list(color_dict)[list(color_dict).index(combo[4]) + 8]
+    combo_5_pair = list(color_dict)[list(color_dict).index(combo[5]) + 8]
+    system_0 = systems[list(color_dict).index(combo[0])]
+    system_1 = systems[list(color_dict).index(combo[1])]
+    system_2 = systems[list(color_dict).index(combo[2])]
+    system_3 = systems[list(color_dict).index(combo[3])]
+    system_4 = systems[list(color_dict).index(combo[4])]
+    system_5 = systems[list(color_dict).index(combo[5])]
 
-def make_7_color_line():
+    lines_440 = [
+        f"<<	S:<1+>{combo[0]}{combo_0_pair}(5)-{combo_0_pair}.AYT*I+B(7)/{combo[1]}{combo_1_pair}-{combo[1]}GHOWZEKL/{combo[2]}{combo_2_pair}-{combo_2_pair}.AYT*I+B/{combo[3]}{combo_3_pair}-{combo[3]}GHOWZEKL;	Y:{system_0}/{system_1}/{system_2}/{system_3}/{system_4}/{system_5};	WM={wm_440}	WMI={wmi}		SX SX SX SX  MSEC={speed}",
+        f">>	S0 MSEC={empty_speed}",
+        f"<<    S:{combo[4]}{combo_4_pair}-{combo_4_pair}.AYT*I+B/{combo[5]}{combo_5_pair}-{combo[5]}GHOWZEKL;					WM={wm_440}	WMI={wmi}		SX SX",
+        f">>	S:<1+>{combo[0]}{combo_0_pair}(5)-{combo_0_pair}.AYT*I+B(7)/{combo[1]}{combo_1_pair}-{combo[1]}GHOWZEKL/{combo[2]}{combo_2_pair}-{combo_2_pair}.AYT*I+B/{combo[3]}{combo_3_pair}-{combo[3]}GHOWZEKL;			WM={wm_440}	WMI={wmi}		SX SX SX SX  MSEC={speed}",
+        f"<<	S0 MSEC={empty_speed}",
+        f">>    S:{combo[4]}{combo_4_pair}-{combo_4_pair}.AYT*I+B/{combo[5]}{combo_5_pair}-{combo[5]}GHOWZEKL;					WM={wm_440}	WMI={wmi}		SX SX"]
 
-def make_8_color_line():
-'''
+    lines_tc = [
+        f"<<    S:<1+>{combo[0]}{combo_0_pair}(5)-{combo_0_pair}.AYT*I+B(7)/{combo[1]}{combo_1_pair}-{combo[1]}GHOWZEKL/{combo[2]}{combo_2_pair}-{combo_2_pair}.AYT*I+B/{combo[3]}{combo_3_pair}-{combo[3]}GHOWZEKL/{combo[4]}{combo}{combo_4_pair}-{combo_4_pair}AYT*I+B/{combo[5]}{combo_5_pair}-{combo[5]}GHOWZEKL;	Y:{system_0}/{system_1}/{system_2}/{system_3}/{system_4}/{system_5};	WM={wm_tc}	WMI={wmi}	SX SX SX SX SX SX  MSEC={speed}",
+        f">>    S:<1+>{combo[0]}{combo_0_pair}(5)-{combo_0_pair}.AYT*I+B(7)/{combo[1]}{combo_1_pair}-{combo[1]}GHOWZEKL/{combo[2]}{combo_2_pair}-{combo_2_pair}.AYT*I+B/{combo[3]}{combo_3_pair}-{combo[3]}GHOWZEKL/{combo[4]}{combo}{combo_4_pair}-{combo_4_pair}AYT*I+B/{combo[5]}{combo_5_pair}-{combo[5]}GHOWZEKL;	Y:{system_0}/{system_1}/{system_2}/{system_3}/{system_4}/{system_5};	WM={wm_tc}	WMI={wmi}	SX SX SX SX SX SX"
+    ]
+
+    return lines_440, lines_tc
 
 
-def make_plain_sintral(jtxt, colors, entries):
-    # colors=sort_colors(colors)
+def make_7_color_line(combo, speed, empty_speed, wm, wmi):
+    combo_0_pair = list(color_dict)[list(color_dict).index(combo[0]) + 8]
+    combo_1_pair = list(color_dict)[list(color_dict).index(combo[1]) + 8]
+    combo_2_pair = list(color_dict)[list(color_dict).index(combo[2]) + 8]
+    combo_3_pair = list(color_dict)[list(color_dict).index(combo[3]) + 8]
+    combo_4_pair = list(color_dict)[list(color_dict).index(combo[4]) + 8]
+    combo_5_pair = list(color_dict)[list(color_dict).index(combo[5]) + 8]
+    combo_6_pair = list(color_dict)[list(color_dict).index(combo[6]) + 8]
+    system_0 = systems[list(color_dict).index(combo[0])]
+    system_1 = systems[list(color_dict).index(combo[1])]
+    system_2 = systems[list(color_dict).index(combo[2])]
+    system_3 = systems[list(color_dict).index(combo[3])]
+    system_4 = systems[list(color_dict).index(combo[4])]
+    system_5 = systems[list(color_dict).index(combo[5])]
+    system_6 = systems[list(color_dict).index(combo[6])]
+
+    lines = [
+        f"<<	S:<1+>{combo[0]}{combo_0_pair}(5)-{combo_0_pair}.AYT*I+B(7)/{combo[1]}{combo_1_pair}-{combo[1]}GHOWZEKL/{combo[2]}{combo_2_pair}-{combo_2_pair}.AYT*I+B/{combo[3]}{combo_3_pair}-{combo[3]}GHOWZEKL;	Y:{system_0}/{system_1}/{system_2}/{system_3}/{system_4}/{system_5}/{system_6};	WM={wm}	WMI={wmi}		SX SX SX SX  MSEC={speed}",
+        f">>	S0 MSEC={empty_speed}",
+        f"<<    S:{combo[4]}{combo_4_pair}-{combo_4_pair}.AYT*I+B/{combo[5]}{combo_5_pair}-{combo[5]}GHOWZEKL/{combo[6]}{combo_6_pair}-{combo_6_pair}.AYT*I+B;				WM={wm}	WMI={wmi}		SX SX SX MSEC={speed}",
+        f">>	S:<1+>{combo[0]}{combo_0_pair}(5)-{combo_0_pair}.AYT*I+B(7)/{combo[1]}{combo_1_pair}-{combo[1]}GHOWZEKL/{combo[2]}{combo_2_pair}-{combo_2_pair}.AYT*I+B/{combo[3]}{combo_3_pair}-{combo[3]}GHOWZEKL;		WM={wm}		WMI={wmi}		SX SX SX SX ",
+        f"<<	S0 MSEC={empty_speed}",
+        f">>    S:{combo[4]}{combo_4_pair}-{combo_4_pair}.AYT*I+B/{combo[5]}{combo_5_pair}-{combo[5]}GHOWZEKL/{combo[5]}{combo_5_pair}-{combo_6_pair}.AYT*I+B;				WM={wm}	WMI={wmi}		SX SX SX MSEC={speed}",
+    ]
+
+    return lines
+
+
+def make_8_color_line(combo, speed, empty_speed, wm, wmi):
+    combo_0_pair = list(color_dict)[list(color_dict).index(combo[0]) + 8]
+    combo_1_pair = list(color_dict)[list(color_dict).index(combo[1]) + 8]
+    combo_2_pair = list(color_dict)[list(color_dict).index(combo[2]) + 8]
+    combo_3_pair = list(color_dict)[list(color_dict).index(combo[3]) + 8]
+    combo_4_pair = list(color_dict)[list(color_dict).index(combo[4]) + 8]
+    combo_5_pair = list(color_dict)[list(color_dict).index(combo[5]) + 8]
+    combo_6_pair = list(color_dict)[list(color_dict).index(combo[6]) + 8]
+    combo_7_pair = list(color_dict)[list(color_dict).index(combo[7]) + 8]
+    system_0 = systems[list(color_dict).index(combo[0])]
+    system_1 = systems[list(color_dict).index(combo[1])]
+    system_2 = systems[list(color_dict).index(combo[2])]
+    system_3 = systems[list(color_dict).index(combo[3])]
+    system_4 = systems[list(color_dict).index(combo[4])]
+    system_5 = systems[list(color_dict).index(combo[5])]
+    system_6 = systems[list(color_dict).index(combo[6])]
+    system_7 = systems[list(color_dict).index(combo[7])]
+
+    lines = [
+        f"<<	S:<1+>{combo[0]}{combo_0_pair}(5)-{combo_0_pair}.AYT*I+B(7)/{combo[1]}{combo_1_pair}-{combo[1]}GHOWZEKL/{combo[2]}{combo_2_pair}-{combo_2_pair}.AYT*I+B/{combo[3]}{combo_3_pair}-{combo[3]}GHOWZEKL;	Y:{system_0}/{system_1}/{system_2}/{system_3}/{system_4}/{system_5}/{system_6}/{system_7};	WM={wm}	WMI={wmi}		SX SX SX SX  MSEC={speed}",
+        f">>	S0 MSEC={empty_speed}",
+        f"<<    S:{combo[4]}{combo_4_pair}-{combo_4_pair}.AYT*I+B/{combo[5]}{combo_5_pair}-{combo[5]}GHOWZEKL/{combo[6]}{combo_6_pair}-{combo_6_pair}.AYT*I+B/{combo[7]}{combo_7_pair}-{combo[7]}GHOWZEKL;				WM={wm}	WMI={wmi}		SX SX SX MSEC={speed}",
+        f">>	S:<1+>{combo[0]}{combo_0_pair}(5)-{combo_0_pair}.AYT*I+B(7)/{combo[1]}{combo_1_pair}-{combo[1]}GHOWZEKL/{combo[2]}{combo_2_pair}-{combo_2_pair}.AYT*I+B/{combo[3]}{combo_3_pair}-{combo[3]}GHOWZEKL;		WM={wm}		WMI={wmi}		SX SX SX SX ",
+        f"<<	S0 MSEC={empty_speed}",
+        f">>    S:{combo[4]}{combo_4_pair}-{combo_4_pair}.AYT*I+B/{combo[5]}{combo_5_pair}-{combo[5]}GHOWZEKL/{combo[5]}{combo_5_pair}-{combo_6_pair}.AYT*I+B/{combo[7]}{combo_7_pair}-{combo[7]}GHOWZEKL;;				WM={wm}	WMI={wmi}		SX SX SX MSEC={speed}",
+    ]
+
+    return lines
+
+
+def make_plain_sintral(jtxt, entries):
     '''
-    
     Why did I make this?
-    
+    # colors=sort_colors(colors)
     pattern_color_dict={}
     for i in range(len(colors)):
         pattern_color_dict[colors[i]]=(systems[i],list(base_colors_8.values)[i][])
@@ -821,6 +898,55 @@ def make_plain_sintral(jtxt, colors, entries):
                     sintral2x_middle += f"{line}\n"
                 sintral2x_middle += f"REPEND\n"
 
+            if num_colors == 6:
+                lines_440, lines_tc = make_5_color_line(last_line, entries['speed'],
+                                                        entries['empty_speed'],
+                                                        entries['wm36'],
+                                                        entries['wm56'], entries['wmi'])
+
+                sintral_middle += f"REP*{int(rep_count / 2)}\n"
+                for line in lines_440:
+                    sintral_middle += f"{line}\n"
+                sintral_middle += f"REPEND\n"
+
+                sintral2x_middle += f"REP*{int(rep_count / 2)}\n"
+                for line in lines_tc:
+                    sintral2x_middle += f"{line}\n"
+                sintral2x_middle += f"REPEND\n"
+
+            if num_colors == 7:
+                lines_440, lines_tc = make_5_color_line(last_line, entries['speed'],
+                                                        entries['empty_speed'],
+                                                        entries['wm36'],
+                                                        entries['wm56'], entries['wmi'])
+
+                sintral_middle += f"REP*{int(rep_count / 2)}\n"
+                for line in lines_440:
+                    sintral_middle += f"{line}\n"
+                sintral_middle += f"REPEND\n"
+
+                sintral2x_middle += f"REP*{int(rep_count / 2)}\n"
+                for line in lines_tc:
+                    sintral2x_middle += f"{line}\n"
+                sintral2x_middle += f"REPEND\n"
+
+            if num_colors == 8:
+
+                lines_440, lines_tc = make_5_color_line(last_line, entries['speed'],
+                                                        entries['empty_speed'],
+                                                        entries['wm36'],
+                                                        entries['wm56'], entries['wmi'])
+
+                sintral_middle += f"REP*{int(rep_count / 2)}\n"
+                for line in lines_440:
+                    sintral_middle += f"{line}\n"
+                sintral_middle += f"REPEND\n"
+
+                sintral2x_middle += f"REP*{int(rep_count / 2)}\n"
+                for line in lines_tc:
+                    sintral2x_middle += f"{line}\n"
+                sintral2x_middle += f"REPEND\n"
+
             rep_count = 0
         else:
             rep_count += 1
@@ -843,11 +969,12 @@ class MyFirstGUI:
         self.master = master
         master.title("A simple GUI")
 
-        self.plain_folder_button = Button(master, text="Do a Whole Folder. Not Personalized", command=self.plain_folder,
+        self.plain_folder_button = Button(master, text="Do a Whole Folder All The Way. Not Personalized",
+                                          command=self.plain_folder,
                                           highlightbackground="#7eb6ff")
         self.plain_folder_button.grid(row=0, column=0, columnspan=2)
 
-        self.plain_button = Button(master, text="Do a Single. Not Personalized", command=self.plain,
+        self.plain_button = Button(master, text="Do a Single All The Way. Not Personalized", command=self.plain,
                                    highlightbackground="#7EB6FF")
         self.plain_button.grid(row=1, column=0, columnspan=2)
 
@@ -858,79 +985,100 @@ class MyFirstGUI:
         # DITTO HERE
         self.pers_button = Button(master, text="Do a Single. Personalized", command=self.plain,
                                   highlightbackground="#838EDE")
-        self.pers_button.grid(row=3, column=0, columnspan=2, pady=(0, 20))
+        self.pers_button.grid(row=3, column=0, columnspan=2, )
+
+        self.birdseye_button = Button(master, text="Do a Single. Stop Before Color Reduction.",
+                                      command=self.just_birdseye,
+                                      highlightbackground="#7eb8ff")
+        self.birdseye_button.grid(row=4, column=0, columnspan=2)
+
+        self.sintral_button = Button(master, text="Make a Sintral", command=self.just_sintral,
+                                     highlightbackground="#7EB8FF")
+        self.sintral_button.grid(row=5, column=0, columnspan=2, pady=(0, 20))
 
         self.speed_label = Label(master, text="Speed", bg="#8FBC8F")
         self.speed_entry = Entry(master)
         self.speed_entry.insert(0, ".65")
-        self.speed_label.grid(row=4, column=0)
-        self.speed_entry.grid(row=4, column=1)
+        self.speed_label.grid(row=6, column=0)
+        self.speed_entry.grid(row=6, column=1)
 
         self.empty_speed_label = Label(master, text="Empty Stroke Speed", bg="#8FBC8F")
         self.empty_speed_entry = Entry(master)
         self.empty_speed_entry.insert(0, "1.0")
-        self.empty_speed_label.grid(row=5, column=0)
-        self.empty_speed_entry.grid(row=5, column=1)
+        self.empty_speed_label.grid(row=7, column=0)
+        self.empty_speed_entry.grid(row=7, column=1)
 
         self.wm32x_label = Label(master, text="3 Color TC WM", bg="#90EE90")
         self.wm32x_entry = Entry(master)
         self.wm32x_entry.insert(0, "8.5")
-        self.wm32x_label.grid(row=6, column=0)
-        self.wm32x_entry.grid(row=6, column=1)
+        self.wm32x_label.grid(row=8, column=0)
+        self.wm32x_entry.grid(row=8, column=1)
 
         self.wm36_label = Label(master, text="3-6 Color 440 WM", bg="#90EE90")
         self.wm36_entry = Entry(master)
         self.wm36_entry.insert(0, "7")
-        self.wm36_label.grid(row=7, column=0)
-        self.wm36_entry.grid(row=7, column=1)
+        self.wm36_label.grid(row=9, column=0)
+        self.wm36_entry.grid(row=9, column=1)
 
         self.wm56_label = Label(master, text="5-6 Color TC WM", bg="#90EE90")
         self.wm56_entry = Entry(master)
         self.wm56_entry.insert(0, "7.2")
-        self.wm56_label.grid(row=8, column=0)
-        self.wm56_entry.grid(row=8, column=1)
+        self.wm56_label.grid(row=10, column=0)
+        self.wm56_entry.grid(row=10, column=1)
 
         self.wm7_label = Label(master, text="7 Color WM", bg="#90EE90")
         self.wm7_entry = Entry(master)
         self.wm7_entry.insert(0, "7.3")
-        self.wm7_label.grid(row=9, column=0)
-        self.wm7_entry.grid(row=9, column=1)
+        self.wm7_label.grid(row=11, column=0)
+        self.wm7_entry.grid(row=11, column=1)
 
         self.wm8_label = Label(master, text="8 Color TC WM", bg="#90EE90")
         self.wm8_entry = Entry(master)
         self.wm8_entry.insert(0, "7.5")
-        self.wm8_label.grid(row=10, column=0)
-        self.wm8_entry.grid(row=10, column=1)
+        self.wm8_label.grid(row=12, column=0)
+        self.wm8_entry.grid(row=12, column=1)
 
         self.wmi_label = Label(master, text="3-6 Color WMI", bg="#71C671")
         self.wmi_entry = Entry(master)
         self.wmi_entry.insert(0, "11")
-        self.wmi_label.grid(row=11, column=0)
-        self.wmi_entry.grid(row=11, column=1)
+        self.wmi_label.grid(row=13, column=0)
+        self.wmi_entry.grid(row=13, column=1)
 
         self.wmi78_label = Label(master, text="2x and 7-8 Color WMI", bg="#71C671")
         self.wmi78_entry = Entry(master)
         self.wmi78_entry.insert(0, "12")
-        self.wmi78_label.grid(row=12, column=0)
-        self.wmi78_entry.grid(row=12, column=1)
+        self.wmi78_label.grid(row=14, column=0)
+        self.wmi78_entry.grid(row=14, column=1)
 
-        self.front_stitch_label = Label(master, text="Front Stitch Setting", bg="#699864")
+        self.front_stitch_label = Label(master, text="NP 5", bg="#699864")
         self.front_stitch_entry = Entry(master)
         self.front_stitch_entry.insert(0, "5")
-        self.front_stitch_label.grid(row=13, column=0)
-        self.front_stitch_entry.grid(row=13, column=1)
+        self.front_stitch_label.grid(row=15, column=0)
+        self.front_stitch_entry.grid(row=15, column=1)
 
-        self.back_stitch_label = Label(master, text="Back Stitch Setting", bg="#699864")
+        self.back_stitch_label = Label(master, text="NP 6", bg="#699864")
         self.back_stitch_entry = Entry(master)
         self.back_stitch_entry.insert(0, "8")
-        self.back_stitch_label.grid(row=14, column=0)
-        self.back_stitch_entry.grid(row=14, column=1)
+        self.back_stitch_label.grid(row=16, column=0)
+        self.back_stitch_entry.grid(row=16, column=1)
 
         self.close_button = Button(master, text="Close", command=master.quit, highlightbackground="#B0E2FF")
-        self.close_button.grid(row=15, column=0, pady=30, columnspan=2)
+        self.close_button.grid(row=17, column=0, pady=30, columnspan=2)
 
     def plain(self):
 
+        """
+        What sintral color combations are each of these used it?
+        Speed: 3,4,5,6,7,8
+        Empty Speed: 5,6,7,8
+        WM32X: 3
+        WM36: 3,4,5,6
+        WM56: 5,6
+        WM7: 7
+        WM8: 8
+        WMI: 3,4,5,6
+        WMI78: 3,7,8
+        """
         entries = {"speed": self.speed_entry.get(),
                    "empty_speed": self.empty_speed_entry.get(),
                    "wm32x": self.wm32x_entry.get(),
@@ -963,7 +1111,7 @@ class MyFirstGUI:
         os.chdir('..')
         sheet = make_label(colors)
         sheet.save(f"{new_path}/{filename}-color_label.pdf")
-        sintral, sintral2x = make_plain_sintral(compressed_txt, colors, entries)
+        sintral, sintral2x = make_plain_sintral(compressed_txt, entries)
         new_txt_file = open(f"{new_path}/{filename}-sintral440.txt", 'w')
         new_txt_file.write(sintral)
         new_txt_file.close()
@@ -998,6 +1146,58 @@ class MyFirstGUI:
                 os.chdir('..')
                 sheet = make_label(colors)
                 sheet.save(f"{new_path}/{filename1}color_label.pdf")
+
+    def just_birdseye(self):
+        file_path = filedialog.askopenfilename()
+        filename = path_leaf(file_path)
+        filename = filename[:-4]
+        img, colors = read(file_path)
+        barcoded, reduction_counts = make_barcode(img, colors)
+        reduction_count = calculate_reduction(reduction_counts)
+        messagebox.showinfo("Reduction", f"Remove {int(reduction_count)} lines")
+        folder_name = str(askstring("Folder Name", "Name the new folder for this pattern"))
+        new_path = os.path.join(os.path.dirname(file_path), folder_name)
+        os.makedirs(new_path)
+        barcoded.save(f"{new_path}/{filename}-birdseye.bmp")
+        sheet = make_label(colors)
+        sheet.save(f"{new_path}/{filename}-color_label.pdf")
+
+    def just_sintral(self):
+
+        entries = {"speed": self.speed_entry.get(),
+                   "empty_speed": self.empty_speed_entry.get(),
+                   "wm32x": self.wm32x_entry.get(),
+                   "wm36": self.wm36_entry.get(),
+                   "wm56": self.wm56_entry.get(),
+                   "wm7": self.wm7_entry.get(),
+                   "wm8": self.wm8_entry.get(),
+                   "wmi": self.wmi_entry.get(),
+                   "wmi78": self.wmi78_entry.get(),
+                   "front_stitch": self.front_stitch_entry.get(),
+                   "back_stitch": self.back_stitch_entry.get()}
+
+        file_path = filedialog.askopenfilename()
+        filename = path_leaf(file_path)
+        filename = filename[:-4]
+        img = Image.open(file_path)
+        #rgb_im = img.convert('RGB')
+        #pic = img.load()
+        compressed_txt = convert_to_jtxt(img)
+        folder_name = str(askstring("Folder Name", "Name the new folder for this pattern"))
+        new_path = os.path.join(os.path.dirname(file_path), folder_name)
+        os.makedirs(new_path)
+        new_txt_file = open(f"{new_path}/{filename}_J.txt", 'w')
+        new_txt_file.write(compressed_txt)
+        new_txt_file.close()
+        # not sure if this is necessary
+        os.chdir('..')
+        sintral, sintral2x = make_plain_sintral(compressed_txt, entries)
+        new_txt_file = open(f"{new_path}/{filename}-sintral440.txt", 'w')
+        new_txt_file.write(sintral)
+        new_txt_file.close()
+        new_txt_file = open(f"{new_path}/{filename}-sintralTC.txt", 'w')
+        new_txt_file.write(sintral2x)
+        new_txt_file.close()
 
 
 root = Tk()
