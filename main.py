@@ -3,7 +3,7 @@ from tkinter import *
 import os
 import os.path, sys
 from tkinter import messagebox, filedialog
-from tkinter.messagebox import askokcancel, showinfo, WARNING, QUESTION
+from tkinter.messagebox import askokcancel, showinfo, WARNING, QUESTION, askyesno
 from tkinter.simpledialog import askstring
 import pandas as pd
 import labels
@@ -148,13 +148,17 @@ def convert_colors_to_knitting(pic, size_num, colors):
     :param colors: (list of RGB) Colors in the bitmap [Purple,Yellow,Pink]
     :return: New bitmap that has been birdseyed (.G,AH,YO)
     """
+    print(size_num)
+    print(colors)
     pixels = pic.load()
     oddity = 0
     for x in range(size_num[0]):
         for y in range(size_num[1]):
             current_color = pixels[x, y]
             color_index = colors.index(current_color)
-            if oddity % 2 != 0:
+            if current_color == color_dict["P"]:
+                knitting_color=color_dict["P"]
+            elif oddity % 2 != 0:
                 knitting_color = list(color_dict.values())[color_index + 8]
             else:
                 knitting_color = list(color_dict.values())[color_index]
@@ -451,11 +455,12 @@ def remove_lines(bitmap, line_begin, reduction_count):
         remove_lines(bitmap, line_begin, reduction_count)
 
 
-def read(file_path):
+def read(file_path, design_colors=None):
     """
     First function called to introduce the bitmap into the program
     --------------
     :param file_path: Gathered from a file_chooser()
+    :param design_colors: list of colors. for use when reading a personalization grid where color order is already established
     :return: list color colors & The image cropped, flipped, and re-colored to main knitting colors
     """
     large = (483, 510)
@@ -465,7 +470,7 @@ def read(file_path):
     rgb_im = img.convert('RGB')
     pic = img.load()
     size_num = rgb_im.size
-
+    grid_correction = 0
     # Check that the size is right
     if size_num == large:
         size = 'large'
@@ -474,8 +479,12 @@ def read(file_path):
     elif size_num == small:
         size = 'small'
     else:
-        messagebox.showinfo("Uh-oh,", f":( The dimensions are wrong.")
-        return
+        result = askyesno("Grid?", "Is this a personalization grid?")
+        if result is False:
+            messagebox.showinfo("Uh-oh,", f"Oh. Well, the dimensions are wrong.")
+            return
+        else:
+            grid_correction = 5
 
     # Check to see if there are unknown colors
     for x in range(size_num[0]):
@@ -486,16 +495,19 @@ def read(file_path):
     messagebox.showinfo("Congrats", "No unknown colors! Nice")
 
     # Read the color coding in the bottom left corner or scan it to get them.
-    colors = read_color_code(pic, size_num)
-    if not colors:
-        messagebox.showinfo("Don't worry", f"There's no color code for this one. I'll scan it myself.")
-
-    colors = read_bitmap_for_colors(pic, size_num)
+    if not design_colors:
+        colors = read_color_code(pic, size_num)
+        if not colors:
+            messagebox.showinfo("Don't worry", f"There's no color code for this one. I'll scan it myself.")
+        colors = read_bitmap_for_colors(pic, size_num)
+    else:
+        colors = design_colors
 
     # Trim the edges and rotate
     height = size_num[1] - 15
-    img2 = img.crop((5, 5, 478, height))
-    img2 = img2.transpose(PIL.Image.FLIP_TOP_BOTTOM)
+    img2 = img.crop((5 - grid_correction, 5 - grid_correction, 478 - grid_correction, height))
+    if grid_correction == 0:
+        img2 = img2.transpose(PIL.Image.FLIP_TOP_BOTTOM)
     size_num = img2.size
     # pic=img2.load()
 
@@ -504,7 +516,7 @@ def read(file_path):
     return img3, colors
 
 
-def convert_to_jtxt(image):
+def convert_to_jtxt(image,start_line=None):
     """
     Takes the completed birdseyed bitmap and converts it to Run-Length Encoded _J.txt
     --------------
@@ -514,6 +526,7 @@ def convert_to_jtxt(image):
     pixels = image.load()
     size = image.size
     big_string = ""
+    # grid_correction
     for y in range(size[1]):
         string = ""
         for x in range(481):
@@ -521,8 +534,11 @@ def convert_to_jtxt(image):
             string += list(color_dict.keys())[list(color_dict.values()).index(current_color)]
         big_string += string + '\n'
 
-    txt_list = big_string.split('\n')
-    line_num = 1002
+    txt_list = big_string.split('\n')[:-1]
+    if start_line:
+        line_num=start_line
+    else:
+        line_num = 1002
     compressed = ""
     for line in txt_list:
         string = line
@@ -556,7 +572,7 @@ def convert_to_jtxt(image):
                     i += 1
         compressed = compressed + str(line_num) + " " + new_string + "\n"
         line_num += 1
-    return compressed
+    return compressed[:compressed.rfind('\n')], line_num
 
 
 def path_leaf(path):
@@ -870,7 +886,7 @@ def make_plain_sintral(jtxt, entries):
                     sintral2x_middle += f"{line2_440}\n"
 
             if num_colors == 4:
-                line1, line2 = make_4_color_line()
+                line1, line2 = make_4_color_line(last_line,entries['speed'],entries['wm36'],entries['wmi'])
 
                 sintral_middle += f"REP*{int(rep_count / 2)}\n"
                 sintral_middle += f"{line1}\n"
@@ -982,8 +998,8 @@ class MyFirstGUI:
         self.pers_folder_button = Button(master, text="Do a Whole Folder. Personalized", command=self.plain_folder,
                                          highlightbackground="#838EDE")
         self.pers_folder_button.grid(row=2, column=0, columnspan=2)
-        # DITTO HERE
-        self.pers_button = Button(master, text="Do a Single. Personalized", command=self.plain,
+
+        self.pers_button = Button(master, text="Do a Single. Personalized", command=self.pers_single,
                                   highlightbackground="#838EDE")
         self.pers_button.grid(row=3, column=0, columnspan=2, )
 
@@ -1103,7 +1119,7 @@ class MyFirstGUI:
         new_path = os.path.join(os.path.dirname(file_path), folder_name)
         os.makedirs(new_path)
         reduced.save(f"{new_path}/{filename}-birdseye.bmp")
-        compressed_txt = convert_to_jtxt(reduced)
+        compressed_txt,line_num = convert_to_jtxt(reduced)
         new_txt_file = open(f"{new_path}/{filename}_J.txt", 'w')
         new_txt_file.write(compressed_txt)
         new_txt_file.close()
@@ -1180,8 +1196,8 @@ class MyFirstGUI:
         filename = path_leaf(file_path)
         filename = filename[:-4]
         img = Image.open(file_path)
-        #rgb_im = img.convert('RGB')
-        #pic = img.load()
+        # rgb_im = img.convert('RGB')
+        # pic = img.load()
         compressed_txt = convert_to_jtxt(img)
         folder_name = str(askstring("Folder Name", "Name the new folder for this pattern"))
         new_path = os.path.join(os.path.dirname(file_path), folder_name)
@@ -1191,6 +1207,73 @@ class MyFirstGUI:
         new_txt_file.close()
         # not sure if this is necessary
         os.chdir('..')
+        sintral, sintral2x = make_plain_sintral(compressed_txt, entries)
+        new_txt_file = open(f"{new_path}/{filename}-sintral440.txt", 'w')
+        new_txt_file.write(sintral)
+        new_txt_file.close()
+        new_txt_file = open(f"{new_path}/{filename}-sintralTC.txt", 'w')
+        new_txt_file.write(sintral2x)
+        new_txt_file.close()
+
+    def pers_single(self):
+
+        entries = {"speed": self.speed_entry.get(),
+                   "empty_speed": self.empty_speed_entry.get(),
+                   "wm32x": self.wm32x_entry.get(),
+                   "wm36": self.wm36_entry.get(),
+                   "wm56": self.wm56_entry.get(),
+                   "wm7": self.wm7_entry.get(),
+                   "wm8": self.wm8_entry.get(),
+                   "wmi": self.wmi_entry.get(),
+                   "wmi78": self.wmi78_entry.get(),
+                   "front_stitch": self.front_stitch_entry.get(),
+                   "back_stitch": self.back_stitch_entry.get()}
+
+        showinfo("Bitmap", "Give me the main design bitmap first.")
+        file_path = filedialog.askopenfilename()
+        filename = path_leaf(file_path)
+        filename = filename[:-4]
+        img, colors = read(file_path)
+        barcoded, reduction_counts = make_barcode(img, colors)
+        reduction_count = calculate_reduction(reduction_counts)
+        line_begin = askstring("Begin Reduction", "How far in from the edge should I start my removal?")
+        reduced = remove_lines(barcoded, line_begin, reduction_count)
+
+        # Do the same thing now for the personalization grid
+        # But no reductions
+        showinfo("Grid", "Give me the personalization grid now.")
+        grid_file_path = filedialog.askopenfilename()
+        grid_filename = path_leaf(grid_file_path)
+        grid_filename = grid_filename[:-4]
+        grid_img, grid_colors = read(grid_file_path, design_colors=colors)
+        grid_barcoded, reduction_counts = make_barcode(grid_img, colors)
+
+        # Save both new birdseyed bitmaps
+        folder_name = str(askstring("Folder Name", "Name the new folder for this pattern"))
+        new_path = os.path.join(os.path.dirname(file_path), folder_name)
+        os.makedirs(new_path)
+        reduced.save(f"{new_path}/{filename}-birdseye.bmp")
+        grid_barcoded.save(f"{new_path}/{grid_filename}-birdseye.bmp")
+
+        compressed_txt, end_line_num = convert_to_jtxt(reduced)
+        compressed_grid, end_line_num = convert_to_jtxt(grid_barcoded,start_line=end_line_num)
+        new_txt_file = open(f"{new_path}/{filename}_J.txt", 'w')
+        new_txt_file.write(compressed_txt)
+        new_txt_file.close()
+        grid_new_txt_file = open(f"{new_path}/{grid_filename}_J.txt", 'w')
+        grid_new_txt_file.write(compressed_grid)
+        grid_new_txt_file.close()
+
+        #make the new combined file
+        combined=compressed_txt + "\n" + compressed_grid
+        combined_new_txt_file = open(f"{new_path}/{filename} Combined_J.txt", 'w')
+        combined_new_txt_file.write(combined)
+        combined_new_txt_file.close()
+
+        # not sure if this is necessary
+        os.chdir('..')
+        sheet = make_label(colors)
+        sheet.save(f"{new_path}/{filename}-color_label.pdf")
         sintral, sintral2x = make_plain_sintral(compressed_txt, entries)
         new_txt_file = open(f"{new_path}/{filename}-sintral440.txt", 'w')
         new_txt_file.write(sintral)
