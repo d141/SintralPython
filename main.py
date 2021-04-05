@@ -1,3 +1,4 @@
+import math
 import ntpath
 from tkinter import *
 import os
@@ -148,24 +149,42 @@ def convert_colors_to_knitting(pic, size_num, colors):
     :param colors: (list of RGB) Colors in the bitmap [Purple,Yellow,Pink]
     :return: New bitmap that has been birdseyed (.G,AH,YO)
     """
-    print(size_num)
-    print(colors)
     pixels = pic.load()
+    img_array = np.array(pic, dtype=np.uint8)
     oddity = 0
+    this_line = []
+    last_line = []
+    found_center = False
+    streak = 0
     for x in range(size_num[0]):
+        if not found_center:
+            this_line = img_array[x]
+            if x > 0 and (this_line == last_line).all():
+                streak += 1
+            if x > 0 and (this_line != last_line).any() and streak > 40:
+                print("streak",streak)
+                print("x",x)
+                center = ((streak / 2) - 20)+(x-streak)
+                found_center = True
+            if x>0 and (this_line != last_line).any() and streak<40:
+                streak = 0
         for y in range(size_num[1]):
             current_color = pixels[x, y]
-            color_index = colors.index(current_color)
             if current_color == color_dict["P"]:
-                knitting_color=color_dict["P"]
-            elif oddity % 2 != 0:
-                knitting_color = list(color_dict.values())[color_index + 8]
+                knitting_color = color_dict["P"]
             else:
-                knitting_color = list(color_dict.values())[color_index]
+                color_index = colors.index(current_color)
+                if oddity % 2 != 0:
+                    knitting_color = list(color_dict.values())[color_index + 8]
+                else:
+                    knitting_color = list(color_dict.values())[color_index]
             pixels[x, y] = knitting_color
             oddity += 1
         oddity += 1
-    return pic
+        last_line = this_line
+    if not found_center:
+        center = 0
+    return pic, center
 
 
 def sort_colors(colors):
@@ -206,6 +225,8 @@ def make_barcode(img, colors):
         colors_in_row = []
         for x in range(473):
             current_color = pixels[x + 8, y]
+            if current_color == color_dict["P"]:
+                break
             current_color_pair = ()
             if current_color not in base_colors_8.keys():
                 current_color_pair = list(color_dict.values())[list(color_dict.values()).index(current_color) - 8]
@@ -235,7 +256,6 @@ def make_barcode(img, colors):
                 elif current_color in pair_8:
                     colors_in_row.append(pair_8[0])
                     num_colors_in_row += 1
-
         colors_in_row = sort_colors(colors_in_row)
         reduction_counts[num_colors_in_row - 1] += 1
         go_backwards = False
@@ -512,11 +532,11 @@ def read(file_path, design_colors=None):
     # pic=img2.load()
 
     # Convert the bitmap to it's knitting colors
-    img3 = convert_colors_to_knitting(img2, size_num, colors)
-    return img3, colors
+    img3, center = convert_colors_to_knitting(img2, size_num, colors)
+    return img3, colors, center
 
 
-def convert_to_jtxt(image,start_line=None):
+def convert_to_jtxt(image, start_line=None):
     """
     Takes the completed birdseyed bitmap and converts it to Run-Length Encoded _J.txt
     --------------
@@ -536,7 +556,7 @@ def convert_to_jtxt(image,start_line=None):
 
     txt_list = big_string.split('\n')[:-1]
     if start_line:
-        line_num=start_line
+        line_num = start_line
     else:
         line_num = 1002
     compressed = ""
@@ -573,6 +593,16 @@ def convert_to_jtxt(image,start_line=None):
         compressed = compressed + str(line_num) + " " + new_string + "\n"
         line_num += 1
     return compressed[:compressed.rfind('\n')], line_num
+
+
+def find_ja1(grid):
+    lines = grid.split('\n')
+    index = 1
+    ja1_list = ""
+    for line in lines:
+        if "P" in line:
+            ja1_list += f"IF #50={index}: JA1={str(int(line[0:4]) - 1)}\n"
+    return ja1_list
 
 
 def path_leaf(path):
@@ -830,17 +860,21 @@ def make_8_color_line(combo, speed, empty_speed, wm, wmi):
     return lines
 
 
-def make_plain_sintral(jtxt, entries):
+def make_plain_sintral(jtxt, entries, ja1=None):
     '''
-    Why did I make this?
-    # colors=sort_colors(colors)
+
     pattern_color_dict={}
     for i in range(len(colors)):
         pattern_color_dict[colors[i]]=(systems[i],list(base_colors_8.values)[i][])
 '''
     sintral_top, sintral2x_top = add_top_of_sintral()
-
-    ##### Make sintral_middle
+    # Why did I make this?
+    # colors=sort_colors(colors)
+    grid_flag = False
+    if ja1:
+        grid_flag = True
+        streak = 0
+    # Make sintral_middle
     lines = jtxt.split('\n')
     last_line = ""
     idx = 0
@@ -859,7 +893,6 @@ def make_plain_sintral(jtxt, entries):
         if this_line != last_line and idx > 0:
             # We have a change in color combinations
             num_colors = len(last_line)
-            print(num_colors, rep_count)
 
             if num_colors == 3:
                 line1_440, line2_440, line1_TC, line2_TC = make_3_color_line(last_line, entries['speed'],
@@ -886,7 +919,7 @@ def make_plain_sintral(jtxt, entries):
                     sintral2x_middle += f"{line2_440}\n"
 
             if num_colors == 4:
-                line1, line2 = make_4_color_line(last_line,entries['speed'],entries['wm36'],entries['wmi'])
+                line1, line2 = make_4_color_line(last_line, entries['speed'], entries['wm36'], entries['wmi'])
 
                 sintral_middle += f"REP*{int(rep_count / 2)}\n"
                 sintral_middle += f"{line1}\n"
@@ -978,7 +1011,11 @@ def make_plain_sintral(jtxt, entries):
 
     return sintral, sintral2x
 
-
+def add_pers_barcode(bitmap,start_pers):
+    pixels=bitmap.load()
+    pixels[0,start_pers]=color_dict["P"]
+    bitmap.show()
+    return bitmap
 class MyFirstGUI:
 
     def __init__(self, master):
@@ -1110,7 +1147,7 @@ class MyFirstGUI:
         file_path = filedialog.askopenfilename()
         filename = path_leaf(file_path)
         filename = filename[:-4]
-        img, colors = read(file_path)
+        img, colors, center = read(file_path)
         barcoded, reduction_counts = make_barcode(img, colors)
         reduction_count = calculate_reduction(reduction_counts)
         line_begin = askstring("Begin Reduction", "How far in from the edge should I start my removal?")
@@ -1119,7 +1156,7 @@ class MyFirstGUI:
         new_path = os.path.join(os.path.dirname(file_path), folder_name)
         os.makedirs(new_path)
         reduced.save(f"{new_path}/{filename}-birdseye.bmp")
-        compressed_txt,line_num = convert_to_jtxt(reduced)
+        compressed_txt, line_num = convert_to_jtxt(reduced)
         new_txt_file = open(f"{new_path}/{filename}_J.txt", 'w')
         new_txt_file.write(compressed_txt)
         new_txt_file.close()
@@ -1145,7 +1182,7 @@ class MyFirstGUI:
             if filename.endswith(".bmp") or filename.endswith(".Bmp"):
                 messagebox.showinfo("Working", f"We're about to work on {filename}")
                 file_path = os.fsdecode(os.path.join(directory, file))
-                img, colors = read(file_path)
+                img, colors, center = read(file_path)
                 barcoded, reduction_counts = make_barcode(img, colors)
                 reduction_count = calculate_reduction(reduction_counts)
                 line_begin = askstring("Begin Reduction", "How far in from the edge should I start my removal?")
@@ -1167,7 +1204,7 @@ class MyFirstGUI:
         file_path = filedialog.askopenfilename()
         filename = path_leaf(file_path)
         filename = filename[:-4]
-        img, colors = read(file_path)
+        img, colors, center = read(file_path)
         barcoded, reduction_counts = make_barcode(img, colors)
         reduction_count = calculate_reduction(reduction_counts)
         messagebox.showinfo("Reduction", f"Remove {int(reduction_count)} lines")
@@ -1233,19 +1270,21 @@ class MyFirstGUI:
         file_path = filedialog.askopenfilename()
         filename = path_leaf(file_path)
         filename = filename[:-4]
-        img, colors = read(file_path)
+        img, colors, center = read(file_path)
         barcoded, reduction_counts = make_barcode(img, colors)
         reduction_count = calculate_reduction(reduction_counts)
+        start_pers=center-(reduction_count/2)
+        start_pers = math.floor(start_pers / 2.) * 2
         line_begin = askstring("Begin Reduction", "How far in from the edge should I start my removal?")
         reduced = remove_lines(barcoded, line_begin, reduction_count)
-
+        reduced=add_pers_barcode(reduced,start_pers)
         # Do the same thing now for the personalization grid
         # But no reductions
         showinfo("Grid", "Give me the personalization grid now.")
         grid_file_path = filedialog.askopenfilename()
         grid_filename = path_leaf(grid_file_path)
         grid_filename = grid_filename[:-4]
-        grid_img, grid_colors = read(grid_file_path, design_colors=colors)
+        grid_img, grid_colors, center = read(grid_file_path, design_colors=colors)
         grid_barcoded, reduction_counts = make_barcode(grid_img, colors)
 
         # Save both new birdseyed bitmaps
@@ -1256,7 +1295,7 @@ class MyFirstGUI:
         grid_barcoded.save(f"{new_path}/{grid_filename}-birdseye.bmp")
 
         compressed_txt, end_line_num = convert_to_jtxt(reduced)
-        compressed_grid, end_line_num = convert_to_jtxt(grid_barcoded,start_line=end_line_num)
+        compressed_grid, end_line_num = convert_to_jtxt(grid_barcoded, start_line=end_line_num)
         new_txt_file = open(f"{new_path}/{filename}_J.txt", 'w')
         new_txt_file.write(compressed_txt)
         new_txt_file.close()
@@ -1264,8 +1303,8 @@ class MyFirstGUI:
         grid_new_txt_file.write(compressed_grid)
         grid_new_txt_file.close()
 
-        #make the new combined file
-        combined=compressed_txt + "\n" + compressed_grid
+        # make the new combined file
+        combined = compressed_txt + "\n" + compressed_grid
         combined_new_txt_file = open(f"{new_path}/{filename} Combined_J.txt", 'w')
         combined_new_txt_file.write(combined)
         combined_new_txt_file.close()
@@ -1274,7 +1313,8 @@ class MyFirstGUI:
         os.chdir('..')
         sheet = make_label(colors)
         sheet.save(f"{new_path}/{filename}-color_label.pdf")
-        sintral, sintral2x = make_plain_sintral(compressed_txt, entries)
+        ja1 = find_ja1(compressed_grid)
+        sintral, sintral2x = make_plain_sintral(compressed_txt, entries, ja1)
         new_txt_file = open(f"{new_path}/{filename}-sintral440.txt", 'w')
         new_txt_file.write(sintral)
         new_txt_file.close()
