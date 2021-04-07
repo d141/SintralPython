@@ -260,7 +260,7 @@ def make_barcode(img, colors):
         reduction_counts[num_colors_in_row - 1] += 1
         go_backwards = False
 
-        if colors_in_row != last_row and y > 0 and y % 2 == 0:
+        if colors_in_row != last_row and y > 0 and y % 2 != 0:
             if len(last_row) == num_colors_in_row:
                 in_first = set(colors_in_row)
                 in_second = set(last_row)
@@ -604,6 +604,7 @@ def find_ja1(grid):
             ja1_list += f"IF #50={index}: JA1={str(int(line[0:4]) - 1)}\n"
     return ja1_list
 
+#def add_ja1(list)
 
 def path_leaf(path):
     """
@@ -882,6 +883,7 @@ def make_plain_sintral(jtxt, entries, ja1=None):
     sintral_middle = ""
     sintral2x_middle = ""
     for line in lines:
+        print(line)
         this_line = ""
         line_slice = line[5:13]
         for char in line_slice:
@@ -889,10 +891,24 @@ def make_plain_sintral(jtxt, entries, ja1=None):
                 break
             else:
                 this_line += char
-
+        pers_start=False
+        pers_stop=False
         if this_line != last_line and idx > 0:
             # We have a change in color combinations
             num_colors = len(last_line)
+
+            if this_line[0] == 'P':
+                pers_start = True
+                print("yes")
+                this_line = last_line
+                start_line = int(line[0:4])
+                lines[idx+40] = lines[idx+40][0:5]+'X'+lines[idx+40][6:]
+
+            if this_line[0] == 'X':
+                pers_stop = True
+                rep_count += 2
+                this_line = last_line
+                stop_line = str(start_line + 40)
 
             if num_colors == 3:
                 line1_440, line2_440, line1_TC, line2_TC = make_3_color_line(last_line, entries['speed'],
@@ -995,6 +1011,15 @@ def make_plain_sintral(jtxt, entries, ja1=None):
                 for line in lines_tc:
                     sintral2x_middle += f"{line}\n"
                 sintral2x_middle += f"REPEND\n"
+
+            if pers_start:
+                sintral_middle += ja1
+                sintral2x_middle += ja1
+                pers_start = False
+            if pers_stop:
+                sintral_middle += f"JA1 = {stop_line}\n"
+                sintral2x_middle += f"JA1 = {stop_line}\n"
+                pers_stop = False
 
             rep_count = 0
         else:
