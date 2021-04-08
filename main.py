@@ -1,20 +1,18 @@
 import math
 import ntpath
-from tkinter import *
 import os
-import os.path, sys
-from tkinter import messagebox, filedialog
-from tkinter.messagebox import askokcancel, showinfo, WARNING, QUESTION, askyesno
-from tkinter.simpledialog import askstring
-import pandas as pd
-import labels
-from reportlab.graphics import shapes
-from scipy import misc
-import PIL
-from PIL import Image
-import numpy as np
+import os.path
 import textwrap
-import itertools
+from tkinter import *
+from tkinter import messagebox, filedialog
+from tkinter.messagebox import askokcancel, showinfo, QUESTION, askyesno
+from tkinter.simpledialog import askstring
+
+import PIL
+import labels
+import numpy as np
+from PIL import Image
+from reportlab.graphics import shapes
 
 color_dict = {'.': (255, 255, 255),
               'A': (0, 0, 0),
@@ -871,10 +869,6 @@ def make_plain_sintral(jtxt, entries, ja1=None):
     sintral_top, sintral2x_top = add_top_of_sintral()
     # Why did I make this?
     # colors=sort_colors(colors)
-    grid_flag = False
-    if ja1:
-        grid_flag = True
-        streak = 0
     # Make sintral_middle
     lines = jtxt.split('\n')
     last_line = ""
@@ -882,8 +876,8 @@ def make_plain_sintral(jtxt, entries, ja1=None):
     rep_count = 0
     sintral_middle = ""
     sintral2x_middle = ""
+    lines[-1]=lines[-1][0:5] + 'Q' + lines[-1][6:]
     for line in lines:
-        print(line)
         this_line = ""
         line_slice = line[5:13]
         for char in line_slice:
@@ -894,22 +888,25 @@ def make_plain_sintral(jtxt, entries, ja1=None):
         pers_start=False
         pers_stop=False
         if this_line != last_line and idx > 0:
+
             # We have a change in color combinations
             num_colors = len(last_line)
 
             if this_line[0] == 'P':
                 pers_start = True
-                print("yes")
                 this_line = last_line
                 start_line = int(line[0:4])
-                lines[idx+40] = lines[idx+40][0:5]+'X'+lines[idx+40][6:]
+                lines[idx+39] = lines[idx+39][0:5]+'X'+lines[idx+39][6:]
 
             if this_line[0] == 'X':
                 pers_stop = True
-                rep_count += 2
                 this_line = last_line
                 stop_line = str(start_line + 40)
 
+            if this_line[0] == 'Q':
+                rep_count += 1
+
+            print(rep_count)
             if num_colors == 3:
                 line1_440, line2_440, line1_TC, line2_TC = make_3_color_line(last_line, entries['speed'],
                                                                              entries['wm36'],
@@ -921,7 +918,10 @@ def make_plain_sintral(jtxt, entries, ja1=None):
                 sintral_middle += f"REPEND\n"
 
                 # Deal with an uneven number of double production strokes
-                if rep_count % 4 == 0:
+                if rep_count == 2:
+                    sintral2x_middle += f"{line1_440}\n"
+                    sintral2x_middle += f"{line2_440}\n"
+                elif rep_count % 4 == 0:
                     sintral2x_middle += f"REP*{int(rep_count / 4)}\n"
                     sintral2x_middle += f"{line1_TC}\n"
                     sintral2x_middle += f"{line2_TC}\n"
@@ -1016,12 +1016,14 @@ def make_plain_sintral(jtxt, entries, ja1=None):
                 sintral_middle += ja1
                 sintral2x_middle += ja1
                 pers_start = False
-            if pers_stop:
+                rep_count = 2
+            elif pers_stop:
                 sintral_middle += f"JA1 = {stop_line}\n"
                 sintral2x_middle += f"JA1 = {stop_line}\n"
                 pers_stop = False
-
-            rep_count = 0
+                rep_count = 0
+            else:
+                rep_count = 1
         else:
             rep_count += 1
 
@@ -1034,13 +1036,30 @@ def make_plain_sintral(jtxt, entries, ja1=None):
     sintral = sintral_top + sintral_middle + sintral_bottom
     sintral2x = sintral2x_top + sintral2x_middle + sintral2x_bottom
 
-    return sintral, sintral2x
+    line_number = 1
+    sintral_final=""
+    for line in sintral.split("\n"):
+        if line[0] == "9":
+            sintral_final += line
+        sintral_final += f"{str(line_number)} {line}\n"
+        line_number += 1
+
+    line_number = 1
+    sintral2x_final=""
+    for line in sintral2x.split("\n"):
+        if line[0] == "9":
+            sintral2x_final += line
+        sintral2x_final += f"{str(line_number)} {line}\n"
+        line_number += 1
+
+    return sintral_final, sintral2x_final
 
 def add_pers_barcode(bitmap,start_pers):
     pixels=bitmap.load()
     pixels[0,start_pers]=color_dict["P"]
     bitmap.show()
     return bitmap
+
 class MyFirstGUI:
 
     def __init__(self, master):
