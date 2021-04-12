@@ -1039,16 +1039,18 @@ def make_plain_sintral(jtxt, entries, ja1=None):
     sintral_final=""
     for line in sintral.split("\n"):
         if line[0] == "9":
-            sintral_final += line
-        sintral_final += f"{str(line_number)} {line}\n"
+            sintral_final += f"{line}\n"
+        else:
+            sintral_final += f"{str(line_number)} {line}\n"
         line_number += 1
 
     line_number = 1
     sintral2x_final=""
     for line in sintral2x.split("\n"):
         if line[0] == "9":
-            sintral2x_final += line
-        sintral2x_final += f"{str(line_number)} {line}\n"
+            sintral2x_final += f"{line}\n"
+        else:
+            sintral2x_final += f"{str(line_number)} {line}\n"
         line_number += 1
 
     return sintral_final, sintral2x_final
