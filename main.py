@@ -154,19 +154,17 @@ def convert_colors_to_knitting(pic, size_num, colors):
     last_line = []
     found_center = False
     streak = 0
-    for x in range(size_num[0]):
+    for y in range(size_num[1]):
         if not found_center:
-            this_line = img_array[x]
-            if x > 0 and (this_line == last_line).all():
+            this_line = img_array[y]
+            if y > 0 and (this_line == last_line).all():
                 streak += 1
-            if x > 0 and (this_line != last_line).any() and streak > 40:
-                print("streak",streak)
-                print("x",x)
-                center = ((streak / 2) - 20)+(x-streak)
+            if y > 0 and (this_line != last_line).any() and streak > 40:
+                center = ((streak / 2) - 20)+(y-streak)
                 found_center = True
-            if x>0 and (this_line != last_line).any() and streak<40:
+            if y>0 and (this_line != last_line).any() and streak<40:
                 streak = 0
-        for y in range(size_num[1]):
+        for x in range(size_num[0]):
             current_color = pixels[x, y]
             if current_color == color_dict["P"]:
                 knitting_color = color_dict["P"]
@@ -178,7 +176,7 @@ def convert_colors_to_knitting(pic, size_num, colors):
                     knitting_color = list(color_dict.values())[color_index]
             pixels[x, y] = knitting_color
             oddity += 1
-        oddity += 1
+        #oddity += 1
         last_line = this_line
     if not found_center:
         center = 0
@@ -470,6 +468,7 @@ def remove_lines(bitmap, line_begin, reduction_count):
         return canvas
     else:
         showinfo("OK", "Alrighty...let's try again", )
+        line_begin = askstring("Begin Reduction", "How far in from the edge should I start my removal?")
         remove_lines(bitmap, line_begin, reduction_count)
 
 
@@ -624,7 +623,7 @@ def make_label(colors):
     :return: a sheet object that is saved in project folder as an appropriately sized pdf
     """
 
-    specs = labels.Specification(75, 14, 1, 1, 70, 12, left_padding=0, top_padding=0, bottom_padding=0, right_padding=0,
+    specs = labels.Specification(90, 14, 1, 1,90, 14, left_padding=0, top_padding=0, bottom_padding=0, right_padding=0,
                                  padding_radius=0)
 
     # Create a function to draw each label. This will be given the ReportLab drawing
@@ -642,7 +641,7 @@ def make_label(colors):
     string = ""
     for i in range(len(colors)):
         string += f"{color_words[colors[i]]}/"
-    wrapper = textwrap.TextWrapper(width=60)
+    wrapper = textwrap.TextWrapper(width=90)
     string = wrapper.fill(text=string)
     sheet.add_label(string)
     return sheet
