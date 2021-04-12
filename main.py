@@ -436,6 +436,18 @@ def confirm():
         icon=QUESTION)
     return answer
 
+def ask_multiple_grids():
+    """
+    Simple function to ask if the user is happy with results of the line reduction
+    --------------
+    :return: boolean
+    """
+
+    answer = askyesno(
+        title='Proceed?',
+        message='Are there any more grids?',
+        icon=QUESTION)
+    return answer
 
 def remove_lines(bitmap, line_begin, reduction_count):
     """
@@ -1325,19 +1337,32 @@ class MyFirstGUI:
         reduced=add_pers_barcode(reduced,start_pers)
         # Do the same thing now for the personalization grid
         # But no reductions
+        grids=[]
         showinfo("Grid", "Give me the personalization grid now.")
         grid_file_path = filedialog.askopenfilename()
         grid_filename = path_leaf(grid_file_path)
         grid_filename = grid_filename[:-4]
         grid_img, grid_colors, center = read(grid_file_path, design_colors=colors)
         grid_barcoded, reduction_counts = make_barcode(grid_img, colors)
+        grids.append(grid_barcoded)
+        grid_answer = ask_multiple_grids()
+        while grid_answer:
+            showinfo("Grid", "Give me another grid now.")
+            grid_file_path = filedialog.askopenfilename()
+            grid_filename = path_leaf(grid_file_path)
+            grid_filename = grid_filename[:-4]
+            grid_img, grid_colors, center = read(grid_file_path, design_colors=colors)
+            grid_barcoded, reduction_counts = make_barcode(grid_img, colors)
+            grids.append(grid_barcoded)
+            grid_answer = ask_multiple_grids()
 
         # Save both new birdseyed bitmaps
         folder_name = str(askstring("Folder Name", "Name the new folder for this pattern"))
         new_path = os.path.join(os.path.dirname(file_path), folder_name)
         os.makedirs(new_path)
         reduced.save(f"{new_path}/{filename}-birdseye.bmp")
-        grid_barcoded.save(f"{new_path}/{grid_filename}-birdseye.bmp")
+        for grid_barcoded in grids:
+            grid_barcoded.save(f"{new_path}/{grid_filename}-birdseye.bmp")
 
         compressed_txt, end_line_num = convert_to_jtxt(reduced)
         compressed_grid, end_line_num = convert_to_jtxt(grid_barcoded, start_line=end_line_num)
