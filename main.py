@@ -975,7 +975,7 @@ def make_plain_sintral(jtxt, entries, ja1=None):
                 sintral2x_middle += f"REPEND\n"
 
             if num_colors == 6:
-                lines_440, lines_tc = make_5_color_line(last_line, entries['speed'],
+                lines_440, lines_tc = make_6_color_line(last_line, entries['speed'],
                                                         entries['empty_speed'],
                                                         entries['wm36'],
                                                         entries['wm56'], entries['wmi'])
@@ -991,10 +991,9 @@ def make_plain_sintral(jtxt, entries, ja1=None):
                 sintral2x_middle += f"REPEND\n"
 
             if num_colors == 7:
-                lines_440, lines_tc = make_5_color_line(last_line, entries['speed'],
+                lines_440, lines_tc = make_7_color_line(last_line, entries['speed'],
                                                         entries['empty_speed'],
-                                                        entries['wm36'],
-                                                        entries['wm56'], entries['wmi'])
+                                                        entries['wm7'], entries['wmi78'])
 
                 sintral_middle += f"REP*{int(rep_count / 2)}\n"
                 for line in lines_440:
@@ -1008,10 +1007,9 @@ def make_plain_sintral(jtxt, entries, ja1=None):
 
             if num_colors == 8:
 
-                lines_440, lines_tc = make_5_color_line(last_line, entries['speed'],
+                lines_440, lines_tc = make_8_color_line(last_line, entries['speed'],
                                                         entries['empty_speed'],
-                                                        entries['wm36'],
-                                                        entries['wm56'], entries['wmi'])
+                                                        entries['wm8'], entries['wmi78'])
 
                 sintral_middle += f"REP*{int(rep_count / 2)}\n"
                 for line in lines_440:
@@ -1338,19 +1336,23 @@ class MyFirstGUI:
         # Do the same thing now for the personalization grid
         # But no reductions
         grids=[]
+        grid_filenames=[]
         showinfo("Grid", "Give me the personalization grid now.")
         grid_file_path = filedialog.askopenfilename()
         grid_filename = path_leaf(grid_file_path)
         grid_filename = grid_filename[:-4]
+        grid_filenames.append(grid_filename)
         grid_img, grid_colors, center = read(grid_file_path, design_colors=colors)
         grid_barcoded, reduction_counts = make_barcode(grid_img, colors)
         grids.append(grid_barcoded)
         grid_answer = ask_multiple_grids()
+
         while grid_answer:
             showinfo("Grid", "Give me another grid now.")
             grid_file_path = filedialog.askopenfilename()
             grid_filename = path_leaf(grid_file_path)
             grid_filename = grid_filename[:-4]
+            grid_filenames.append(grid_filename)
             grid_img, grid_colors, center = read(grid_file_path, design_colors=colors)
             grid_barcoded, reduction_counts = make_barcode(grid_img, colors)
             grids.append(grid_barcoded)
@@ -1361,23 +1363,26 @@ class MyFirstGUI:
         new_path = os.path.join(os.path.dirname(file_path), folder_name)
         os.makedirs(new_path)
         reduced.save(f"{new_path}/{filename}-birdseye.bmp")
-        for grid_barcoded in grids:
-            grid_barcoded.save(f"{new_path}/{grid_filename}-birdseye.bmp")
 
-        compressed_txt, end_line_num = convert_to_jtxt(reduced)
-        compressed_grid, end_line_num = convert_to_jtxt(grid_barcoded, start_line=end_line_num)
-        new_txt_file = open(f"{new_path}/{filename}_J.txt", 'w')
-        new_txt_file.write(compressed_txt)
-        new_txt_file.close()
-        grid_new_txt_file = open(f"{new_path}/{grid_filename}_J.txt", 'w')
-        grid_new_txt_file.write(compressed_grid)
-        grid_new_txt_file.close()
+        print('length', len(grids))
 
-        # make the new combined file
-        combined = compressed_txt + "\n" + compressed_grid
-        combined_new_txt_file = open(f"{new_path}/{filename} Combined_J.txt", 'w')
-        combined_new_txt_file.write(combined)
-        combined_new_txt_file.close()
+        for i in range(len(grids)):
+            grids[i].save(f"{new_path}/{grid_filenames[i]}-birdseye.bmp")
+
+            compressed_txt, end_line_num = convert_to_jtxt(reduced)
+            compressed_grid, end_line_num = convert_to_jtxt(grids[i], start_line=end_line_num)
+            new_txt_file = open(f"{new_path}/{filename}_J.txt", 'w')
+            new_txt_file.write(compressed_txt)
+            new_txt_file.close()
+            grid_new_txt_file = open(f"{new_path}/{grid_filenames[i]}_J.txt", 'w')
+            grid_new_txt_file.write(compressed_grid)
+            grid_new_txt_file.close()
+
+            # make the new combined file
+            combined = compressed_txt + "\n" + compressed_grid
+            combined_new_txt_file = open(f"{new_path}/{grid_filenames[i]} Combined_J.txt", 'w')
+            combined_new_txt_file.write(combined)
+            combined_new_txt_file.close()
 
         # not sure if this is necessary
         os.chdir('..')
