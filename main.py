@@ -436,6 +436,19 @@ def confirm():
         icon=QUESTION)
     return answer
 
+def ask_grid_background():
+    """
+    Simple function to ask if the user is happy with results of the line reduction
+    --------------
+    :return: boolean
+    """
+
+    answer = askyesno(
+        title='Proceed?',
+        message='Is it a basic set up? (If you answer no, the background will be white)',
+        icon=QUESTION)
+    return answer
+
 def ask_multiple_grids():
     """
     Simple function to ask if the user is happy with results of the line reduction
@@ -1075,7 +1088,7 @@ class MyFirstGUI:
 
     def __init__(self, master):
         self.master = master
-        master.title("A simple GUI")
+        master.title("Logo Knits Production App")
 
         self.plain_folder_button = Button(master, text="Do a Whole Folder All The Way. Not Personalized",
                                           command=self.plain_folder,
@@ -1167,11 +1180,53 @@ class MyFirstGUI:
         self.back_stitch_label = Label(master, text="NP 6", bg="#699864")
         self.back_stitch_entry = Entry(master)
         self.back_stitch_entry.insert(0, "8")
-        self.back_stitch_label.grid(row=16, column=0)
-        self.back_stitch_entry.grid(row=16, column=1)
+        self.back_stitch_label.grid(row=16, column=0,pady=30)
+        self.back_stitch_entry.grid(row=16, column=1,pady=30)
+
+        self.personalize_label = Button(master, text="Make Grids", highlightbackground="#688264",command=self.personalize)
+        self.personalize_entry = Text(master)
+        #self.back_stitch_entry.insert(0, "8")
+        self.personalize_label.grid(row=17, column=0)
+        self.personalize_entry.grid(row=17,column=1)
+
+        self.scrollbar = Scrollbar(master)
+        self.personalize_entry.config(yscrollcommand=self.scrollbar.set)
+        self.scrollbar.config(command=self.personalize_entry.yview)
+        self.scrollbar.grid(column=3, row=17, rowspan=1, sticky='NS')
+
+
 
         self.close_button = Button(master, text="Close", command=master.quit, highlightbackground="#B0E2FF")
-        self.close_button.grid(row=17, column=0, pady=30, columnspan=2)
+        self.close_button.grid(row=18, column=0, pady=30, columnspan=2)
+
+    def personalize(self):
+
+        answer=ask_grid_background()
+        seperator = Image.new('RGB',(473,1),color_dict['P'])
+        background = Image.new('RGB', (473, 821), color_dict['.'])
+        if answer:
+            showinfo("Bitmap", "Give me the design.")
+            file_path = filedialog.askopenfilename()
+            filename = path_leaf(file_path)
+            filename = filename[:-4]
+            __, __, center = read(file_path)
+            if center == 0:
+                messagebox.showinfo("Hmmm", f"I couldn't find a center...are you sure this is a basic set up?")
+                return False
+            img = Image.open(file_path)
+            size_num = img.size
+            section = img.crop((5,(size_num[1]-55-center),478,(size_num[1]-center-15)))
+            background.paste(seperator, (0, 0))
+            for i in range(20):
+                background.paste(section,(0,(41*i+1)))
+                background.paste(seperator,(0,(41*i)+41))
+        else:
+            background.paste(seperator, (0, 0))
+            for i in range(20):
+                #background.paste(section,(0,(41*i+1)))
+                background.paste(seperator,(0,(41*i)+41))
+        background.show()
+
 
     def plain(self):
 
