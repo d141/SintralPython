@@ -1201,6 +1201,8 @@ class MyFirstGUI:
 
     def personalize(self):
 
+        names = self.personalize_entry.get()
+        print(names)
         answer=ask_grid_background()
         seperator = Image.new('RGB',(473,1),color_dict['P'])
         background = Image.new('RGB', (473, 821), color_dict['.'])
