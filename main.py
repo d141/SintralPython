@@ -615,8 +615,41 @@ def convert_to_jtxt(image, start_line=None):
                     i = 1
                 else:
                     i += 1
-        compressed = compressed + str(line_num) + " " + new_string + "\n"
-        line_num += 1
+
+
+        if len(new_string)>120:
+            new_lines=[]
+            last_char_idx=119
+            last_char = new_string[last_char_idx]
+            while last_char == "(" or last_char.isdigit():
+                last_char_idx -= 1
+                last_char = new_string[last_char_idx]
+            new_lines.append(new_string[:last_char_idx])
+        if len(new_string)>360:
+            compressed = compressed + str(line_num) + " " + new_string[:118] + "$\n"
+            line_num += 1
+            compressed = compressed + str(line_num) + " $" + new_string[119:238] + "$\n"
+            line_num += 1
+            compressed = compressed + str(line_num) + " $" + new_string[239:358] + "$\n"
+            line_num += 1
+            compressed = compressed + str(line_num) + " $" + new_string[359:] + "\n"
+            line_num += 1
+        elif len(new_string)>240:
+            compressed = compressed + str(line_num) + " " + new_string[:118] + "$\n"
+            line_num += 1
+            compressed = compressed + str(line_num) + " $" + new_string[119:238] + "$\n"
+            line_num += 1
+            compressed = compressed + str(line_num) + " $" + new_string[239:] + "\n"
+            line_num += 1
+        elif len(new_string)>120:
+            compressed = compressed + str(line_num) + " " + new_string[:118] + "$\n"
+            line_num += 1
+            compressed = compressed + str(line_num) + " $" + new_string[119:] + "\n"
+            line_num += 1
+        else:
+            compressed = compressed + str(line_num) + " " + new_string + "\n"
+            line_num += 1
+    print(compressed[:compressed.rfind('\n')])
     return compressed[:compressed.rfind('\n')], line_num
 
 
