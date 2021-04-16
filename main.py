@@ -11,7 +11,7 @@ from tkinter.simpledialog import askstring
 import PIL
 import labels
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw,ImageFont
 from reportlab.graphics import shapes
 
 color_dict = {'.': (255, 255, 255),
@@ -160,9 +160,9 @@ def convert_colors_to_knitting(pic, size_num, colors):
             if y > 0 and (this_line == last_line).all():
                 streak += 1
             if y > 0 and (this_line != last_line).any() and streak > 40:
-                center = ((streak / 2) - 20)+(y-streak)
+                center = ((streak / 2) - 20) + (y - streak)
                 found_center = True
-            if y>0 and (this_line != last_line).any() and streak<40:
+            if y > 0 and (this_line != last_line).any() and streak < 40:
                 streak = 0
         for x in range(size_num[0]):
             current_color = pixels[x, y]
@@ -176,7 +176,7 @@ def convert_colors_to_knitting(pic, size_num, colors):
                     knitting_color = list(color_dict.values())[color_index]
             pixels[x, y] = knitting_color
             oddity += 1
-        #oddity += 1
+        # oddity += 1
         last_line = this_line
     if not found_center:
         center = 0
@@ -436,6 +436,7 @@ def confirm():
         icon=QUESTION)
     return answer
 
+
 def ask_grid_background():
     """
     Simple function to ask if the user is happy with results of the line reduction
@@ -449,6 +450,7 @@ def ask_grid_background():
         icon=QUESTION)
     return answer
 
+
 def ask_multiple_grids():
     """
     Simple function to ask if the user is happy with results of the line reduction
@@ -461,6 +463,7 @@ def ask_multiple_grids():
         message='Are there any more grids?',
         icon=QUESTION)
     return answer
+
 
 def remove_lines(bitmap, line_begin, reduction_count):
     """
@@ -626,7 +629,8 @@ def find_ja1(grid):
             ja1_list += f"IF #50={index}: JA1={str(int(line[0:4]) - 1)}\n"
     return ja1_list
 
-#def add_ja1(list)
+
+# def add_ja1(list)
 
 def path_leaf(path):
     """
@@ -648,7 +652,7 @@ def make_label(colors):
     :return: a sheet object that is saved in project folder as an appropriately sized pdf
     """
 
-    specs = labels.Specification(90, 14, 1, 1,90, 14, left_padding=0, top_padding=0, bottom_padding=0, right_padding=0,
+    specs = labels.Specification(90, 14, 1, 1, 90, 14, left_padding=0, top_padding=0, bottom_padding=0, right_padding=0,
                                  padding_radius=0)
 
     # Create a function to draw each label. This will be given the ReportLab drawing
@@ -900,7 +904,7 @@ def make_plain_sintral(jtxt, entries, ja1=None):
     rep_count = 0
     sintral_middle = ""
     sintral2x_middle = ""
-    lines[-1]=lines[-1][0:5] + 'Q' + lines[-1][6:]
+    lines[-1] = lines[-1][0:5] + 'Q' + lines[-1][6:]
     for line in lines:
         this_line = ""
         line_slice = line[5:13]
@@ -909,8 +913,8 @@ def make_plain_sintral(jtxt, entries, ja1=None):
                 break
             else:
                 this_line += char
-        pers_start=False
-        pers_stop=False
+        pers_start = False
+        pers_stop = False
         if this_line != last_line and idx > 0:
 
             # We have a change in color combinations
@@ -920,7 +924,7 @@ def make_plain_sintral(jtxt, entries, ja1=None):
                 pers_start = True
                 this_line = last_line
                 start_line = int(line[0:4])
-                lines[idx+39] = lines[idx+39][0:5]+'X'+lines[idx+39][6:]
+                lines[idx + 39] = lines[idx + 39][0:5] + 'X' + lines[idx + 39][6:]
 
             if this_line[0] == 'X':
                 pers_stop = True
@@ -1059,7 +1063,7 @@ def make_plain_sintral(jtxt, entries, ja1=None):
     sintral2x = sintral2x_top + sintral2x_middle + sintral2x_bottom
 
     line_number = 1
-    sintral_final=""
+    sintral_final = ""
     for line in sintral.split("\n"):
         if line[0] == "9":
             sintral_final += f"{line}\n"
@@ -1068,7 +1072,7 @@ def make_plain_sintral(jtxt, entries, ja1=None):
         line_number += 1
 
     line_number = 1
-    sintral2x_final=""
+    sintral2x_final = ""
     for line in sintral2x.split("\n"):
         if line[0] == "9":
             sintral2x_final += f"{line}\n"
@@ -1078,11 +1082,13 @@ def make_plain_sintral(jtxt, entries, ja1=None):
 
     return sintral_final, sintral2x_final
 
-def add_pers_barcode(bitmap,start_pers):
-    pixels=bitmap.load()
-    pixels[0,start_pers]=color_dict["P"]
+
+def add_pers_barcode(bitmap, start_pers):
+    pixels = bitmap.load()
+    pixels[0, start_pers] = color_dict["P"]
     bitmap.show()
     return bitmap
+
 
 class MyFirstGUI:
 
@@ -1180,32 +1186,33 @@ class MyFirstGUI:
         self.back_stitch_label = Label(master, text="NP 6", bg="#699864")
         self.back_stitch_entry = Entry(master)
         self.back_stitch_entry.insert(0, "8")
-        self.back_stitch_label.grid(row=16, column=0,pady=30)
-        self.back_stitch_entry.grid(row=16, column=1,pady=30)
+        self.back_stitch_label.grid(row=16, column=0, pady=30)
+        self.back_stitch_entry.grid(row=16, column=1, pady=30)
 
-        self.personalize_label = Button(master, text="Make Grids", highlightbackground="#688264",command=self.personalize)
+        self.personalize_label = Button(master, text="Make Grids", highlightbackground="#688264",
+                                        command=self.personalize)
         self.personalize_entry = Text(master)
-        #self.back_stitch_entry.insert(0, "8")
+        # self.back_stitch_entry.insert(0, "8")
         self.personalize_label.grid(row=17, column=0)
-        self.personalize_entry.grid(row=17,column=1)
+        self.personalize_entry.grid(row=17, column=1)
 
         self.scrollbar = Scrollbar(master)
         self.personalize_entry.config(yscrollcommand=self.scrollbar.set)
         self.scrollbar.config(command=self.personalize_entry.yview)
         self.scrollbar.grid(column=3, row=17, rowspan=1, sticky='NS')
 
-
-
         self.close_button = Button(master, text="Close", command=master.quit, highlightbackground="#B0E2FF")
         self.close_button.grid(row=18, column=0, pady=30, columnspan=2)
 
     def personalize(self):
 
-        names = self.personalize_entry.get()
-        print(names)
-        answer=ask_grid_background()
-        seperator = Image.new('RGB',(473,1),color_dict['P'])
+        names = self.personalize_entry.get("1.0", 'end-1c').split('\n')
+        num_names = len(names)
+        num_grids = math.ceil(num_names/20)
+        answer = ask_grid_background()
+        separator = Image.new('RGB', (473, 1), color_dict['P'])
         background = Image.new('RGB', (473, 821), color_dict['.'])
+
         if answer:
             showinfo("Bitmap", "Give me the design.")
             file_path = filedialog.askopenfilename()
@@ -1217,16 +1224,20 @@ class MyFirstGUI:
                 return False
             img = Image.open(file_path)
             size_num = img.size
-            section = img.crop((5,(size_num[1]-55-center),478,(size_num[1]-center-15)))
-            background.paste(seperator, (0, 0))
+            section = img.crop((5, (size_num[1] - 55 - center), 478, (size_num[1] - center - 15)))
+            background.paste(separator, (0, 0))
             for i in range(20):
-                background.paste(section,(0,(41*i+1)))
-                background.paste(seperator,(0,(41*i)+41))
+                background.paste(section, (0, (41 * i + 1)))
+                background.paste(separator, (0, (41 * i) + 41))
         else:
-            background.paste(seperator, (0, 0))
+            background.paste(separator, (0, 0))
             for i in range(20):
-                #background.paste(section,(0,(41*i+1)))
-                background.paste(seperator,(0,(41*i)+41))
+                # background.paste(section,(0,(41*i+1)))
+                background.paste(separator, (0, (41 * i) + 41))
+
+        draw = ImageDraw.Draw(background)
+        fnt = ImageFont.truetype("Fonts/PIXEAB__.ttf",36)
+        draw.text((10, 10), names[0], font=fnt, fill=(0, 0, 0))
         background.show()
 
 
@@ -1385,15 +1396,15 @@ class MyFirstGUI:
         img, colors, center = read(file_path)
         barcoded, reduction_counts = make_barcode(img, colors)
         reduction_count = calculate_reduction(reduction_counts)
-        start_pers=center-(reduction_count/2)
+        start_pers = center - (reduction_count / 2)
         start_pers = math.floor(start_pers / 2.) * 2
         line_begin = askstring("Begin Reduction", "How far in from the edge should I start my removal?")
         reduced = remove_lines(barcoded, line_begin, reduction_count)
-        reduced=add_pers_barcode(reduced,start_pers)
+        reduced = add_pers_barcode(reduced, start_pers)
         # Do the same thing now for the personalization grid
         # But no reductions
-        grids=[]
-        grid_filenames=[]
+        grids = []
+        grid_filenames = []
         showinfo("Grid", "Give me the personalization grid now.")
         grid_file_path = filedialog.askopenfilename()
         grid_filename = path_leaf(grid_file_path)
