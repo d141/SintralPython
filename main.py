@@ -616,39 +616,43 @@ def convert_to_jtxt(image, start_line=None):
                 else:
                     i += 1
 
+        new_lines = []
+        while len(new_string)>120:
 
-        if len(new_string)>120:
-            new_lines=[]
             last_char_idx=119
             last_char = new_string[last_char_idx]
             while last_char == "(" or last_char.isdigit():
                 last_char_idx -= 1
                 last_char = new_string[last_char_idx]
-            new_lines.append(new_string[:last_char_idx])
-        if len(new_string)>360:
-            compressed = compressed + str(line_num) + " " + new_string[:118] + "$\n"
+            new_lines.append(new_string[:last_char_idx] + "$")
+            new_string = "$" + new_string[last_char_idx:]
+        new_lines.append(new_string)
+
+        if len(new_lines)==4:
+            compressed = compressed + str(line_num) + " " + new_lines[0] + "\n"
             line_num += 1
-            compressed = compressed + str(line_num) + " $" + new_string[119:238] + "$\n"
+            compressed = compressed + str(line_num) + " " + new_lines[1] + "\n"
             line_num += 1
-            compressed = compressed + str(line_num) + " $" + new_string[239:358] + "$\n"
+            compressed = compressed + str(line_num) + " " + new_lines[2] + "\n"
             line_num += 1
-            compressed = compressed + str(line_num) + " $" + new_string[359:] + "\n"
+            compressed = compressed + str(line_num) + " " + new_lines[3] + "\n"
             line_num += 1
-        elif len(new_string)>240:
-            compressed = compressed + str(line_num) + " " + new_string[:118] + "$\n"
+        elif len(new_lines)==3:
+            compressed = compressed + str(line_num) + " " + new_lines[0] + "\n"
             line_num += 1
-            compressed = compressed + str(line_num) + " $" + new_string[119:238] + "$\n"
+            compressed = compressed + str(line_num) + " " + new_lines[1] + "\n"
             line_num += 1
-            compressed = compressed + str(line_num) + " $" + new_string[239:] + "\n"
+            compressed = compressed + str(line_num) + " " + new_lines[2] + "\n"
             line_num += 1
-        elif len(new_string)>120:
-            compressed = compressed + str(line_num) + " " + new_string[:118] + "$\n"
+        elif len(new_lines)==2:
+            compressed = compressed + str(line_num) + " " + new_lines[0] + "\n"
             line_num += 1
-            compressed = compressed + str(line_num) + " $" + new_string[119:] + "\n"
+            compressed = compressed + str(line_num) + " " + new_lines[1] + "\n"
             line_num += 1
         else:
-            compressed = compressed + str(line_num) + " " + new_string + "\n"
+            compressed = compressed + str(line_num) + " " + new_lines[0] + "\n"
             line_num += 1
+
     print(compressed[:compressed.rfind('\n')])
     return compressed[:compressed.rfind('\n')], line_num
 
