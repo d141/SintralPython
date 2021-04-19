@@ -11,7 +11,7 @@ from tkinter.simpledialog import askstring
 import PIL
 import labels
 import numpy as np
-from PIL import Image, ImageDraw,ImageFont
+from PIL import Image, ImageDraw, ImageFont
 from reportlab.graphics import shapes
 
 color_dict = {'.': (255, 255, 255),
@@ -617,9 +617,9 @@ def convert_to_jtxt(image, start_line=None):
                     i += 1
 
         new_lines = []
-        while len(new_string)>120:
+        while len(new_string) > 120:
 
-            last_char_idx=119
+            last_char_idx = 119
             last_char = new_string[last_char_idx]
             while last_char == "(" or last_char.isdigit():
                 last_char_idx -= 1
@@ -628,7 +628,7 @@ def convert_to_jtxt(image, start_line=None):
             new_string = "$" + new_string[last_char_idx:]
         new_lines.append(new_string)
 
-        if len(new_lines)==4:
+        if len(new_lines) == 4:
             compressed = compressed + str(line_num) + " " + new_lines[0] + "\n"
             line_num += 1
             compressed = compressed + str(line_num) + " " + new_lines[1] + "\n"
@@ -637,14 +637,14 @@ def convert_to_jtxt(image, start_line=None):
             line_num += 1
             compressed = compressed + str(line_num) + " " + new_lines[3] + "\n"
             line_num += 1
-        elif len(new_lines)==3:
+        elif len(new_lines) == 3:
             compressed = compressed + str(line_num) + " " + new_lines[0] + "\n"
             line_num += 1
             compressed = compressed + str(line_num) + " " + new_lines[1] + "\n"
             line_num += 1
             compressed = compressed + str(line_num) + " " + new_lines[2] + "\n"
             line_num += 1
-        elif len(new_lines)==2:
+        elif len(new_lines) == 2:
             compressed = compressed + str(line_num) + " " + new_lines[0] + "\n"
             line_num += 1
             compressed = compressed + str(line_num) + " " + new_lines[1] + "\n"
@@ -943,6 +943,8 @@ def make_plain_sintral(jtxt, entries, ja1=None):
     sintral2x_middle = ""
     lines[-1] = lines[-1][0:5] + 'Q' + lines[-1][6:]
     for line in lines:
+        if "$" in line:
+            continue
         this_line = ""
         line_slice = line[5:13]
         for char in line_slice:
@@ -1239,13 +1241,39 @@ class MyFirstGUI:
         self.scrollbar.grid(column=3, row=17, rowspan=1, sticky='NS')
 
         self.close_button = Button(master, text="Close", command=master.quit, highlightbackground="#B0E2FF")
-        self.close_button.grid(row=18, column=0, pady=30, columnspan=2)
+        self.close_button.grid(row=22, column=0, pady=30, columnspan=2)
+
+        font_size_options = ["10", "12", "14", "16", "20", "24", "36", "40"]
+        self.font_size_var = StringVar(master)
+        self.font_size_var.set("24")
+        self.font_size_label = Label(master, text="Font Size", bg="#699864")
+        self.font_size = OptionMenu(master, self.font_size_var, *font_size_options)
+        self.font_size.grid(row=18, column=3, pady=10)
+        self.font_size_label.grid(row=18, column=2, pady=10)
+
+        alignment_options = ["Center", "Align Left", "Align Right"]
+        alignment_var = StringVar(master)
+        alignment_var.set("Center")
+        self.alignment_label = Label(master, text="Alignment", bg="#699864")
+        self.alignment_size = OptionMenu(master, alignment_var, *alignment_options)
+        self.alignment_size.grid(row=19, column=3, pady=10)
+        self.alignment_label.grid(row=19, column=2, pady=10)
+
+        font_options = []
+        for file in os.listdir("Fonts/"):
+            font_options.append(path_leaf(os.fsdecode(file))[:-4])
+        self.font_var = StringVar(master)
+        self.font_var.set(font_options[0])
+        self.font_label = Label(master, text="Font", bg="#699864")
+        self.font = OptionMenu(master, self.font_var, *sorted(font_options))
+        self.font.grid(row=20, column=3, pady=10)
+        self.font_label.grid(row=20, column=2, pady=10)
 
     def personalize(self):
 
         names = self.personalize_entry.get("1.0", 'end-1c').split('\n')
         num_names = len(names)
-        num_grids = math.ceil(num_names/20)
+        num_grids = math.ceil(num_names / 20)
         answer = ask_grid_background()
         separator = Image.new('RGB', (473, 1), color_dict['P'])
         background = Image.new('RGB', (473, 821), color_dict['.'])
@@ -1273,10 +1301,25 @@ class MyFirstGUI:
                 background.paste(separator, (0, (41 * i) + 41))
 
         draw = ImageDraw.Draw(background)
-        fnt = ImageFont.truetype("Fonts/PIXEAB__.ttf",36)
-        draw.text((10, 10), names[0], font=fnt, fill=(0, 0, 0))
-        background.show()
+        font_name = self.font_var.get()
+        font_size = int(self.font_size_var.get())
+        fnt = ImageFont.truetype(f"Fonts/{font_name}.ttf", font_size)
+        draw.fontmode = '1'
+        y = 0
+        for name in names:
+            width_text, height_text = draw.textsize(name, fnt)
 
+            offset_x, offset_y = fnt.getoffset(name)
+            width_text += offset_x
+            height_text += offset_y
+
+            top_left_x = 473 / 2 - width_text / 2
+            top_left_y = (40 / 2 - height_text / 2) + y
+            xy = top_left_x, top_left_y
+
+            draw.text(xy, name, font=fnt, fill=(255, 0, 0))
+            y += 41
+        background.show()
 
     def plain(self):
 
