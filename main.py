@@ -1129,7 +1129,35 @@ def add_pers_barcode(bitmap, start_pers):
     return bitmap
 
 
-class MyFirstGUI:
+def get_text_width(text_string, font):
+    return font.getmask(text_string).getbbox()[2]
+
+
+def kern(name, draw_object, y, space, font, fill):
+    chars = [char for char in name]
+
+    total_width = 0
+
+    for char in chars:
+        width_text = get_text_width(char, font)
+        total_width += (width_text + int(space))
+
+    __, height_text = draw_object.textsize(name, font)
+    __, offset_y = font.getoffset(name)
+    height_text += offset_y
+
+    width_adjuster = 0
+    for char in chars:
+        width_text = get_text_width(char, font)
+        top_left_x = (473 / 2 - total_width / 2) + width_adjuster
+        top_left_y = (40 / 2 - height_text / 2) + y
+        xy = top_left_x, top_left_y
+        width_adjuster += width_text + int(space)
+        print(f"char:{char},width_text:{width_text},xy:{xy},width_adjuster:{width_adjuster}")
+        draw_object.text(xy, char, font=font, fill=fill)
+
+
+class MyGUI:
 
     def __init__(self, master):
         self.master = master
@@ -1252,10 +1280,10 @@ class MyFirstGUI:
         self.font_size_label.grid(row=18, column=2, pady=10)
 
         alignment_options = ["Center", "Align Left", "Align Right"]
-        alignment_var = StringVar(master)
-        alignment_var.set("Center")
+        self.alignment_var = StringVar(master)
+        self.alignment_var.set("Center")
         self.alignment_label = Label(master, text="Alignment", bg="#699864")
-        self.alignment_size = OptionMenu(master, alignment_var, *alignment_options)
+        self.alignment_size = OptionMenu(master, self.alignment_var, *alignment_options)
         self.alignment_size.grid(row=19, column=3, pady=10)
         self.alignment_label.grid(row=19, column=2, pady=10)
 
@@ -1269,6 +1297,14 @@ class MyFirstGUI:
         self.font.grid(row=20, column=3, pady=10)
         self.font_label.grid(row=20, column=2, pady=10)
 
+        kern_options = ["1", "2", "3", "4", "5"]
+        self.kern_var = StringVar(master)
+        self.kern_var.set("2")
+        self.kern_label = Label(master, text="Kern", bg="#699864")
+        self.kern = OptionMenu(master, self.kern_var, *kern_options)
+        self.kern.grid(row=21, column=3, pady=10)
+        self.kern_label.grid(row=21, column=2, pady=10)
+
     def personalize(self):
 
         names = self.personalize_entry.get("1.0", 'end-1c').split('\n')
@@ -1277,6 +1313,7 @@ class MyFirstGUI:
         answer = ask_grid_background()
         separator = Image.new('RGB', (473, 1), color_dict['P'])
         background = Image.new('RGB', (473, 821), color_dict['.'])
+        filename=""
 
         if answer:
             showinfo("Bitmap", "Give me the design.")
@@ -1295,36 +1332,47 @@ class MyFirstGUI:
                 background.paste(section, (0, (41 * i + 1)))
                 background.paste(separator, (0, (41 * i) + 41))
         else:
-            background.paste(separator, (0, 0))
+            #background.paste(separator, (0, 0))
             for i in range(20):
                 # background.paste(section,(0,(41*i+1)))
                 background.paste(separator, (0, (41 * i) + 41))
 
-        draw = ImageDraw.Draw(background)
-        font_name = self.font_var.get()
-        font_size = int(self.font_size_var.get())
-        fnt = ImageFont.truetype(f"Fonts/{font_name}.ttf", font_size)
-        draw.fontmode = '1'
-        y = 0
-        for name in names:
-            width_text, height_text = draw.textsize(name, fnt)
+        for i in range(num_grids):
 
-            offset_x, offset_y = fnt.getoffset(name)
-            width_text += offset_x
-            height_text += offset_y
+            grid=background.copy()
 
-            top_left_x = 473 / 2 - width_text / 2
-            top_left_y = (40 / 2 - height_text / 2) + y
-            xy = top_left_x, top_left_y
+            draw = ImageDraw.Draw(grid)
+            font_name = self.font_var.get()
+            font_size = int(self.font_size_var.get())
+            fnt = ImageFont.truetype(f"Fonts/{font_name}.ttf", font_size)
+            draw.fontmode = '1'
+            y = 0
+            n = 0
+            for name in names:
+                kern(name=name, draw_object=draw, y=y, space=self.kern_var.get(), font=fnt, fill=(255, 0, 0))
+                y += 41
+                n += 1
+                if n == 20:
+                    if filename:
+                        grid.save(f"{filename} Grid {i}.bmp")
+                    else:
+                        grid.save(f"Current Grid {i}.bmp")
 
-            draw.text(xy, name, font=fnt, fill=(255, 0, 0))
-            y += 41
+                    names = names[20:]
+                    break
+
+            if filename:
+                grid.save(f"{filename} Grid {i}.bmp")
+            else:
+                grid.save(f"Current Grid {i}.bmp")
+
+
         background.show()
 
     def plain(self):
 
         """
-        What sintral color combations are each of these used it?
+        What sintral color combinations are each of these used it?
         Speed: 3,4,5,6,7,8
         Empty Speed: 5,6,7,8
         WM32X: 3
@@ -1547,5 +1595,5 @@ class MyFirstGUI:
 
 
 root = Tk()
-my_gui = MyFirstGUI(root)
+my_gui = MyGUI(root)
 root.mainloop()
