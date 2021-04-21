@@ -982,10 +982,10 @@ def make_plain_sintral(jtxt, entries, ja1=None):
 
                 if pers_middle:
                     print(line1_440)
-                    line1_440 = re.sub(r"S:<1\+>",r"S:<1\->", line1_440)
-                    line2_440 = re.sub(r"S:<1\+>",r"S:<1\->", line2_440)
-                    line1_TC = re.sub(r"S:<1\+>",r"S:<1\->", line1_TC)
-                    line2_TC = re.sub(r"S:<1\+>",r"S:<1\->", line2_TC)
+                    line1_440 = re.sub(r"S:<1\+>",r"S:<1->", line1_440)
+                    line2_440 = re.sub(r"S:<1\+>",r"S:<1->", line2_440)
+                    line1_TC = re.sub(r"S:<1\+>",r"S:<1->", line1_TC)
+                    line2_TC = re.sub(r"S:<1\+>",r"S:<1->", line2_TC)
 
                 sintral_middle += f"REP*{int(rep_count / 2)}\n"
                 sintral_middle += f"{line1_440}\n"
@@ -1055,33 +1055,33 @@ def make_plain_sintral(jtxt, entries, ja1=None):
                 sintral2x_middle += f"REPEND\n"
 
             if num_colors == 7:
-                lines_440, lines_tc = make_7_color_line(last_line, entries['speed'],
+                lines = make_7_color_line(last_line, entries['speed'],
                                                         entries['empty_speed'],
                                                         entries['wm7'], entries['wmi78'])
 
                 sintral_middle += f"REP*{int(rep_count / 2)}\n"
-                for line in lines_440:
+                for line in lines:
                     sintral_middle += f"{line}\n"
                 sintral_middle += f"REPEND\n"
 
                 sintral2x_middle += f"REP*{int(rep_count / 2)}\n"
-                for line in lines_tc:
+                for line in lines:
                     sintral2x_middle += f"{line}\n"
                 sintral2x_middle += f"REPEND\n"
 
             if num_colors == 8:
 
-                lines_440, lines_tc = make_8_color_line(last_line, entries['speed'],
+                lines = make_8_color_line(last_line, entries['speed'],
                                                         entries['empty_speed'],
                                                         entries['wm8'], entries['wmi78'])
 
                 sintral_middle += f"REP*{int(rep_count / 2)}\n"
-                for line in lines_440:
+                for line in lines:
                     sintral_middle += f"{line}\n"
                 sintral_middle += f"REPEND\n"
 
                 sintral2x_middle += f"REP*{int(rep_count / 2)}\n"
-                for line in lines_tc:
+                for line in lines:
                     sintral2x_middle += f"{line}\n"
                 sintral2x_middle += f"REPEND\n"
 
