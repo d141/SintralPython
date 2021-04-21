@@ -7,7 +7,7 @@ from tkinter import *
 from tkinter import messagebox, filedialog
 from tkinter.messagebox import askokcancel, showinfo, QUESTION, askyesno
 from tkinter.simpledialog import askstring
-
+import re
 import PIL
 import labels
 import numpy as np
@@ -653,7 +653,6 @@ def convert_to_jtxt(image, start_line=None):
             compressed = compressed + str(line_num) + " " + new_lines[0] + "\n"
             line_num += 1
 
-    print(compressed[:compressed.rfind('\n')])
     return compressed[:compressed.rfind('\n')], line_num
 
 
@@ -663,7 +662,8 @@ def find_ja1(grid):
     ja1_list = ""
     for line in lines:
         if "P" in line:
-            ja1_list += f"IF #50={index}: JA1={str(int(line[0:4]) - 1)}\n"
+            ja1_list += f"IF #50={index} JA1={str(int(line[0:4]) - 1)}\n"
+            index += 1
     return ja1_list
 
 
@@ -942,8 +942,9 @@ def make_plain_sintral(jtxt, entries, ja1=None):
     sintral_middle = ""
     sintral2x_middle = ""
     lines[-1] = lines[-1][0:5] + 'Q' + lines[-1][6:]
+    pers_middle = False
     for line in lines:
-        if "$" in line:
+        if "$" in line[:7]:
             continue
         this_line = ""
         line_slice = line[5:13]
@@ -973,12 +974,19 @@ def make_plain_sintral(jtxt, entries, ja1=None):
             if this_line[0] == 'Q':
                 rep_count += 1
 
-            print(rep_count)
             if num_colors == 3:
                 line1_440, line2_440, line1_TC, line2_TC = make_3_color_line(last_line, entries['speed'],
                                                                              entries['wm36'],
                                                                              entries['wm32x'], entries['wmi'],
                                                                              entries['wmi78'])
+
+                if pers_middle:
+                    print(line1_440)
+                    line1_440 = re.sub(r"S:<1\+>",r"S:<1\->", line1_440)
+                    line2_440 = re.sub(r"S:<1\+>",r"S:<1\->", line2_440)
+                    line1_TC = re.sub(r"S:<1\+>",r"S:<1\->", line1_TC)
+                    line2_TC = re.sub(r"S:<1\+>",r"S:<1\->", line2_TC)
+
                 sintral_middle += f"REP*{int(rep_count / 2)}\n"
                 sintral_middle += f"{line1_440}\n"
                 sintral_middle += f"{line2_440}\n"
@@ -1082,7 +1090,9 @@ def make_plain_sintral(jtxt, entries, ja1=None):
                 sintral2x_middle += ja1
                 pers_start = False
                 rep_count = 2
+                pers_middle = True
             elif pers_stop:
+                pers_middle = False
                 sintral_middle += f"JA1 = {stop_line}\n"
                 sintral2x_middle += f"JA1 = {stop_line}\n"
                 pers_stop = False
@@ -1153,7 +1163,6 @@ def kern(name, draw_object, y, space, font, fill):
         top_left_y = (40 / 2 - height_text / 2) + y
         xy = top_left_x, top_left_y
         width_adjuster += width_text + int(space)
-        print(f"char:{char},width_text:{width_text},xy:{xy},width_adjuster:{width_adjuster}")
         draw_object.text(xy, char, font=font, fill=fill)
 
 
@@ -1170,25 +1179,25 @@ class MyGUI:
 
         self.plain_button = Button(master, text="Do a Single All The Way. Not Personalized", command=self.plain,
                                    highlightbackground="#7EB6FF")
-        self.plain_button.grid(row=1, column=0, columnspan=2)
+        self.plain_button.grid(row=0, column=2, columnspan=2)
 
         # DON'T FORGET TO CHANGE THE COMMAND
         self.pers_folder_button = Button(master, text="Do a Whole Folder. Personalized", command=self.plain_folder,
                                          highlightbackground="#838EDE")
-        self.pers_folder_button.grid(row=2, column=0, columnspan=2)
+        self.pers_folder_button.grid(row=1, column=0, columnspan=2)
 
         self.pers_button = Button(master, text="Do a Single. Personalized", command=self.pers_single,
                                   highlightbackground="#838EDE")
-        self.pers_button.grid(row=3, column=0, columnspan=2, )
+        self.pers_button.grid(row=1, column=2, columnspan=2, )
 
         self.birdseye_button = Button(master, text="Do a Single. Stop Before Color Reduction.",
                                       command=self.just_birdseye,
                                       highlightbackground="#7eb8ff")
-        self.birdseye_button.grid(row=4, column=0, columnspan=2)
+        self.birdseye_button.grid(row=2, column=0, columnspan=2)
 
         self.sintral_button = Button(master, text="Make a Sintral", command=self.just_sintral,
                                      highlightbackground="#7EB8FF")
-        self.sintral_button.grid(row=5, column=0, columnspan=2, pady=(0, 20))
+        self.sintral_button.grid(row=2, column=2, columnspan=2)
 
         self.speed_label = Label(master, text="Speed", bg="#8FBC8F")
         self.speed_entry = Entry(master)
@@ -1560,7 +1569,6 @@ class MyGUI:
         os.makedirs(new_path)
         reduced.save(f"{new_path}/{filename}-birdseye.bmp")
 
-        print('length', len(grids))
 
         for i in range(len(grids)):
             grids[i].save(f"{new_path}/{grid_filenames[i]}-birdseye.bmp")
