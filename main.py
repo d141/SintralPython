@@ -915,10 +915,10 @@ def make_8_color_line(combo, speed, empty_speed, wm, wmi):
     lines = [
         f"<<	S:<1+>{combo[0]}{combo_0_pair}(5)-{combo_0_pair}.AYT*I+B(7)/{combo[1]}{combo_1_pair}-{combo[1]}GHOWZEKL/{combo[2]}{combo_2_pair}-{combo_2_pair}.AYT*I+B/{combo[3]}{combo_3_pair}-{combo[3]}GHOWZEKL;	Y:{system_0}/{system_1}/{system_2}/{system_3}/{system_4}/{system_5}/{system_6}/{system_7};	WM={wm}	WMI={wmi}		SX SX SX SX  MSEC={speed}",
         f">>	S0 MSEC={empty_speed}",
-        f"<<    S:{combo[4]}{combo_4_pair}-{combo_4_pair}.AYT*I+B/{combo[5]}{combo_5_pair}-{combo[5]}GHOWZEKL/{combo[6]}{combo_6_pair}-{combo_6_pair}.AYT*I+B/{combo[7]}{combo_7_pair}-{combo[7]}GHOWZEKL;				WM={wm}	WMI={wmi}		SX SX SX MSEC={speed}",
+        f"<<    S:{combo[4]}{combo_4_pair}-{combo_4_pair}.AYT*I+B/{combo[5]}{combo_5_pair}-{combo[5]}GHOWZEKL/{combo[6]}{combo_6_pair}-{combo_6_pair}.AYT*I+B/{combo[7]}{combo_7_pair}-{combo[7]}GHOWZEKL;				WM={wm}	WMI={wmi}		SX SX SX SX MSEC={speed}",
         f">>	S:<1+>{combo[0]}{combo_0_pair}(5)-{combo_0_pair}.AYT*I+B(7)/{combo[1]}{combo_1_pair}-{combo[1]}GHOWZEKL/{combo[2]}{combo_2_pair}-{combo_2_pair}.AYT*I+B/{combo[3]}{combo_3_pair}-{combo[3]}GHOWZEKL;		WM={wm}		WMI={wmi}		SX SX SX SX ",
         f"<<	S0 MSEC={empty_speed}",
-        f">>    S:{combo[4]}{combo_4_pair}-{combo_4_pair}.AYT*I+B/{combo[5]}{combo_5_pair}-{combo[5]}GHOWZEKL/{combo[5]}{combo_5_pair}-{combo_6_pair}.AYT*I+B/{combo[7]}{combo_7_pair}-{combo[7]}GHOWZEKL;;				WM={wm}	WMI={wmi}		SX SX SX MSEC={speed}",
+        f">>    S:{combo[4]}{combo_4_pair}-{combo_4_pair}.AYT*I+B/{combo[5]}{combo_5_pair}-{combo[5]}GHOWZEKL/{combo[5]}{combo_5_pair}-{combo_6_pair}.AYT*I+B/{combo[7]}{combo_7_pair}-{combo[7]}GHOWZEKL;;				WM={wm}	WMI={wmi}		SX SX SX SX MSEC={speed}",
     ]
 
     return lines
@@ -1093,8 +1093,8 @@ def make_plain_sintral(jtxt, entries, ja1=None):
                 pers_middle = True
             elif pers_stop:
                 pers_middle = False
-                sintral_middle += f"JA1 = {stop_line}\n"
-                sintral2x_middle += f"JA1 = {stop_line}\n"
+                sintral_middle += f"JA1={stop_line}\n"
+                sintral2x_middle += f"JA1={stop_line}\n"
                 pers_stop = False
                 rep_count = 0
             else:
@@ -1231,7 +1231,7 @@ class MyGUI:
 
         self.wm7_label = Label(master, text="7 Color WM", bg="#90EE90")
         self.wm7_entry = Entry(master)
-        self.wm7_entry.insert(0, "7.3")
+        self.wm7_entry.insert(0, "7.5")
         self.wm7_label.grid(row=8, column=2)
         self.wm7_entry.grid(row=8, column=3)
 
