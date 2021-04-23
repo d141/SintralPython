@@ -590,6 +590,7 @@ def convert_to_jtxt(image, start_line=None):
         length = len(big_string)
         new_string = ""
         i = 1
+        print(f"length of big string {length}")
         while i <= length - 1 and string:
             if i > length - i:
                 pass
@@ -992,10 +993,17 @@ def make_plain_sintral(jtxt, entries, ja1=None):
                 sintral_middle += f"{line2_440}\n"
                 sintral_middle += f"REPEND\n"
 
+                #
+
                 # Deal with an uneven number of double production strokes
                 if rep_count == 2:
                     sintral2x_middle += f"{line1_440}\n"
                     sintral2x_middle += f"{line2_440}\n"
+                elif this_line != ".AY":
+                    sintral2x_middle += f"REP*{int(rep_count / 4)}\n"
+                    sintral2x_middle += f"{line1_440}\n"
+                    sintral2x_middle += f"{line2_440}\n"
+                    sintral2x_middle += f"REPEND\n"
                 elif rep_count % 4 == 0:
                     sintral2x_middle += f"REP*{int(rep_count / 4)}\n"
                     sintral2x_middle += f"{line1_TC}\n"
