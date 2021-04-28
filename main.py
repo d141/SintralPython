@@ -584,13 +584,21 @@ def convert_to_jtxt(image, start_line=None):
         line_num = start_line
     else:
         line_num = 1002
+
     compressed = ""
-    for line in txt_list:
-        string = line
-        length = len(big_string)
-        new_string = ""
-        i = 1
-        print(f"length of big string {length}")
+
+    counts_found = find_counts(txt_list)
+    compressed_list = find_patterns(counts_found)
+
+
+    for line in compressed_list:
+        #string = line
+        #length = len(big_string)
+        #new_string = ""
+        #i = 1
+        '''
+        #Original Compression Algorithm
+        
         while i <= length - 1 and string:
             if i > length - i:
                 pass
@@ -616,18 +624,20 @@ def convert_to_jtxt(image, start_line=None):
                     i = 1
                 else:
                     i += 1
+        '''
 
         new_lines = []
-        while len(new_string) > 120:
+        while len(line) > 120:
 
             last_char_idx = 119
-            last_char = new_string[last_char_idx]
+            last_char = line[last_char_idx]
             while last_char == "(" or last_char.isdigit():
                 last_char_idx -= 1
-                last_char = new_string[last_char_idx]
-            new_lines.append(new_string[:last_char_idx] + "$")
-            new_string = "$" + new_string[last_char_idx:]
-        new_lines.append(new_string)
+                last_char = line[last_char_idx]
+            new_lines.append(line[:last_char_idx] + "$")
+            line = "$" + line[last_char_idx:]
+        new_lines.append(line)
+
 
         if len(new_lines) == 4:
             compressed = compressed + str(line_num) + " " + new_lines[0] + "\n"
@@ -638,6 +648,7 @@ def convert_to_jtxt(image, start_line=None):
             line_num += 1
             compressed = compressed + str(line_num) + " " + new_lines[3] + "\n"
             line_num += 1
+
         elif len(new_lines) == 3:
             compressed = compressed + str(line_num) + " " + new_lines[0] + "\n"
             line_num += 1
@@ -645,11 +656,13 @@ def convert_to_jtxt(image, start_line=None):
             line_num += 1
             compressed = compressed + str(line_num) + " " + new_lines[2] + "\n"
             line_num += 1
+
         elif len(new_lines) == 2:
             compressed = compressed + str(line_num) + " " + new_lines[0] + "\n"
             line_num += 1
             compressed = compressed + str(line_num) + " " + new_lines[1] + "\n"
             line_num += 1
+
         else:
             compressed = compressed + str(line_num) + " " + new_lines[0] + "\n"
             line_num += 1
@@ -924,6 +937,90 @@ def make_8_color_line(combo, speed, empty_speed, wm, wmi):
 
     return lines
 
+def find_counts(text_list):
+  new_list=[]
+  for line in text_list:
+    string = line
+    new_string = ""
+    while string:
+      if len(string) == 1:
+        new_string += string[0]
+        new_list.append(new_string)
+        break
+      sub_string1 = string[0]
+      sub_string2 = string[1]
+      if sub_string1 == sub_string2:
+          match = True
+          count = 1
+          while match is True:
+              sub_string1 = string[count]
+              sub_string2 = string[count+1]
+              if sub_string1 == sub_string2:
+                  count += 1
+              else:
+                  match = False
+                  new_string += f"{count + 1}{sub_string1}"
+                  string = string[count+1:]
+      else:
+              new_string += string[0]
+              string = string[1:]
+  return new_list
+
+def find_patterns(text_list):
+  new_list = []
+  for line in text_list:
+
+    new_line = ""
+
+    while line:
+
+
+      index = 0
+      current = line[index]
+      color_1 = ""
+      while current.isnumeric():
+        index += 1
+        current = line[index]
+
+      color_1 = line[:index + 1]
+
+      line = line[index+1:]
+
+      if len(line) == 0:
+        new_line += color_1
+        new_list.append(new_line)
+        break
+
+      color_2 = ""
+      index = 0
+      current = line[index]
+
+      while current.isnumeric():
+        index += 1
+        current = line[index]
+      color_2 = line[:index + 1]
+
+      color_pair = color_1 + color_2
+
+      index = 0
+      pair_length = len(color_pair)
+      next_pair = line[index + 1: index + 1 + pair_length]
+      pair_count = 1
+
+      while color_pair == next_pair:
+        pair_count += 1
+        index += pair_length
+        next_pair = line[index + 1: index + 1 + pair_length]
+
+      if pair_count == 1:
+        new_line += color_1
+        #line = line[len(color_1):]
+      else:
+        new_line += f"{pair_count}({color_pair})"
+        line = line[pair_count * len(color_pair)-1:]
+
+    new_list.append(new_line)
+  return(new_list)
 
 def make_plain_sintral(jtxt, entries, ja1=None):
     '''
