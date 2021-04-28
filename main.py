@@ -590,12 +590,13 @@ def convert_to_jtxt(image, start_line=None):
     counts_found = find_counts(txt_list)
     compressed_list = find_patterns(counts_found)
 
+    print(compressed_list)
 
     for line in compressed_list:
-        #string = line
-        #length = len(big_string)
-        #new_string = ""
-        #i = 1
+        # string = line
+        # length = len(big_string)
+        # new_string = ""
+        # i = 1
         '''
         #Original Compression Algorithm
         
@@ -638,7 +639,6 @@ def convert_to_jtxt(image, start_line=None):
             line = "$" + line[last_char_idx:]
         new_lines.append(line)
 
-
         if len(new_lines) == 4:
             compressed = compressed + str(line_num) + " " + new_lines[0] + "\n"
             line_num += 1
@@ -658,6 +658,7 @@ def convert_to_jtxt(image, start_line=None):
             line_num += 1
 
         elif len(new_lines) == 2:
+
             compressed = compressed + str(line_num) + " " + new_lines[0] + "\n"
             line_num += 1
             compressed = compressed + str(line_num) + " " + new_lines[1] + "\n"
@@ -937,90 +938,94 @@ def make_8_color_line(combo, speed, empty_speed, wm, wmi):
 
     return lines
 
+
 def find_counts(text_list):
-  new_list=[]
-  for line in text_list:
-    string = line
-    new_string = ""
-    while string:
-      if len(string) == 1:
-        new_string += string[0]
-        new_list.append(new_string)
-        break
-      sub_string1 = string[0]
-      sub_string2 = string[1]
-      if sub_string1 == sub_string2:
-          match = True
-          count = 1
-          while match is True:
-              sub_string1 = string[count]
-              sub_string2 = string[count+1]
-              if sub_string1 == sub_string2:
-                  count += 1
-              else:
-                  match = False
-                  new_string += f"{count + 1}{sub_string1}"
-                  string = string[count+1:]
-      else:
-              new_string += string[0]
-              string = string[1:]
-  return new_list
+    new_list = []
+    for line in text_list:
+        string = line
+        new_string = ""
+        while string:
+            if len(string) == 1:
+                new_string += string[0]
+                new_list.append(new_string)
+                break
+            sub_string1 = string[0]
+            sub_string2 = string[1]
+            if sub_string1 == sub_string2:
+                match = True
+                count = 1
+                while match is True:
+                    sub_string1 = string[count]
+                    sub_string2 = string[count + 1]
+                    if sub_string1 == sub_string2:
+                        count += 1
+                    else:
+                        match = False
+                        new_string += f"{count + 1}{sub_string1}"
+                        string = string[count + 1:]
+            else:
+                new_string += string[0]
+                string = string[1:]
+    return new_list
+
 
 def find_patterns(text_list):
-  new_list = []
-  for line in text_list:
+    new_list = []
+    for line in text_list:
 
-    new_line = ""
+        new_line = ""
 
-    while line:
+        while line:
 
+            index = 0
+            current = line[index]
+            color_1 = ""
+            while current.isnumeric():
+                index += 1
+                current = line[index]
 
-      index = 0
-      current = line[index]
-      color_1 = ""
-      while current.isnumeric():
-        index += 1
-        current = line[index]
+            color_1 = line[:index + 1]
 
-      color_1 = line[:index + 1]
+            line = line[index + 1:]
 
-      line = line[index+1:]
+            if len(line) == 0:
+                new_line += color_1
+                #new_list.append(new_line)
+                break
 
-      if len(line) == 0:
-        new_line += color_1
+            color_2 = ""
+            index = 0
+            current = line[index]
+
+            while current.isnumeric():
+                index += 1
+                current = line[index]
+
+            color_2 = line[:index + 1]
+
+            color_pair = color_1 + color_2
+
+            index = 0
+            pair_length = len(color_pair)
+            next_pair = line[index + 1: index + 1 + pair_length]
+            pair_count = 1
+
+            while color_pair == next_pair:
+                pair_count += 1
+                index += pair_length
+                next_pair = line[index + 1: index + 1 + pair_length]
+
+            if pair_count == 1:
+                new_line += color_1
+                # line = line[len(color_1):]
+            else:
+                new_line += f"{pair_count}({color_pair})"
+                line = line[pair_count * len(color_pair) - 1:]
+
         new_list.append(new_line)
-        break
 
-      color_2 = ""
-      index = 0
-      current = line[index]
+    return (new_list)
 
-      while current.isnumeric():
-        index += 1
-        current = line[index]
-      color_2 = line[:index + 1]
-
-      color_pair = color_1 + color_2
-
-      index = 0
-      pair_length = len(color_pair)
-      next_pair = line[index + 1: index + 1 + pair_length]
-      pair_count = 1
-
-      while color_pair == next_pair:
-        pair_count += 1
-        index += pair_length
-        next_pair = line[index + 1: index + 1 + pair_length]
-
-      if pair_count == 1:
-        new_line += color_1
-        #line = line[len(color_1):]
-      else:
-        new_line += f"{pair_count}({color_pair})"
-        line = line[pair_count * len(color_pair)-1:]
-
-    new_list.append(new_line)
-  return(new_list)
 
 def make_plain_sintral(jtxt, entries, ja1=None):
     '''
@@ -1080,10 +1085,10 @@ def make_plain_sintral(jtxt, entries, ja1=None):
 
                 if pers_middle:
                     print(line1_440)
-                    line1_440 = re.sub(r"S:<1\+>",r"S:<1->", line1_440)
-                    line2_440 = re.sub(r"S:<1\+>",r"S:<1->", line2_440)
-                    line1_TC = re.sub(r"S:<1\+>",r"S:<1->", line1_TC)
-                    line2_TC = re.sub(r"S:<1\+>",r"S:<1->", line2_TC)
+                    line1_440 = re.sub(r"S:<1\+>", r"S:<1->", line1_440)
+                    line2_440 = re.sub(r"S:<1\+>", r"S:<1->", line2_440)
+                    line1_TC = re.sub(r"S:<1\+>", r"S:<1->", line1_TC)
+                    line2_TC = re.sub(r"S:<1\+>", r"S:<1->", line2_TC)
 
                 sintral_middle += f"REP*{int(rep_count / 2)}\n"
                 sintral_middle += f"{line1_440}\n"
@@ -1161,8 +1166,8 @@ def make_plain_sintral(jtxt, entries, ja1=None):
 
             if num_colors == 7:
                 lines = make_7_color_line(last_line, entries['speed'],
-                                                        entries['empty_speed'],
-                                                        entries['wm7'], entries['wmi78'])
+                                          entries['empty_speed'],
+                                          entries['wm7'], entries['wmi78'])
 
                 sintral_middle += f"REP*{int(rep_count / 2)}\n"
                 for line in lines:
@@ -1177,8 +1182,8 @@ def make_plain_sintral(jtxt, entries, ja1=None):
             if num_colors == 8:
 
                 lines = make_8_color_line(last_line, entries['speed'],
-                                                        entries['empty_speed'],
-                                                        entries['wm8'], entries['wmi78'])
+                                          entries['empty_speed'],
+                                          entries['wm8'], entries['wmi78'])
 
                 sintral_middle += f"REP*{int(rep_count / 2)}\n"
                 for line in lines:
@@ -1427,7 +1432,7 @@ class MyGUI:
         answer = ask_grid_background()
         separator = Image.new('RGB', (473, 1), color_dict['P'])
         background = Image.new('RGB', (473, 821), color_dict['.'])
-        filename=""
+        filename = ""
 
         if answer:
             showinfo("Bitmap", "Give me the design.")
@@ -1446,14 +1451,14 @@ class MyGUI:
                 background.paste(section, (0, (41 * i + 1)))
                 background.paste(separator, (0, (41 * i) + 41))
         else:
-            #background.paste(separator, (0, 0))
+            # background.paste(separator, (0, 0))
             for i in range(20):
                 # background.paste(section,(0,(41*i+1)))
                 background.paste(separator, (0, (41 * i) + 41))
 
         for i in range(num_grids):
 
-            grid=background.copy()
+            grid = background.copy()
 
             draw = ImageDraw.Draw(grid)
             font_name = self.font_var.get()
@@ -1479,7 +1484,6 @@ class MyGUI:
                 grid.save(f"{filename} Grid {i}.bmp")
             else:
                 grid.save(f"Current Grid {i}.bmp")
-
 
         background.show()
 
@@ -1673,7 +1677,6 @@ class MyGUI:
         new_path = os.path.join(os.path.dirname(file_path), folder_name)
         os.makedirs(new_path)
         reduced.save(f"{new_path}/{filename}-birdseye.bmp")
-
 
         for i in range(len(grids)):
             grids[i].save(f"{new_path}/{grid_filenames[i]}-birdseye.bmp")
