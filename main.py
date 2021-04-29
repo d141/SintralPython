@@ -1250,6 +1250,9 @@ def add_pers_barcode(bitmap, start_pers):
 
 
 def get_text_width(text_string, font):
+    if text_string == " ":
+        return font.getsize(text_string)[0]
+
     return font.getmask(text_string).getbbox()[2]
 
 
@@ -1267,6 +1270,7 @@ def kern(name, draw_object, y, space, font, fill):
     height_text += offset_y
 
     width_adjuster = 0
+
     for char in chars:
         width_text = get_text_width(char, font)
         top_left_x = (473 / 2 - total_width / 2) + width_adjuster
@@ -1275,6 +1279,11 @@ def kern(name, draw_object, y, space, font, fill):
         width_adjuster += width_text + int(space)
         draw_object.text(xy, char, font=font, fill=fill)
 
+
+
+
+def TitleCase(string):
+    return re.sub(r"['\w]+", lambda m: m.group(0).capitalize(), string)
 
 class MyGUI:
 
@@ -1388,7 +1397,7 @@ class MyGUI:
         self.scrollbar.grid(column=3, row=12, rowspan=1, sticky='NS')
 
         self.close_button = Button(master, text="Close", command=master.quit, highlightbackground="#B0E2FF")
-        self.close_button.grid(row=15, column=0, pady=30, columnspan=2)
+        self.close_button.grid(row=16, column=0, pady=30, columnspan=2)
 
         font_size_options = ["10", "12", "14", "16", "20", "24", "36", "40"]
         self.font_size_var = StringVar(master)
@@ -1423,6 +1432,14 @@ class MyGUI:
         self.kern = OptionMenu(master, self.kern_var, *kern_options)
         self.kern.grid(row=14, column=1, pady=10)
         self.kern_label.grid(row=14, column=0, pady=10)
+
+        capitalize_options = ['Leave it alone', 'ALL CAPS', 'all lower','Title Case']
+        self.capitalize_var = StringVar(master)
+        self.capitalize_var.set("Leave it alone")
+        self.capitalize_label = Label(master, text="Capitalize", bg="#699864")
+        self.capitalize = OptionMenu(master, self.capitalize_var, *capitalize_options)
+        self.capitalize.grid(row=15, column=1, pady=10)
+        self.capitalize_label.grid(row=15, column=0, pady=10)
 
     def personalize(self):
 
@@ -1467,25 +1484,43 @@ class MyGUI:
             draw.fontmode = '1'
             y = 0
             n = 0
+
             for name in names:
-                kern(name=name, draw_object=draw, y=y, space=self.kern_var.get(), font=fnt, fill=(255, 0, 0))
+                '''
+                if self.capitalize_var.get() == "ALL CAPS":
+                    name = name.upper()
+                elif self.capitalize_var.get() == "all lower":
+                    name = name.lower()
+                elif self.capitalize_var.get() == "Title Case":
+                    name = TitleCase(name)
+                else:
+                    pass
+                '''
+
+                print(name)
+
+                kern(name=name, draw_object=draw, y=y, space=self.kern_var.get(), font=fnt, fill=(255, 255, 0))
                 y += 41
                 n += 1
+
                 if n == 20:
                     if filename:
-                        grid.save(f"{filename} Grid {i}.bmp")
+                        grid.save(f"/Users/davevananda/Desktop/Bitmaps/{filename} Grid {i}.bmp")
                     else:
-                        grid.save(f"Current Grid {i}.bmp")
+                        grid.save(f"/Users/davevananda/Desktop/Bitmaps/Current Grid {i}.bmp")
 
                     names = names[20:]
                     break
 
+            grid.show()
             if filename:
-                grid.save(f"{filename} Grid {i}.bmp")
+                grid.save(f"/Users/davevananda/Desktop/Bitmaps/{filename} Grid {i}.bmp")
             else:
-                grid.save(f"Current Grid {i}.bmp")
+                grid.save(f"/Users/davevananda/Desktop/Bitmaps/Current Grid {i}.bmp")
 
-        background.show()
+
+
+
 
     def plain(self):
 
