@@ -42,7 +42,7 @@ color_dict = {'.': (255, 255, 255),
               'i': (252, 218, 17),
               'b': (196, 73, 0),
               'g': (213, 144, 0),
-              'h': (61, 17, 19),
+              'h': (61, 71, 19),
               'o': (213, 199, 186),
               'w': (249, 218, 224),
               'z': (112, 2255, 112),
@@ -74,7 +74,7 @@ color_words = {(255, 255, 255): "White",
                (252, 218, 17): "Canary",
                (196, 73, 0): "Burnt Orange",
                (213, 144, 0): "Old Gold",
-               (61, 17, 19): "Olive",
+               (61, 71, 19): "Olive",
                (213, 199, 186): "Van Cream",
                (249, 218, 224): "Light Pink",
                (235, 254, 1): "Safety Yellow",
@@ -303,17 +303,17 @@ def make_barcode(img, colors):
                 pixels[1, y] = pair_2[0]
                 pixels[2, y] = colors_in_row[1]
                 if go_backwards:
-                    pixels[0, y] = pair_1[0]
-                    pixels[1, y] = pair_2[0]
-                    pixels[2, y] = colors_in_row[1]
+                    pixels[0, y -1] = pair_1[0]
+                    pixels[1, y - 1] = pair_2[0]
+                    pixels[2, y - 1] = colors_in_row[1]
             elif colors_in_row[0] not in base_colors_3 and colors_in_row[1] not in base_colors_3:
                 pixels[0, y] = pair_1[0]
                 pixels[1, y] = colors_in_row[0]
                 pixels[2, y] = colors_in_row[1]
                 if go_backwards:
-                    pixels[0, y] = pair_1[0]
-                    pixels[1, y] = colors_in_row[0]
-                    pixels[2, y] = colors_in_row[1]
+                    pixels[0, y - 1] = pair_1[0]
+                    pixels[1, y - 1] = colors_in_row[0]
+                    pixels[2, y -1] = colors_in_row[1]
             else:
                 pixels[0, y] = pair_1[0]
                 pixels[1, y] = pair_2[0]
