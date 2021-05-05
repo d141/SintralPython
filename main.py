@@ -786,6 +786,7 @@ def make_3_color_line(combo, speed, wm_440, wm_TC, wmi_440, wmi_TC):
     system_2 = systems[list(color_dict).index(combo[2])]
     line1_440 = f"<<	S:<1+>{combo[0]}{combo_0_pair}(5)-R(6)/{combo[1]}{combo_1_pair}-{combo[1]}{combo_1_pair}{combo[0]}{combo_0_pair}{combo_2_pair}/{combo[2]}{combo_2_pair}-{combo[2]}{combo_2_pair}{combo[0]}{combo[1]};		Y:{system_0}/{system_1}/{system_2};	WM={wm_440}		WMI={wmi_440}	SX SX SX  MSEC={speed}"
     line2_440 = f">>	S:<1+>{combo[0]}{combo_0_pair}(5)-R(6)/{combo[1]}{combo_1_pair}-{combo[1]}{combo_1_pair}{combo[0]}{combo_0_pair}{combo_2_pair}/{combo[2]}{combo_2_pair}-{combo[2]}{combo_2_pair}{combo[0]}{combo[1]};		Y:{system_0}/{system_1}/{system_2};	WM={wm_440}		WMI={wmi_440}	SX SX SX"
+    print(combo)
     if combo[0] == '.' and combo[1] == 'A' and combo[2] == 'Y':
         line1_TC = f"<<	S:<1+>.G(5)-R(6)/AH-AH.GO/YO-YO.A;		Y:2/3/4/2/3/4;	WM={wm_TC}		WMI={wmi_TC}	SX SX SX SX SX SX   MSEC={speed}"
         line2_TC = f">>	S:<1+>.G(5)-R(6)/AH-AH.GO/YO-YO.A;		Y:2/3/4/2/3/4;	WM={wm_TC}		WMI={wmi_TC}	SX SX SX SX SX SX   MSEC={speed}"
@@ -1096,21 +1097,25 @@ def make_plain_sintral(jtxt, entries, ja1=None):
                 sintral_middle += f"REPEND\n"
 
                 #
-
+                print(line1_TC)
+                print(this_line)
                 # Deal with an uneven number of double production strokes
                 if rep_count == 2:
                     sintral2x_middle += f"{line1_440}\n"
                     sintral2x_middle += f"{line2_440}\n"
-                elif this_line != ".AY":
+
+                elif last_line != ".AY":
                     sintral2x_middle += f"REP*{int(rep_count / 4)}\n"
                     sintral2x_middle += f"{line1_440}\n"
                     sintral2x_middle += f"{line2_440}\n"
                     sintral2x_middle += f"REPEND\n"
+
                 elif rep_count % 4 == 0:
                     sintral2x_middle += f"REP*{int(rep_count / 4)}\n"
                     sintral2x_middle += f"{line1_TC}\n"
                     sintral2x_middle += f"{line2_TC}\n"
                     sintral2x_middle += f"REPEND\n"
+
                 else:
                     sintral2x_middle += f"REP*{int((rep_count - 2) / 4)}\n"
                     sintral2x_middle += f"{line1_TC}\n"
