@@ -549,7 +549,7 @@ def read(file_path, design_colors=None):
         colors = design_colors
 
     # Trim the edges and rotate
-    height = size_num[1] - 15
+    height = size_num[1] - 15 + (3*grid_correction)
     img2 = img.crop((5 - grid_correction, 5 - grid_correction, 478 - grid_correction, height))
     if grid_correction == 0:
         img2 = img2.transpose(PIL.Image.FLIP_TOP_BOTTOM)
@@ -590,7 +590,6 @@ def convert_to_jtxt(image, start_line=None):
     counts_found = find_counts(txt_list)
     compressed_list = find_patterns(counts_found)
 
-    print(compressed_list)
 
     for line in compressed_list:
         # string = line
@@ -786,7 +785,6 @@ def make_3_color_line(combo, speed, wm_440, wm_TC, wmi_440, wmi_TC):
     system_2 = systems[list(color_dict).index(combo[2])]
     line1_440 = f"<<	S:<1+>{combo[0]}{combo_0_pair}(5)-R(6)/{combo[1]}{combo_1_pair}-{combo[1]}{combo_1_pair}{combo[0]}{combo_0_pair}{combo_2_pair}/{combo[2]}{combo_2_pair}-{combo[2]}{combo_2_pair}{combo[0]}{combo[1]};		Y:{system_0}/{system_1}/{system_2};	WM={wm_440}		WMI={wmi_440}	SX SX SX  MSEC={speed}"
     line2_440 = f">>	S:<1+>{combo[0]}{combo_0_pair}(5)-R(6)/{combo[1]}{combo_1_pair}-{combo[1]}{combo_1_pair}{combo[0]}{combo_0_pair}{combo_2_pair}/{combo[2]}{combo_2_pair}-{combo[2]}{combo_2_pair}{combo[0]}{combo[1]};		Y:{system_0}/{system_1}/{system_2};	WM={wm_440}		WMI={wmi_440}	SX SX SX"
-    print(combo)
     if combo[0] == '.' and combo[1] == 'A' and combo[2] == 'Y':
         line1_TC = f"<<	S:<1+>.G(5)-R(6)/AH-AH.GO/YO-YO.A;		Y:2/3/4/2/3/4;	WM={wm_TC}		WMI={wmi_TC}	SX SX SX SX SX SX   MSEC={speed}"
         line2_TC = f">>	S:<1+>.G(5)-R(6)/AH-AH.GO/YO-YO.A;		Y:2/3/4/2/3/4;	WM={wm_TC}		WMI={wmi_TC}	SX SX SX SX SX SX   MSEC={speed}"
@@ -956,17 +954,24 @@ def find_counts(text_list):
                 match = True
                 count = 1
                 while match is True:
-                    sub_string1 = string[count]
-                    sub_string2 = string[count + 1]
-                    if sub_string1 == sub_string2:
-                        count += 1
+                    if count == (len(string)-1):
+                      match = False
+                      new_string += f"{count + 1}{sub_string1}"
+                      string = string[count + 1:]
+
                     else:
-                        match = False
-                        new_string += f"{count + 1}{sub_string1}"
-                        string = string[count + 1:]
+                        sub_string1 = string[count]
+                        sub_string2 = string[count + 1]
+                        if sub_string1 == sub_string2:
+                            count += 1
+                        else:
+                            match = False
+                            new_string += f"{count + 1}{sub_string1}"
+                            string = string[count + 1:]
             else:
                 new_string += string[0]
                 string = string[1:]
+        new_list.append(new_string)
     return new_list
 
 
@@ -1025,7 +1030,7 @@ def find_patterns(text_list):
 
         new_list.append(new_line)
 
-    return (new_list)
+    return new_list
 
 
 def make_plain_sintral(jtxt, entries, ja1=None):
@@ -1085,7 +1090,6 @@ def make_plain_sintral(jtxt, entries, ja1=None):
                                                                              entries['wmi78'])
 
                 if pers_middle:
-                    print(line1_440)
                     line1_440 = re.sub(r"S:<1\+>", r"S:<1->", line1_440)
                     line2_440 = re.sub(r"S:<1\+>", r"S:<1->", line2_440)
                     line1_TC = re.sub(r"S:<1\+>", r"S:<1->", line1_TC)
@@ -1096,9 +1100,7 @@ def make_plain_sintral(jtxt, entries, ja1=None):
                 sintral_middle += f"{line2_440}\n"
                 sintral_middle += f"REPEND\n"
 
-                #
-                print(line1_TC)
-                print(this_line)
+
                 # Deal with an uneven number of double production strokes
                 if rep_count == 2:
                     sintral2x_middle += f"{line1_440}\n"
@@ -1502,7 +1504,6 @@ class MyGUI:
                     pass
                 '''
 
-                print(name)
 
                 kern(name=name, draw_object=draw, y=y, space=self.kern_var.get(), font=fnt, fill=(255, 255, 0))
                 y += 41
