@@ -971,14 +971,14 @@ def find_counts(text_list):
             else:
                 new_string += string[0]
                 string = string[1:]
-        new_list.append(new_string)
+        #new_list.append(new_string)
+    #print(new_list)
     return new_list
 
 
 def find_patterns(text_list):
     new_list = []
     for line in text_list:
-
         new_line = ""
 
         while line:
@@ -1029,7 +1029,6 @@ def find_patterns(text_list):
                 line = line[pair_count * len(color_pair) - 1:]
 
         new_list.append(new_line)
-
     return new_list
 
 
