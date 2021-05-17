@@ -972,7 +972,6 @@ def find_counts(text_list):
                 new_string += string[0]
                 string = string[1:]
         #new_list.append(new_string)
-    #print(new_list)
     return new_list
 
 
@@ -1106,7 +1105,7 @@ def make_plain_sintral(jtxt, entries, ja1=None):
                     sintral2x_middle += f"{line2_440}\n"
 
                 elif last_line != ".AY":
-                    sintral2x_middle += f"REP*{int(rep_count / 4)}\n"
+                    sintral2x_middle += f"REP*{int(rep_count / 2)}\n"
                     sintral2x_middle += f"{line1_440}\n"
                     sintral2x_middle += f"{line2_440}\n"
                     sintral2x_middle += f"REPEND\n"
@@ -1456,16 +1455,19 @@ class MyGUI:
         separator = Image.new('RGB', (473, 1), color_dict['P'])
         background = Image.new('RGB', (473, 821), color_dict['.'])
         filename = ""
+        messagebox.showinfo("Name Count", f"There are { num_names} names in this list.")
 
         if answer:
-            showinfo("Bitmap", "Give me the design.")
+            messagebox.showinfo("Bitmap", "Give me the design.")
             file_path = filedialog.askopenfilename()
             filename = path_leaf(file_path)
             filename = filename[:-4]
             __, __, center = read(file_path)
             if center == 0:
-                messagebox.showinfo("Hmmm", f"I couldn't find a center...are you sure this is a basic set up?")
-                return False
+                if messagebox.askyesno("Hmmm", f"I couldn't find a center...Do you want to tell me where to begin?"):
+                    center = int(askstring("What's the Center?", "How far in from the edge should I start my removal?"))
+                else:
+                    return False
             img = Image.open(file_path)
             size_num = img.size
             section = img.crop((5, (size_num[1] - 55 - center), 478, (size_num[1] - center - 15)))
