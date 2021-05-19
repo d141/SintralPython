@@ -586,7 +586,7 @@ def convert_to_jtxt(image, start_line=None):
         line_num = 1002
 
     compressed = ""
-
+    print(txt_list)
     counts_found = find_counts(txt_list)
     compressed_list = find_patterns(counts_found)
 
@@ -943,6 +943,10 @@ def find_counts(text_list):
         string = line
         new_string = ""
         while string:
+            if "P" in string:
+                 new_list.append("481P")
+                 break
+
             if len(string) == 1:
                 new_string += string[0]
                 new_list.append(new_string)
@@ -1066,18 +1070,18 @@ def make_plain_sintral(jtxt, entries, ja1=None):
             # We have a change in color combinations
             num_colors = len(last_line)
 
-            if this_line[0] == 'P':
+            if "k" in this_line:
                 pers_start = True
                 this_line = last_line
                 start_line = int(line[0:4])
                 lines[idx + 39] = lines[idx + 39][0:5] + 'X' + lines[idx + 39][6:]
 
-            if this_line[0] == 'X':
+            if 'X' in this_line:
                 pers_stop = True
                 this_line = last_line
                 stop_line = str(start_line + 40)
 
-            if this_line[0] == 'Q':
+            if 'Q' in this_line:
                 rep_count += 1
 
             if num_colors == 3:
@@ -1247,7 +1251,7 @@ def make_plain_sintral(jtxt, entries, ja1=None):
 
 def add_pers_barcode(bitmap, start_pers):
     pixels = bitmap.load()
-    pixels[0, start_pers] = color_dict["P"]
+    pixels[0, start_pers] = color_dict["k"]
     bitmap.show()
     return bitmap
 
