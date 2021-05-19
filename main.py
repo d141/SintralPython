@@ -303,7 +303,7 @@ def make_barcode(img, colors):
                 pixels[1, y] = pair_2[0]
                 pixels[2, y] = colors_in_row[1]
                 if go_backwards:
-                    pixels[0, y -1] = pair_1[0]
+                    pixels[0, y - 1] = pair_1[0]
                     pixels[1, y - 1] = pair_2[0]
                     pixels[2, y - 1] = colors_in_row[1]
             elif colors_in_row[0] not in base_colors_3 and colors_in_row[1] not in base_colors_3:
@@ -313,7 +313,7 @@ def make_barcode(img, colors):
                 if go_backwards:
                     pixels[0, y - 1] = pair_1[0]
                     pixels[1, y - 1] = colors_in_row[0]
-                    pixels[2, y -1] = colors_in_row[1]
+                    pixels[2, y - 1] = colors_in_row[1]
             else:
                 pixels[0, y] = pair_1[0]
                 pixels[1, y] = pair_2[0]
@@ -549,7 +549,7 @@ def read(file_path, design_colors=None):
         colors = design_colors
 
     # Trim the edges and rotate
-    height = size_num[1] - 15 + (3*grid_correction)
+    height = size_num[1] - 15 + (3 * grid_correction)
     img2 = img.crop((5 - grid_correction, 5 - grid_correction, 478 - grid_correction, height))
     if grid_correction == 0:
         img2 = img2.transpose(PIL.Image.FLIP_TOP_BOTTOM)
@@ -589,7 +589,6 @@ def convert_to_jtxt(image, start_line=None):
 
     counts_found = find_counts(txt_list)
     compressed_list = find_patterns(counts_found)
-
 
     for line in compressed_list:
         # string = line
@@ -954,10 +953,10 @@ def find_counts(text_list):
                 match = True
                 count = 1
                 while match is True:
-                    if count == (len(string)-1):
-                      match = False
-                      new_string += f"{count + 1}{sub_string1}"
-                      string = string[count + 1:]
+                    if count == (len(string) - 1):
+                        match = False
+                        new_string += f"{count + 1}{sub_string1}"
+                        string = string[count + 1:]
 
                     else:
                         sub_string1 = string[count]
@@ -971,7 +970,7 @@ def find_counts(text_list):
             else:
                 new_string += string[0]
                 string = string[1:]
-        #new_list.append(new_string)
+        # new_list.append(new_string)
     return new_list
 
 
@@ -995,7 +994,7 @@ def find_patterns(text_list):
 
             if len(line) == 0:
                 new_line += color_1
-                #new_list.append(new_line)
+                # new_list.append(new_line)
                 break
 
             color_2 = ""
@@ -1097,7 +1096,6 @@ def make_plain_sintral(jtxt, entries, ja1=None):
                 sintral_middle += f"{line1_440}\n"
                 sintral_middle += f"{line2_440}\n"
                 sintral_middle += f"REPEND\n"
-
 
                 # Deal with an uneven number of double production strokes
                 if rep_count == 2:
@@ -1261,10 +1259,12 @@ def get_text_width(text_string, font):
     return font.getmask(text_string).getbbox()[2]
 
 
-def kern(name, draw_object, y, space, font, fill):
+def kern(name, draw_object, y, space, font, fill, alignment):
     chars = [char for char in name]
 
     total_width = 0
+
+
 
     for char in chars:
         width_text = get_text_width(char, font)
@@ -1276,19 +1276,25 @@ def kern(name, draw_object, y, space, font, fill):
 
     width_adjuster = 0
 
+    if alignment == "Center":
+        alignment_adjuster = 0
+    elif alignment == "Align Left":
+        alignment_adjuster = -((473 / 2 - total_width / 2)-26)
+    elif alignment == "Align Right":
+        alignment_adjuster = (473 / 2 + total_width / 2)-total_width-26
+
     for char in chars:
         width_text = get_text_width(char, font)
-        top_left_x = (473 / 2 - total_width / 2) + width_adjuster
+        top_left_x = (473 / 2 - total_width / 2) + width_adjuster + alignment_adjuster
         top_left_y = (40 / 2 - height_text / 2) + y
         xy = top_left_x, top_left_y
         width_adjuster += width_text + int(space)
         draw_object.text(xy, char, font=font, fill=fill)
 
 
-
-
 def TitleCase(string):
     return re.sub(r"['\w]+", lambda m: m.group(0).capitalize(), string)
+
 
 class MyGUI:
 
@@ -1438,7 +1444,7 @@ class MyGUI:
         self.kern.grid(row=14, column=1, pady=10)
         self.kern_label.grid(row=14, column=0, pady=10)
 
-        capitalize_options = ['Leave it alone', 'ALL CAPS', 'all lower','Title Case']
+        capitalize_options = ['Leave it alone', 'ALL CAPS', 'all lower', 'Title Case']
         self.capitalize_var = StringVar(master)
         self.capitalize_var.set("Leave it alone")
         self.capitalize_label = Label(master, text="Capitalize", bg="#699864")
@@ -1455,7 +1461,7 @@ class MyGUI:
         separator = Image.new('RGB', (473, 1), color_dict['P'])
         background = Image.new('RGB', (473, 821), color_dict['.'])
         filename = ""
-        messagebox.showinfo("Name Count", f"There are { num_names} names in this list.")
+        messagebox.showinfo("Name Count", f"There are {num_names} names in this list.")
 
         if answer:
             messagebox.showinfo("Bitmap", "Give me the design.")
@@ -1484,7 +1490,7 @@ class MyGUI:
         for i in range(num_grids):
 
             grid = background.copy()
-
+            alignment = self.alignment_var.get()
             draw = ImageDraw.Draw(grid)
             font_name = self.font_var.get()
             font_size = int(self.font_size_var.get())
@@ -1494,7 +1500,7 @@ class MyGUI:
             n = 0
 
             for name in names:
-                '''
+
                 if self.capitalize_var.get() == "ALL CAPS":
                     name = name.upper()
                 elif self.capitalize_var.get() == "all lower":
@@ -1503,10 +1509,9 @@ class MyGUI:
                     name = TitleCase(name)
                 else:
                     pass
-                '''
 
-
-                kern(name=name, draw_object=draw, y=y, space=self.kern_var.get(), font=fnt, fill=(255, 255, 0))
+                kern(name=name, draw_object=draw, y=y, space=self.kern_var.get(), font=fnt, fill=(255, 255, 0),
+                     alignment=alignment)
                 y += 41
                 n += 1
 
@@ -1524,10 +1529,6 @@ class MyGUI:
                 grid.save(f"/Users/davevananda/Desktop/Bitmaps/{filename} Grid {i}.bmp")
             else:
                 grid.save(f"/Users/davevananda/Desktop/Bitmaps/Current Grid {i}.bmp")
-
-
-
-
 
     def plain(self):
 
