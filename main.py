@@ -1283,9 +1283,9 @@ def kern(name, draw_object, y, space, font, fill, alignment):
     if alignment == "Center":
         alignment_adjuster = 0
     elif alignment == "Align Left":
-        alignment_adjuster = -((473 / 2 - total_width / 2)-26)
+        alignment_adjuster = -((473 / 2 - total_width / 2)-36)
     elif alignment == "Align Right":
-        alignment_adjuster = (473 / 2 + total_width / 2)-total_width-26
+        alignment_adjuster = (473 / 2 + total_width / 2)-total_width-36
 
     for char in chars:
         width_text = get_text_width(char, font)
@@ -1414,7 +1414,7 @@ class MyGUI:
         self.close_button = Button(master, text="Close", command=master.quit, highlightbackground="#B0E2FF")
         self.close_button.grid(row=16, column=0, pady=30, columnspan=2)
 
-        font_size_options = ["10", "12", "14", "16", "20", "24", "36", "40"]
+        font_size_options = ["10", "12", "14", "16", "20", "24","30", "36", "40"]
         self.font_size_var = StringVar(master)
         self.font_size_var.set("24")
         self.font_size_label = Label(master, text="Font Size", bg="#699864")
@@ -1475,7 +1475,7 @@ class MyGUI:
             __, __, center = read(file_path)
             if center == 0:
                 if messagebox.askyesno("Hmmm", f"I couldn't find a center...Do you want to tell me where to begin?"):
-                    center = int(askstring("What's the Center?", "How far in from the edge should I start my removal?"))
+                    center = int(askstring("Where's the grid?", "How far in from the bottom edge does the grid start?"))
                 else:
                     return False
             img = Image.open(file_path)
@@ -1514,25 +1514,25 @@ class MyGUI:
                 else:
                     pass
 
-                kern(name=name, draw_object=draw, y=y, space=self.kern_var.get(), font=fnt, fill=(255, 255, 0),
+                kern(name=name, draw_object=draw, y=y, space=self.kern_var.get(), font=fnt, fill=(64,224,208),
                      alignment=alignment)
                 y += 41
                 n += 1
 
                 if n == 20:
                     if filename:
-                        grid.save(f"/Users/davevananda/Desktop/Bitmaps/{filename} Grid {i}.bmp")
+                        grid.save(f"C:/Users/sitex 9.10.2020.A/desktop/{filename} Grid {i+1}.bmp")
                     else:
-                        grid.save(f"/Users/davevananda/Desktop/Bitmaps/Current Grid {i}.bmp")
+                        grid.save(f"C:/Users/sitex 9.10.2020.A/desktop/Current Grid {i+1}.bmp")
 
                     names = names[20:]
                     break
 
             grid.show()
             if filename:
-                grid.save(f"/Users/davevananda/Desktop/Bitmaps/{filename} Grid {i}.bmp")
+                grid.save(f"C:/Users/sitex 9.10.2020.A/desktop/{filename} Grid {i}.bmp")
             else:
-                grid.save(f"/Users/davevananda/Desktop/Bitmaps/Current Grid {i}.bmp")
+                grid.save(f"C:/Users/sitex 9.10.2020.A/desktop/Current Grid {i}.bmp")
 
     def plain(self):
 
