@@ -1263,19 +1263,28 @@ def get_text_width(text_string, font):
     return font.getmask(text_string).getbbox()[2]
 
 
-def kern(name, draw_object, y, space, font, fill, alignment):
+def kern(name, draw_object, y, space, font_name,font_size, fill, alignment):
     chars = [char for char in name]
 
     total_width = 0
 
+    fnt = ImageFont.truetype(f"Fonts/{font_name}.ttf", font_size)
 
+    width = fnt.getsize(name)[0]
+
+    #check and adjust font_size
+    while width > 360:
+        print(width)
+        font_size -= 2
+        fnt = ImageFont.truetype(f"Fonts/{font_name}.ttf", font_size)
+        width = fnt.getsize(name)[0]
 
     for char in chars:
-        width_text = get_text_width(char, font)
+        width_text = get_text_width(char, fnt)
         total_width += (width_text + int(space))
 
-    __, height_text = draw_object.textsize(name, font)
-    __, offset_y = font.getoffset(name)
+    __, height_text = draw_object.textsize(name, fnt)
+    __, offset_y = fnt.getoffset(name)
     height_text += offset_y
 
     width_adjuster = 0
@@ -1288,12 +1297,12 @@ def kern(name, draw_object, y, space, font, fill, alignment):
         alignment_adjuster = (473 / 2 + total_width / 2)-total_width-36
 
     for char in chars:
-        width_text = get_text_width(char, font)
+        width_text = get_text_width(char, fnt)
         top_left_x = (473 / 2 - total_width / 2) + width_adjuster + alignment_adjuster
         top_left_y = (40 / 2 - height_text / 2) + y
         xy = top_left_x, top_left_y
         width_adjuster += width_text + int(space)
-        draw_object.text(xy, char, font=font, fill=fill)
+        draw_object.text(xy, char, font=fnt, fill=fill)
 
 
 def TitleCase(string):
@@ -1497,9 +1506,9 @@ class MyGUI:
             alignment = self.alignment_var.get()
             draw = ImageDraw.Draw(grid)
             font_name = self.font_var.get()
-            font_size = int(self.font_size_var.get())
-            fnt = ImageFont.truetype(f"Fonts/{font_name}.ttf", font_size)
+            font_size = math.ceil(int(self.font_size_var.get())*1.333)
             draw.fontmode = '1'
+
             y = 0
             n = 0
 
@@ -1514,25 +1523,25 @@ class MyGUI:
                 else:
                     pass
 
-                kern(name=name, draw_object=draw, y=y, space=self.kern_var.get(), font=fnt, fill=(64,224,208),
+                kern(name=name, draw_object=draw, y=y, space=self.kern_var.get(), font_name=font_name,font_size=font_size, fill=(64,224,208),
                      alignment=alignment)
                 y += 41
                 n += 1
 
                 if n == 20:
                     if filename:
-                        grid.save(f"C:/Users/sitex 9.10.2020.A/desktop/{filename} Grid {i+1}.bmp")
+                        grid.save(f"C:/Users/Sitex.9.10.2020.A/Desktop/{filename} Grid {i+1}.bmp")
                     else:
-                        grid.save(f"C:/Users/sitex 9.10.2020.A/desktop/Current Grid {i+1}.bmp")
+                        grid.save(f"C:/Users/Sitex.9.10.2020.A/Desktop/Current Grid {i+1}.bmp")
 
                     names = names[20:]
                     break
 
             grid.show()
             if filename:
-                grid.save(f"C:/Users/sitex 9.10.2020.A/desktop/{filename} Grid {i}.bmp")
+                grid.save(f"C:/Users/Sitex.9.10.2020.A/Desktop/{filename} Grid {i+1}.bmp")
             else:
-                grid.save(f"C:/Users/sitex 9.10.2020.A/desktop/Current Grid {i}.bmp")
+                grid.save(f"C:/Users/Sitex.9.10.2020.A/Desktop/Current Grid {i+1}.bmp")
 
     def plain(self):
 
