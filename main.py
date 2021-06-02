@@ -13,6 +13,7 @@ import labels
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 from reportlab.graphics import shapes
+from datetime import datetime
 
 color_dict = {'.': (255, 255, 255),
               'A': (0, 0, 0),
@@ -586,7 +587,6 @@ def convert_to_jtxt(image, start_line=None):
         line_num = 1002
 
     compressed = ""
-    print(txt_list)
     counts_found = find_counts(txt_list)
     compressed_list = find_patterns(counts_found)
 
@@ -1274,7 +1274,6 @@ def kern(name, draw_object, y, space, font_name,font_size, fill, alignment):
 
     #check and adjust font_size
     while width > 360:
-        print(width)
         font_size -= 2
         fnt = ImageFont.truetype(f"Fonts/{font_name}.ttf", font_size)
         width = fnt.getsize(name)[0]
@@ -1500,6 +1499,9 @@ class MyGUI:
                 # background.paste(section,(0,(41*i+1)))
                 background.paste(separator, (0, (41 * i) + 41))
 
+        today= datetime.today().strftime('%b-%d-%y')
+        file_name = str(askstring("File Name", f"Name the files. The format will be:\n [your choice]-Grid n-{today}"))
+
         for i in range(num_grids):
 
             grid = background.copy()
@@ -1530,21 +1532,21 @@ class MyGUI:
 
                 if n == 20:
                     if filename:
-                        grid.save(f"C:/Users/Sitex.9.10.2020.A/Desktop/{filename} Grid {i+1}.bmp")
+                        #print(f"C:/Users/Sitex.9.10.2020.A/Desktop/{file_name}-Grid {i+1}-{today}.bmp")
+                        grid.save(f"C:/Users/Sitex.9.10.2020.A/Desktop/{file_name}-Grid {i+1}-{today}.bmp")
                     else:
-                        grid.save(f"C:/Users/Sitex.9.10.2020.A/Desktop/Current Grid {i+1}.bmp")
+                        grid.save(f"C:/Users/Sitex.9.10.2020.A/Desktop/Current Grid {i+1}-{today}.bmp")
 
                     names = names[20:]
                     break
 
             grid.show()
             if filename:
-                grid.save(f"C:/Users/Sitex.9.10.2020.A/Desktop/{filename} Grid {i+1}.bmp")
+                grid.save(f"C:/Users/Sitex.9.10.2020.A/Desktop/{file_name}-Grid {i+1}-{today}.bmp")
             else:
-                grid.save(f"C:/Users/Sitex.9.10.2020.A/Desktop/Current Grid {i+1}.bmp")
+                grid.save(f"C:/Users/Sitex.9.10.2020.A/Desktop/Current Grid {i+1}-{today}.bmp")
 
     def plain(self):
-
         """
         What sintral color combinations are each of these used it?
         Speed: 3,4,5,6,7,8
@@ -1557,6 +1559,7 @@ class MyGUI:
         WMI: 3,4,5,6
         WMI78: 3,7,8
         """
+
         entries = {"speed": self.speed_entry.get(),
                    "empty_speed": self.empty_speed_entry.get(),
                    "wm32x": self.wm32x_entry.get(),
