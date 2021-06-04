@@ -1411,7 +1411,7 @@ class MyGUI:
                                         command=self.personalize)
         self.personalize_entry = Text(master)
         # self.back_stitch_entry.insert(0, "8")
-        self.personalize_label.grid(row=12, column=0)
+        self.personalize_label.grid(row=16, column=2)
         self.personalize_entry.grid(row=12, column=1)
 
         self.scrollbar = Scrollbar(master)
@@ -1525,7 +1525,7 @@ class MyGUI:
                 else:
                     pass
 
-                kern(name=name, draw_object=draw, y=y, space=self.kern_var.get(), font_name=font_name,font_size=font_size, fill=(64,224,208),
+                kern(name=name, draw_object=draw, y=y, space=self.kern_var.get(), font_name=font_name,font_size=font_size, fill=(152, 0, 152),
                      alignment=alignment)
                 y += 41
                 n += 1
@@ -1533,18 +1533,18 @@ class MyGUI:
                 if n == 20:
                     if filename:
                         #print(f"C:/Users/Sitex.9.10.2020.A/Desktop/{file_name}-Grid {i+1}-{today}.bmp")
-                        grid.save(f"C:/Users/Sitex.9.10.2020.A/Desktop/{file_name}-Grid {i+1}-{today}.bmp")
+                        grid.save(f"C:/Sitex/Files/Downloads/{file_name}-Grid {i+1}-{today}.bmp")
                     else:
-                        grid.save(f"C:/Users/Sitex.9.10.2020.A/Desktop/Current Grid {i+1}-{today}.bmp")
+                        grid.save(f"C:/Sitex/Files/Downloads/Current Grid {i+1}-{today}.bmp")
 
                     names = names[20:]
                     break
 
             grid.show()
             if filename:
-                grid.save(f"C:/Users/Sitex.9.10.2020.A/Desktop/{file_name}-Grid {i+1}-{today}.bmp")
+                grid.save(f"C:/Sitex/Files/Downloads/{file_name}-Grid {i+1}-{today}.bmp")
             else:
-                grid.save(f"C:/Users/Sitex.9.10.2020.A/Desktop/Current Grid {i+1}-{today}.bmp")
+                grid.save(f"C:/Sitex/Files/Downloads/Current Grid {i+1}-{today}.bmp")
 
     def plain(self):
         """
