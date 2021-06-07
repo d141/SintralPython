@@ -1465,13 +1465,20 @@ class MyGUI:
         self.capitalize_label.grid(row=15, column=0, pady=10)
 
     def personalize(self):
+        alignment = self.alignment_var.get()
+        font_name = self.font_var.get()
+
+        kern_value = self.kern_var.get()
 
         names = self.personalize_entry.get("1.0", 'end-1c').split('\n')
         num_names = len(names)
         num_grids = math.ceil(num_names / 20)
         answer = ask_grid_background()
         separator = Image.new('RGB', (473, 1), color_dict['P'])
-        background = Image.new('RGB', (473, 821), color_dict['.'])
+
+
+
+        background = Image.new('RGB', (473, 841), color_dict['.'])
         filename = ""
         messagebox.showinfo("Name Count", f"There are {num_names} names in this list.")
 
@@ -1481,9 +1488,11 @@ class MyGUI:
             filename = path_leaf(file_path)
             filename = filename[:-4]
             __, __, center = read(file_path)
+            center_string = "Auto"
             if center == 0:
                 if messagebox.askyesno("Hmmm", f"I couldn't find a center...Do you want to tell me where to begin?"):
                     center = int(askstring("Where's the grid?", "How far in from the bottom edge does the grid start?"))
+                    center_string = str(center)
                 else:
                     return False
             img = Image.open(file_path)
@@ -1493,8 +1502,11 @@ class MyGUI:
             for i in range(20):
                 background.paste(section, (0, (41 * i + 1)))
                 background.paste(separator, (0, (41 * i) + 41))
+            #background.paste(info_section, (0, (41 * i) + 42))
+
         else:
             # background.paste(separator, (0, 0))
+            center_string="Blank"
             for i in range(20):
                 # background.paste(section,(0,(41*i+1)))
                 background.paste(separator, (0, (41 * i) + 41))
@@ -1505,9 +1517,8 @@ class MyGUI:
         for i in range(num_grids):
 
             grid = background.copy()
-            alignment = self.alignment_var.get()
+
             draw = ImageDraw.Draw(grid)
-            font_name = self.font_var.get()
             font_size = math.ceil(int(self.font_size_var.get())*1.333)
             draw.fontmode = '1'
 
@@ -1539,7 +1550,10 @@ class MyGUI:
 
                     names = names[20:]
                     break
-
+            info_string = f"LineBeg:{center_string} Font:{font_name} Font Size:{self.font_size_var.get()} Kern:{kern_value}"
+            kern(name=info_string, draw_object=draw, y=810, space=2, font_name='Arial', font_size=16,
+                 fill=(0, 0, 0),
+                 alignment="Align Left")
             grid.show()
             if filename:
                 grid.save(f"C:/Sitex/Files/Downloads/{file_name}-Grid {i+1}-{today}.bmp")
