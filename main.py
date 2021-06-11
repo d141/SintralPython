@@ -673,7 +673,7 @@ def find_ja1(grid):
     lines = grid.split('\n')
     index = 1
     ja1_list = ""
-    for line in lines:
+    for line in lines[1:]:
         if "P" in line:
             ja1_list += f"IF #50={index} JA1={str(int(line[0:4]) - 1)}\n"
             index += 1
@@ -944,8 +944,8 @@ def find_counts(text_list):
         new_string = ""
         while string:
             if "P" in string:
-                 new_list.append("481P")
-                 break
+                new_list.append("481P")
+                break
 
             if len(string) == 1:
                 new_string += string[0]
@@ -1035,12 +1035,12 @@ def find_patterns(text_list):
 
 
 def make_plain_sintral(jtxt, entries, ja1=None):
-    '''
+    """
 
     pattern_color_dict={}
     for i in range(len(colors)):
         pattern_color_dict[colors[i]]=(systems[i],list(base_colors_8.values)[i][])
-'''
+"""
     sintral_top, sintral2x_top = add_top_of_sintral()
     # Why did I make this?
     # colors=sort_colors(colors)
@@ -1263,7 +1263,7 @@ def get_text_width(text_string, font):
     return font.getmask(text_string).getbbox()[2]
 
 
-def kern(name, draw_object, y, space, font_name,font_size, fill, alignment):
+def kern(name, draw_object, y, space, font_name, font_size, fill, alignment):
     chars = [char for char in name]
 
     total_width = 0
@@ -1272,7 +1272,7 @@ def kern(name, draw_object, y, space, font_name,font_size, fill, alignment):
 
     width = fnt.getsize(name)[0]
 
-    #check and adjust font_size
+    # check and adjust font_size
     while width > 360:
         font_size -= 2
         fnt = ImageFont.truetype(f"Fonts/{font_name}.ttf", font_size)
@@ -1291,9 +1291,9 @@ def kern(name, draw_object, y, space, font_name,font_size, fill, alignment):
     if alignment == "Center":
         alignment_adjuster = 0
     elif alignment == "Align Left":
-        alignment_adjuster = -((473 / 2 - total_width / 2)-36)
+        alignment_adjuster = -((473 / 2 - total_width / 2) - 36)
     elif alignment == "Align Right":
-        alignment_adjuster = (473 / 2 + total_width / 2)-total_width-36
+        alignment_adjuster = (473 / 2 + total_width / 2) - total_width - 36
 
     for char in chars:
         width_text = get_text_width(char, fnt)
@@ -1332,10 +1332,11 @@ class MyGUI:
                                   highlightbackground="#838EDE")
         self.pers_button.grid(row=1, column=2, columnspan=2, )
 
-        self.birdseye_button = Button(master, text="Do a Single. Stop Before Color Reduction.",
-                                      command=self.just_birdseye,
-                                      highlightbackground="#7eb8ff")
-        self.birdseye_button.grid(row=2, column=0, columnspan=2)
+        self.skip_reduction_var = IntVar()
+        self.skip_reduction_button = Checkbutton(master, text="Skip the Color Reduction",
+                                                 variable=self.skip_reduction_var,
+                                                 highlightbackground="#7eb8ff")
+        self.skip_reduction_button.grid(row=2, column=0, columnspan=2)
 
         self.sintral_button = Button(master, text="Make a Sintral", command=self.just_sintral,
                                      highlightbackground="#7EB8FF")
@@ -1422,7 +1423,7 @@ class MyGUI:
         self.close_button = Button(master, text="Close", command=master.quit, highlightbackground="#B0E2FF")
         self.close_button.grid(row=16, column=0, pady=30, columnspan=2)
 
-        font_size_options = ["10", "12", "14", "16", "20", "24","30", "36", "40"]
+        font_size_options = ["10", "12", "14", "16", "20", "24", "30", "36", "40"]
         self.font_size_var = StringVar(master)
         self.font_size_var.set("24")
         self.font_size_label = Label(master, text="Font Size", bg="#699864")
@@ -1476,8 +1477,6 @@ class MyGUI:
         answer = ask_grid_background()
         separator = Image.new('RGB', (473, 1), color_dict['P'])
 
-
-
         background = Image.new('RGB', (473, 841), color_dict['.'])
         filename = ""
         messagebox.showinfo("Name Count", f"There are {num_names} names in this list.")
@@ -1502,16 +1501,16 @@ class MyGUI:
             for i in range(20):
                 background.paste(section, (0, (41 * i + 1)))
                 background.paste(separator, (0, (41 * i) + 41))
-            #background.paste(info_section, (0, (41 * i) + 42))
+            # background.paste(info_section, (0, (41 * i) + 42))
 
         else:
             # background.paste(separator, (0, 0))
-            center_string="Blank"
+            center_string = "Blank"
             for i in range(20):
                 # background.paste(section,(0,(41*i+1)))
                 background.paste(separator, (0, (41 * i) + 41))
 
-        today= datetime.today().strftime('%b-%d-%y')
+        today = datetime.today().strftime('%b-%d-%y')
         file_name = str(askstring("File Name", f"Name the files. The format will be:\n [your choice]-Grid n-{today}"))
 
         for i in range(num_grids):
@@ -1519,7 +1518,7 @@ class MyGUI:
             grid = background.copy()
 
             draw = ImageDraw.Draw(grid)
-            font_size = math.ceil(int(self.font_size_var.get())*1.333)
+            font_size = math.ceil(int(self.font_size_var.get()) * 1.333)
             draw.fontmode = '1'
 
             y = 0
@@ -1536,17 +1535,18 @@ class MyGUI:
                 else:
                     pass
 
-                kern(name=name, draw_object=draw, y=y, space=self.kern_var.get(), font_name=font_name,font_size=font_size, fill=(152, 0, 152),
+                kern(name=name, draw_object=draw, y=y, space=self.kern_var.get(), font_name=font_name,
+                     font_size=font_size, fill=(152, 0, 152),
                      alignment=alignment)
                 y += 41
                 n += 1
 
                 if n == 20:
                     if filename:
-                        #print(f"C:/Users/Sitex.9.10.2020.A/Desktop/{file_name}-Grid {i+1}-{today}.bmp")
-                        grid.save(f"C:/Sitex/Files/Downloads/{file_name}-Grid {i+1}-{today}.bmp")
+                        # print(f"C:/Users/Sitex.9.10.2020.A/Desktop/{file_name}-Grid {i+1}-{today}.bmp")
+                        grid.save(f"C:/Sitex/Files/Downloads/{file_name}-Grid {i + 1}-{today}.bmp")
                     else:
-                        grid.save(f"C:/Sitex/Files/Downloads/Current Grid {i+1}-{today}.bmp")
+                        grid.save(f"C:/Sitex/Files/Downloads/Current Grid {i + 1}-{today}.bmp")
 
                     names = names[20:]
                     break
@@ -1556,9 +1556,9 @@ class MyGUI:
                  alignment="Align Left")
             grid.show()
             if filename:
-                grid.save(f"C:/Sitex/Files/Downloads/{file_name}-Grid {i+1}-{today}.bmp")
+                grid.save(f"C:/Sitex/Files/Downloads/{file_name}-Grid {i + 1}-{today}.bmp")
             else:
-                grid.save(f"C:/Sitex/Files/Downloads/Current Grid {i+1}-{today}.bmp")
+                grid.save(f"C:/Sitex/Files/Downloads/Current Grid {i + 1}-{today}.bmp")
 
     def plain(self):
         """
@@ -1592,6 +1592,8 @@ class MyGUI:
         img, colors, center = read(file_path)
         barcoded, reduction_counts = make_barcode(img, colors)
         reduction_count = calculate_reduction(reduction_counts)
+        if self.skip_reduction_var.get() == 1:
+            reduction_count = 0
         line_begin = askstring("Begin Reduction", "How far in from the edge should I start my removal?")
         reduced = remove_lines(barcoded, line_begin, reduction_count)
         folder_name = str(askstring("Folder Name", "Name the new folder for this pattern"))
