@@ -1644,6 +1644,9 @@ class MyGUI:
                 sheet = make_label(colors)
                 sheet.save(f"{new_path}/{filename1}color_label.pdf")
 
+
+
+
     def just_birdseye(self):
         file_path = filedialog.askopenfilename()
         filename = path_leaf(file_path)
@@ -1676,18 +1679,18 @@ class MyGUI:
         file_path = filedialog.askopenfilename()
         filename = path_leaf(file_path)
         filename = filename[:-4]
-        img = Image.open(file_path)
-        # rgb_im = img.convert('RGB')
-        # pic = img.load()
-        compressed_txt = convert_to_jtxt(img)
+        with open(file_path, "r") as text_file:
+            compressed_txt = ''.join(text_file.readlines())
         folder_name = str(askstring("Folder Name", "Name the new folder for this pattern"))
         new_path = os.path.join(os.path.dirname(file_path), folder_name)
         os.makedirs(new_path)
-        new_txt_file = open(f"{new_path}/{filename}_J.txt", 'w')
-        new_txt_file.write(compressed_txt)
-        new_txt_file.close()
+        print(compressed_txt)
+        #new_txt_file = open(f"{new_path}/{filename}_J.txt", 'w')
+        #new_txt_file.write(compressed_txt)
+        #new_txt_file.close()
         # not sure if this is necessary
-        os.chdir('..')
+        #os.chdir('..')
+
         sintral, sintral2x = make_plain_sintral(compressed_txt, entries)
         new_txt_file = open(f"{new_path}/{filename}-sintral440.txt", 'w')
         new_txt_file.write(sintral)
