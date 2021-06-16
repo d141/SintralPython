@@ -512,6 +512,8 @@ def read(file_path, design_colors=None):
     large = (483, 510)
     regular = (483, 360)
     small = (483, 296)
+    grid = (473,481)
+    new_grid = (473, 501)
     img = Image.open(file_path)
     rgb_im = img.convert('RGB')
     pic = img.load()
@@ -524,13 +526,17 @@ def read(file_path, design_colors=None):
         size = 'regular'
     elif size_num == small:
         size = 'small'
+    elif size_num == grid:
+        size = 'grid'
+        grid_correction = 5
+    elif size_num == new_grid:
+        size = 'new_grid'
+        pic = img.crop(0, 0, 473, 481)
+        grid_correction = 5
     else:
-        result = askyesno("Grid?", "Is this a personalization grid?")
-        if result is False:
-            messagebox.showinfo("Uh-oh,", f"Oh. Well, the dimensions are wrong.")
+            messagebox.showinfo("Uh-oh,", f"I don't recognize these dimensions")
             return
-        else:
-            grid_correction = 5
+
 
     # Check to see if there are unknown colors
     for x in range(size_num[0]):
