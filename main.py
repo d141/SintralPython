@@ -541,9 +541,9 @@ def read(file_path, design_colors=None):
         grid_correction = 5
     elif size_num == new_grid:
         size = 'new_grid'
-        pic = img.crop((0, 0, 473, 481)).load()
+        pic = img.crop((0, 0, 473, 821)).load()
         grid_correction = 5
-        size_num = img.crop((0, 0, 473, 481)).convert('RGB').size
+        size_num = img.crop((0, 0, 473, 821)).convert('RGB').size
     else:
             messagebox.showinfo("Uh-oh,", f"I don't recognize these dimensions")
             return
@@ -1627,7 +1627,7 @@ class MyGUI:
         new_path = os.path.join(os.path.dirname(file_path), folder_name)
         os.makedirs(new_path)
         reduced.save(f"{new_path}/{filename}-birdseye.bmp")
-        compressed_txt, line_num = convert_to_jtxt(reduced)
+        compressed_txt, __ = convert_to_jtxt(reduced)
         new_txt_file = open(f"{new_path}/{filename}_J.txt", 'w')
         new_txt_file.write(compressed_txt)
         new_txt_file.close()
@@ -1664,7 +1664,7 @@ class MyGUI:
                 new_path = os.path.join(os.path.dirname(file_path), folder_name)
                 os.makedirs(new_path)
                 reduced.save(f"{new_path}/{filename1}birdseyed.bmp")
-                compressed_txt = convert_to_jtxt(reduced)
+                compressed_txt, __ = convert_to_jtxt(reduced)
                 new_txt_file = open(f"{new_path}/{filename1}_J.txt", 'w')
                 new_txt_file.write(compressed_txt)
                 new_txt_file.close()
@@ -1713,7 +1713,6 @@ class MyGUI:
         folder_name = str(askstring("Folder Name", "Name the new folder for this pattern"))
         new_path = os.path.join(os.path.dirname(file_path), folder_name)
         os.makedirs(new_path)
-        print(compressed_txt)
         #new_txt_file = open(f"{new_path}/{filename}_J.txt", 'w')
         #new_txt_file.write(compressed_txt)
         #new_txt_file.close()
@@ -1750,19 +1749,22 @@ class MyGUI:
         barcoded, reduction_counts = make_barcode(img, colors)
         reduction_count = calculate_reduction(reduction_counts)
 
-        if self.skip_reduction_var.get() == 1:
+        skip = self.skip_reduction_var.get()
+        if len(colors) < 4:
+            skip = 1
+
+        if self.specify_pers_start_var.get() == 1:
             start_pers = int(askstring("Pers Section", "How far in from the edge does the personalization begin?"))
+            start_pers -= int(np.round(reduction_count / 2))
         else:
             start_pers = center - (reduction_count / 2)
             start_pers = math.floor(start_pers / 2.) * 2
 
-        skip = self.skip_reduction_var.get()
-        if len(colors) < 4:
-            skip = 1
+
         if skip == 1:
             reduction_count = 0
         reduced = remove_lines(barcoded, skip, reduction_count)
-        reduced = add_pers_barcode(reduced,skip, start_pers)
+        reduced = add_pers_barcode(reduced, start_pers)
         # Do the same thing now for the personalization grid
         # But no reductions
         grids = []
@@ -1798,7 +1800,7 @@ class MyGUI:
             grids[i].save(f"{new_path}/{grid_filenames[i]}-birdseye.bmp")
 
             compressed_txt, end_line_num = convert_to_jtxt(reduced)
-            compressed_grid, end_line_num = convert_to_jtxt(grids[i], start_line=end_line_num)
+            compressed_grid, __ = convert_to_jtxt(grids[i], start_line=end_line_num)
             new_txt_file = open(f"{new_path}/{filename}_J.txt", 'w')
             new_txt_file.write(compressed_txt)
             new_txt_file.close()
