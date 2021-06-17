@@ -512,8 +512,8 @@ def read(file_path, design_colors=None):
     large = (483, 510)
     regular = (483, 360)
     small = (483, 296)
-    grid = (473,481)
-    new_grid = (473, 501)
+    grid = (473,821)
+    new_grid = (473,841)
     img = Image.open(file_path)
     rgb_im = img.convert('RGB')
     pic = img.load()
@@ -531,8 +531,9 @@ def read(file_path, design_colors=None):
         grid_correction = 5
     elif size_num == new_grid:
         size = 'new_grid'
-        pic = img.crop(0, 0, 473, 481)
+        pic = img.crop((0, 0, 473, 481)).load()
         grid_correction = 5
+        size_num = img.crop((0, 0, 473, 481)).convert('RGB').size
     else:
             messagebox.showinfo("Uh-oh,", f"I don't recognize these dimensions")
             return
@@ -1550,9 +1551,9 @@ class MyGUI:
                 if n == 20:
                     if filename:
                         # print(f"C:/Users/Sitex.9.10.2020.A/Desktop/{file_name}-Grid {i+1}-{today}.bmp")
-                        grid.save(f"C:/Sitex/Files/Downloads/{file_name}-Grid {i + 1}-{today}.bmp")
+                        grid.save(f"C:/Sitex/Files/Working Folder/Bitmaps/{file_name}-Grid {i + 1}-{today}.bmp")
                     else:
-                        grid.save(f"C:/Sitex/Files/Downloads/Current Grid {i + 1}-{today}.bmp")
+                        grid.save(f"C:/Sitex/Files/Working Folder/Bitmaps/Current Grid {i + 1}-{today}.bmp")
 
                     names = names[20:]
                     break
@@ -1562,9 +1563,9 @@ class MyGUI:
                  alignment="Align Left")
             grid.show()
             if filename:
-                grid.save(f"C:/Sitex/Files/Downloads/{file_name}-Grid {i + 1}-{today}.bmp")
+                grid.save(f"C:/Sitex/Files/Working Folder/Bitmaps/{file_name}-Grid {i + 1}-{today}.bmp")
             else:
-                grid.save(f"C:/Sitex/Files/Downloads/Current Grid {i + 1}-{today}.bmp")
+                grid.save(f"C:/Sitex/Files/Working Folder/Bitmaps/Current Grid {i + 1}-{today}.bmp")
 
     def plain(self):
         """
