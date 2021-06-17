@@ -466,7 +466,7 @@ def ask_multiple_grids():
     return answer
 
 
-def remove_lines(bitmap, line_begin, reduction_count):
+def remove_lines(bitmap,skip , reduction_count):
     """
     Function for automatically removing required lines based on input for the user.
     Uses confirm() at the end to proceed
@@ -476,29 +476,39 @@ def remove_lines(bitmap, line_begin, reduction_count):
     :param reduction_count: (int) Result from calculate_reduction()
     :return: (PIL Image) Reduced bitmap
     """
-    true_count = int(np.round(reduction_count / 2))
-    line_begin = int(line_begin)
-    if true_count % 2 != 0:
-        true_count += 1
-    size = bitmap.size
-    new_height = size[1] - (true_count * 2)
-    canvas = Image.new('RGB', (481, new_height), color_dict['.'])
-    part1 = bitmap.crop((0, 0, 482, line_begin))
-    midsection = new_height - (true_count + line_begin)
-    part2 = bitmap.crop((0, line_begin + true_count, 482, midsection + true_count + line_begin))
-    part3 = bitmap.crop((0, size[1] - line_begin, 482, size[1]))
-    canvas.paste(part1)
-    canvas.paste(part2, (0, line_begin))
-    canvas.paste(part3, (0, new_height - line_begin))
-    canvas.show()
-    decision = confirm()
+    decision = False
 
-    if decision is True:
-        return canvas
-    else:
-        showinfo("OK", "Alrighty...let's try again", )
-        line_begin = askstring("Begin Reduction", "How far in from the edge should I start my removal?")
-        remove_lines(bitmap, line_begin, reduction_count)
+    while not decision:
+
+        if skip == 1:
+            line_begin = 0
+        else:
+            line_begin = str(askstring("Begin Reduction", "How far in from the edge should I start my removal?"))
+
+        true_count = int(np.round(reduction_count / 2))
+        line_begin = int(line_begin)
+        if true_count % 2 != 0:
+            true_count += 1
+        size = bitmap.size
+        new_height = size[1] - (true_count * 2)
+        canvas = Image.new('RGB', (481, new_height), color_dict['.'])
+        part1 = bitmap.crop((0, 0, 482, line_begin))
+        midsection = new_height - (true_count + line_begin)
+        part2 = bitmap.crop((0, line_begin + true_count, 482, midsection + true_count + line_begin))
+        part3 = bitmap.crop((0, size[1] - line_begin, 482, size[1]))
+        canvas.paste(part1)
+        canvas.paste(part2, (0, line_begin))
+        canvas.paste(part3, (0, new_height - line_begin))
+
+
+        if skip ==1:
+            decision=True
+        else:
+            canvas.show()
+            decision = confirm()
+
+
+    return canvas
 
 
 def read(file_path, design_colors=None):
@@ -1258,7 +1268,7 @@ def make_plain_sintral(jtxt, entries, ja1=None):
 def add_pers_barcode(bitmap, start_pers):
     pixels = bitmap.load()
     pixels[0, start_pers] = color_dict["k"]
-    bitmap.show()
+    #bitmap.show()
     return bitmap
 
 
@@ -1607,12 +1617,12 @@ class MyGUI:
         img, colors, center = read(file_path)
         barcoded, reduction_counts = make_barcode(img, colors)
         reduction_count = calculate_reduction(reduction_counts)
-        if self.skip_reduction_var.get() == 1:
+        skip=self.skip_reduction_var.get()
+        if len(colors)<4:
+            skip=1
+        if skip == 1:
             reduction_count = 0
-            line_begin = 0
-        else:
-            line_begin = askstring("Begin Reduction", "How far in from the edge should I start my removal?")
-        reduced = remove_lines(barcoded, line_begin, reduction_count)
+        reduced = remove_lines(barcoded,skip, reduction_count)
         folder_name = str(askstring("Folder Name", "Name the new folder for this pattern"))
         new_path = os.path.join(os.path.dirname(file_path), folder_name)
         os.makedirs(new_path)
@@ -1647,7 +1657,9 @@ class MyGUI:
                 barcoded, reduction_counts = make_barcode(img, colors)
                 reduction_count = calculate_reduction(reduction_counts)
                 line_begin = askstring("Begin Reduction", "How far in from the edge should I start my removal?")
-                reduced = remove_lines(barcoded, line_begin, reduction_count)
+                if self.skip_reduction_var.get() == 1:
+                    reduction_count = 0
+                reduced = remove_lines(barcoded, self.skip_reduction_var.get(), reduction_count)
                 folder_name = str(askstring("Folder Name", "Name the new folder for this pattern"))
                 new_path = os.path.join(os.path.dirname(file_path), folder_name)
                 os.makedirs(new_path)
@@ -1744,15 +1756,13 @@ class MyGUI:
             start_pers = center - (reduction_count / 2)
             start_pers = math.floor(start_pers / 2.) * 2
 
-        if self.skip_reduction_var.get() == 1:
+        skip = self.skip_reduction_var.get()
+        if len(colors) < 4:
+            skip = 1
+        if skip == 1:
             reduction_count = 0
-            line_begin = 0
-        else:
-            line_begin = askstring("Begin Reduction", "How far in from the edge should I start my removal?")
-        reduced = remove_lines(barcoded, line_begin, reduction_count)
-
-
-        reduced = add_pers_barcode(reduced, start_pers)
+        reduced = remove_lines(barcoded, skip, reduction_count)
+        reduced = add_pers_barcode(reduced,skip, start_pers)
         # Do the same thing now for the personalization grid
         # But no reductions
         grids = []
