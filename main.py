@@ -1319,34 +1319,43 @@ class MyGUI:
     def __init__(self, master):
         self.master = master
         master.title("Logo Knits Production App")
-
+#####
         self.plain_folder_button = Button(master, text="Do a Whole Folder All The Way. Not Personalized",
                                           command=self.plain_folder,
                                           highlightbackground="#7eb6ff")
         self.plain_folder_button.grid(row=0, column=0, columnspan=2)
-
+#####
         self.plain_button = Button(master, text="Do a Single All The Way. Not Personalized", command=self.plain,
                                    highlightbackground="#7EB6FF")
         self.plain_button.grid(row=0, column=2, columnspan=2)
-
+#####
         # DON'T FORGET TO CHANGE THE COMMAND
         self.pers_folder_button = Button(master, text="Do a Whole Folder. Personalized", command=self.plain_folder,
                                          highlightbackground="#838EDE")
         self.pers_folder_button.grid(row=1, column=0, columnspan=2)
-
+#####
         self.pers_button = Button(master, text="Do a Single. Personalized", command=self.pers_single,
                                   highlightbackground="#838EDE")
         self.pers_button.grid(row=1, column=2, columnspan=2, )
-
+#####
         self.skip_reduction_var = IntVar()
         self.skip_reduction_button = Checkbutton(master, text="Skip the Color Reduction",
                                                  variable=self.skip_reduction_var,
                                                  highlightbackground="#7eb8ff")
-        self.skip_reduction_button.grid(row=2, column=0, columnspan=2)
-
+        self.skip_reduction_button.grid(row=2, column=0, columnspan=1)
+#####
+        self.specify_pers_start_var = IntVar()
+        self.specify_pers_start_button = Checkbutton(master, text="Specify Start of Pers",
+                                                 variable=self.specify_pers_start_var,
+                                                 highlightbackground="#7eb8ff")
+        self.specify_pers_start_button.grid(row=2, column=1, columnspan=1)
+#####
         self.sintral_button = Button(master, text="Make a Sintral", command=self.just_sintral,
                                      highlightbackground="#7EB8FF")
         self.sintral_button.grid(row=2, column=2, columnspan=2)
+
+
+
 
         self.speed_label = Label(master, text="Speed", bg="#8FBC8F")
         self.speed_entry = Entry(master)
@@ -1556,8 +1565,8 @@ class MyGUI:
 
                     names = names[20:]
                     break
-            info_string = f"LineBeg:{center_string} Font:{font_name} Font Size:{self.font_size_var.get()} Kern:{kern_value}"
-            kern(name=info_string, draw_object=draw, y=810, space=2, font_name='Arial', font_size=16,
+            info_string = f"LnBg:{center_string} Fnt:{font_name} FntSz:{self.font_size_var.get()} Krn:{kern_value}"
+            kern(name=info_string, draw_object=draw, y=810, space=2, font_name='Arial', font_size=15,
                  fill=(0, 0, 0),
                  alignment="Align Left")
             grid.show()
@@ -1600,7 +1609,9 @@ class MyGUI:
         reduction_count = calculate_reduction(reduction_counts)
         if self.skip_reduction_var.get() == 1:
             reduction_count = 0
-        line_begin = askstring("Begin Reduction", "How far in from the edge should I start my removal?")
+            line_begin = 0
+        else:
+            line_begin = askstring("Begin Reduction", "How far in from the edge should I start my removal?")
         reduced = remove_lines(barcoded, line_begin, reduction_count)
         folder_name = str(askstring("Folder Name", "Name the new folder for this pattern"))
         new_path = os.path.join(os.path.dirname(file_path), folder_name)
@@ -1726,10 +1737,21 @@ class MyGUI:
         img, colors, center = read(file_path)
         barcoded, reduction_counts = make_barcode(img, colors)
         reduction_count = calculate_reduction(reduction_counts)
-        start_pers = center - (reduction_count / 2)
-        start_pers = math.floor(start_pers / 2.) * 2
-        line_begin = askstring("Begin Reduction", "How far in from the edge should I start my removal?")
+
+        if self.skip_reduction_var.get() == 1:
+            start_pers = int(askstring("Pers Section", "How far in from the edge does the personalization begin?"))
+        else:
+            start_pers = center - (reduction_count / 2)
+            start_pers = math.floor(start_pers / 2.) * 2
+
+        if self.skip_reduction_var.get() == 1:
+            reduction_count = 0
+            line_begin = 0
+        else:
+            line_begin = askstring("Begin Reduction", "How far in from the edge should I start my removal?")
         reduced = remove_lines(barcoded, line_begin, reduction_count)
+
+
         reduced = add_pers_barcode(reduced, start_pers)
         # Do the same thing now for the personalization grid
         # But no reductions
