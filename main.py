@@ -466,7 +466,7 @@ def ask_multiple_grids():
     return answer
 
 
-def remove_lines(bitmap,skip , reduction_count):
+def remove_lines(bitmap, skip, reduction_count):
     """
     Function for automatically removing required lines based on input for the user.
     Uses confirm() at the end to proceed
@@ -500,13 +500,11 @@ def remove_lines(bitmap,skip , reduction_count):
         canvas.paste(part2, (0, line_begin))
         canvas.paste(part3, (0, new_height - line_begin))
 
-
-        if skip ==1:
-            decision=True
+        if skip == 1:
+            decision = True
         else:
             canvas.show()
             decision = confirm()
-
 
     return canvas
 
@@ -522,8 +520,8 @@ def read(file_path, design_colors=None):
     large = (483, 510)
     regular = (483, 360)
     small = (483, 296)
-    grid = (473,821)
-    new_grid = (473,841)
+    grid = (473, 821)
+    new_grid = (473, 841)
     img = Image.open(file_path)
     rgb_im = img.convert('RGB')
     pic = img.load()
@@ -545,9 +543,8 @@ def read(file_path, design_colors=None):
         grid_correction = 5
         size_num = img.crop((0, 0, 473, 821)).convert('RGB').size
     else:
-            messagebox.showinfo("Uh-oh,", f"I don't recognize these dimensions")
-            return
-
+        messagebox.showinfo("Uh-oh,", f"I don't recognize these dimensions")
+        return
 
     # Check to see if there are unknown colors
     for x in range(size_num[0]):
@@ -695,6 +692,7 @@ def find_ja1(grid):
             ja1_list += f"IF #50={index} JA1={str(int(line[0:4]) - 1)}\n"
             index += 1
     return ja1_list
+
 
 # def add_ja1(list)
 
@@ -1268,7 +1266,7 @@ def make_plain_sintral(jtxt, entries, ja1=None):
 def add_pers_barcode(bitmap, start_pers):
     pixels = bitmap.load()
     pixels[0, start_pers] = color_dict["k"]
-    #bitmap.show()
+    # bitmap.show()
     return bitmap
 
 
@@ -1329,43 +1327,40 @@ class MyGUI:
     def __init__(self, master):
         self.master = master
         master.title("Logo Knits Production App")
-#####
+        #####
         self.plain_folder_button = Button(master, text="Do a Whole Folder All The Way. Not Personalized",
                                           command=self.plain_folder,
                                           highlightbackground="#7eb6ff")
         self.plain_folder_button.grid(row=0, column=0, columnspan=2)
-#####
+        #####
         self.plain_button = Button(master, text="Do a Single All The Way. Not Personalized", command=self.plain,
                                    highlightbackground="#7EB6FF")
         self.plain_button.grid(row=0, column=2, columnspan=2)
-#####
+        #####
         # DON'T FORGET TO CHANGE THE COMMAND
         self.pers_folder_button = Button(master, text="Do a Whole Folder. Personalized", command=self.plain_folder,
                                          highlightbackground="#838EDE")
         self.pers_folder_button.grid(row=1, column=0, columnspan=2)
-#####
+        #####
         self.pers_button = Button(master, text="Do a Single. Personalized", command=self.pers_single,
                                   highlightbackground="#838EDE")
         self.pers_button.grid(row=1, column=2, columnspan=2, )
-#####
+        #####
         self.skip_reduction_var = IntVar()
         self.skip_reduction_button = Checkbutton(master, text="Skip the Color Reduction",
                                                  variable=self.skip_reduction_var,
                                                  highlightbackground="#7eb8ff")
         self.skip_reduction_button.grid(row=2, column=0, columnspan=1)
-#####
+        #####
         self.specify_pers_start_var = IntVar()
         self.specify_pers_start_button = Checkbutton(master, text="Specify Start of Pers",
-                                                 variable=self.specify_pers_start_var,
-                                                 highlightbackground="#7eb8ff")
+                                                     variable=self.specify_pers_start_var,
+                                                     highlightbackground="#7eb8ff")
         self.specify_pers_start_button.grid(row=2, column=1, columnspan=1)
-#####
+        #####
         self.sintral_button = Button(master, text="Make a Sintral", command=self.just_sintral,
                                      highlightbackground="#7EB8FF")
         self.sintral_button.grid(row=2, column=2, columnspan=2)
-
-
-
 
         self.speed_label = Label(master, text="Speed", bg="#8FBC8F")
         self.speed_entry = Entry(master)
@@ -1617,12 +1612,12 @@ class MyGUI:
         img, colors, center = read(file_path)
         barcoded, reduction_counts = make_barcode(img, colors)
         reduction_count = calculate_reduction(reduction_counts)
-        skip=self.skip_reduction_var.get()
-        if len(colors)<4:
-            skip=1
+        skip = self.skip_reduction_var.get()
+        if len(colors) < 4:
+            skip = 1
         if skip == 1:
             reduction_count = 0
-        reduced = remove_lines(barcoded,skip, reduction_count)
+        reduced = remove_lines(barcoded, skip, reduction_count)
         folder_name = str(askstring("Folder Name", "Name the new folder for this pattern"))
         new_path = os.path.join(os.path.dirname(file_path), folder_name)
         os.makedirs(new_path)
@@ -1673,9 +1668,6 @@ class MyGUI:
                 sheet = make_label(colors)
                 sheet.save(f"{new_path}/{filename1}color_label.pdf")
 
-
-
-
     def just_birdseye(self):
         file_path = filedialog.askopenfilename()
         filename = path_leaf(file_path)
@@ -1713,11 +1705,11 @@ class MyGUI:
         folder_name = str(askstring("Folder Name", "Name the new folder for this pattern"))
         new_path = os.path.join(os.path.dirname(file_path), folder_name)
         os.makedirs(new_path)
-        #new_txt_file = open(f"{new_path}/{filename}_J.txt", 'w')
-        #new_txt_file.write(compressed_txt)
-        #new_txt_file.close()
+        # new_txt_file = open(f"{new_path}/{filename}_J.txt", 'w')
+        # new_txt_file.write(compressed_txt)
+        # new_txt_file.close()
         # not sure if this is necessary
-        #os.chdir('..')
+        # os.chdir('..')
 
         sintral, sintral2x = make_plain_sintral(compressed_txt, entries)
         new_txt_file = open(f"{new_path}/{filename}-sintral440.txt", 'w')
@@ -1759,7 +1751,6 @@ class MyGUI:
         else:
             start_pers = center - (reduction_count / 2)
             start_pers = math.floor(start_pers / 2.) * 2
-
 
         if skip == 1:
             reduction_count = 0
